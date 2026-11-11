@@ -32,6 +32,7 @@ These are design and audit documents, not evidence that the described services h
 - [Memory & Research Data Model v1.0](docs/MEMORY-RESEARCH-DATA-MODEL-v1.md) — proposed entities, provenance, versioning, privacy and acceptance tests.
 - [Orchestration API Contract v1.0](docs/ORCHESTRATION-API-CONTRACT-v1.md) — proposed routes, task lifecycle, approvals and server-side model boundary.
 - [Knowledge Engine Specification v1.0](docs/KNOWLEDGE-ENGINE-SPEC-v1.md) — source-grounded retrieval, claims, contradictions, research, prediction evaluation and traceability.
+- [Memory Relationship Engine Specification v1.0](docs/MEMORY-RELATIONSHIP-ENGINE-SPEC-v1.md) — explicit relationship types, contradiction preservation, integrity rules, audit requirements and production acceptance tests.
 
 ## Current prototype modules
 
