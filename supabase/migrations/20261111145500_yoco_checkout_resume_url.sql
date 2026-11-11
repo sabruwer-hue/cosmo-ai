@@ -1,0 +1,1 @@
+alter table public.cosmo_yoco_checkouts add column if not exists redirect_url text;
