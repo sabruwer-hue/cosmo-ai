@@ -155,3 +155,41 @@ Before backend implementation, confirm:
 ---
 **Document control:** COSMO-CORE-ARCH-001 · Version 1.0 · Architecture baseline.  
 Changes should be versioned and reviewed; implementation status must be tracked separately from this design.
+
+## 12. Adaptive learning and preference intelligence
+
+Cosmo must adapt to each authorised person and dedicated agent without confusing preference, context, feedback, model output and verified fact.
+
+### 12.1 Separate preference profiles
+Maintain scoped profiles by user, workspace and agent. Capture explicit communication and language preferences, response detail, pace, initiative, preferred formats/examples, accessibility requirements voluntarily supplied, interests, active goals, routines, task context and avoidances. Each preference carries provenance (explicit, feedback, observed or inferred), confidence/rationale, scope, timestamp, expiry/review state and consent/permission. Explicit user instructions outrank weak inferred patterns. Inferences remain tentative until confirmed.
+
+### 12.2 Learning methods
+Use the method suited to the task, including:
+- explicit preference learning and user-configured settings;
+- supervised learning from labelled examples and corrections;
+- feedback/preference learning from ratings, comparisons and edits;
+- contextual adaptation to task, environment, time, device and constraints;
+- online/incremental learning with drift checks and rollback;
+- active learning and targeted clarification;
+- unsupervised pattern discovery and semi-supervised learning;
+- transfer learning with strict separation of private profiles;
+- few-shot/in-context learning and demonstration/imitation learning;
+- meta-learning to evaluate which strategies work for which tasks;
+- reinforcement learning only in approved simulations/sandboxes with explicit reward and constraint models;
+- retrieval-augmented generation grounded in authorised memories and sources;
+- multi-agent collaboration through scoped knowledge contracts;
+- prediction/outcome learning and continual-learning governance.
+
+Retrieval, context examples and preference capture are not automatically model-weight training. Dataset creation, fine-tuning or external provider training requires separate informed consent, documented purpose, data rights and retention/deletion controls.
+
+### 12.3 Feedback-to-adaptation lifecycle
+Capture task context, agent, feedback, observed outcome, provenance and requested learning scope. Classify feedback as task-specific, candidate agent preference or candidate shared rule. Validate repeated signals and conflicts; propose a change with rationale; obtain required approval; evaluate against a baseline; version the adaptation; monitor for regressions; retain rollback. A single rating must not silently rewrite a durable preference.
+
+### 12.4 Household and agent boundaries
+Keep each person's profile and each dedicated household agent separate. Do not assume one member's preferences apply to another. Shared knowledge is distinct from shared preferences. Cross-agent transfer requires explicit authorization and field-level access checks. All agents inherit the same non-overridable safety and security policy.
+
+### 12.5 Non-learning safety boundaries
+Safety, consent, security, legal compliance, access control and tool permissions are policy constraints, not learned preferences. Medical, financial, legal, vehicle, energy and physical-control decisions require deterministic safeguards and appropriate human authorization. No live safety-critical trial-and-error reinforcement learning is allowed. User preferences cannot grant permissions the user does not hold.
+
+### 12.6 User control and evaluation
+Users must be able to inspect, correct, reject, expire, export and delete profile data subject to lawful retention. Track task success, correction rates, user satisfaction, calibration, latency, error rates, privacy incidents and performance regressions. Preserve model, prompt, adapter, dataset and policy versions with evaluation baselines and rollback records.
