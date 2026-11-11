@@ -306,3 +306,149 @@ if (vaultExport) {
     URL.revokeObjectURL(url);
   });
 }
+
+
+// Memory Relationship Engine v1 prototype.
+// Relationships are explicit session-only assertions; they never determine truth automatically.
+(() => {
+  const relationForm = document.querySelector("#relationship-form");
+  if (!relationForm) return;
+  const fromSelect = document.querySelector("#relationship-from");
+  const toSelect = document.querySelector("#relationship-to");
+  const typeSelect = document.querySelector("#relationship-type");
+  const noteInput = document.querySelector("#relationship-note");
+  const relationList = document.querySelector("#relationship-list");
+  const relationEmpty = document.querySelector("#relationship-empty");
+  const relationCount = document.querySelector("#relationship-count");
+  const relationAudit = document.querySelector("#relationship-audit");
+  const relationExport = document.querySelector("#relationship-export");
+  const relationships = [];
+
+  const labels = {
+    supports: "Supports", contradicts: "Contradicts", refines: "Refines / adds detail",
+    supersedes: "Supersedes / replaces guidance", duplicate_of: "Possible duplicate of",
+    depends_on: "Depends on", related_to: "Related to", derived_from: "Derived from"
+  };
+  const memoryByCode = (code) => memoryDrafts.find((memory) => memory.code === code);
+
+  function fillMemoryChoices() {
+    const priorFrom = fromSelect.value;
+    const priorTo = toSelect.value;
+    [fromSelect, toSelect].forEach((select, index) => {
+      select.replaceChildren();
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = memoryDrafts.length < 2 ? "Create at least two memories" : "Choose a memory";
+      select.append(placeholder);
+      memoryDrafts.forEach((memory) => {
+        const option = document.createElement("option");
+        option.value = memory.code;
+        option.textContent = memory.code + " · " + memory.title;
+        select.append(option);
+      });
+      select.value = index === 0 ? priorFrom : priorTo;
+    });
+    relationForm.querySelector('button[type="submit"]').disabled = memoryDrafts.length < 2;
+  }
+
+  function auditRelationships() {
+    const broken = relationships.filter((link) => !memoryByCode(link.fromCode) || !memoryByCode(link.toCode));
+    const contradictions = relationships.filter((link) => link.type === "contradicts");
+    const duplicates = relationships.filter((link) => link.type === "duplicate_of");
+    const duplicatePairs = relationships.filter((link, index) =>
+      relationships.findIndex((other) => other.fromCode === link.fromCode && other.toCode === link.toCode && other.type === link.type) !== index
+    );
+    relationAudit.replaceChildren();
+    const summary = document.createElement("p");
+    summary.textContent = relationships.length + " link(s) · " + contradictions.length + " contradiction(s) · " + duplicates.length + " possible duplicate(s) · " + broken.length + " broken reference(s) · " + duplicatePairs.length + " repeated link(s).";
+    relationAudit.append(summary);
+    const detail = document.createElement("small");
+    detail.textContent = broken.length ? "Integrity warning: one or more links point to missing memory codes." : "Integrity check: every relationship currently points to an existing memory draft. This is a local demo check, not a server audit.";
+    relationAudit.append(detail);
+  }
+
+  function renderRelationships() {
+    relationList.replaceChildren();
+    relationCount.textContent = relationships.length + (relationships.length === 1 ? " LINK" : " LINKS");
+    relationEmpty.hidden = relationships.length > 0;
+    relationExport.disabled = relationships.length === 0;
+    relationships.forEach((link) => {
+      const from = memoryByCode(link.fromCode);
+      const to = memoryByCode(link.toCode);
+      const card = document.createElement("article");
+      card.className = "relationship-record";
+      const head = document.createElement("div");
+      head.className = "knowledge-record-top";
+      const code = document.createElement("strong");
+      code.textContent = link.code;
+      const kind = document.createElement("span");
+      kind.className = "tag " + (link.type === "contradicts" ? "tag-warning" : "");
+      kind.textContent = labels[link.type];
+      head.append(code, kind);
+      const path = document.createElement("p");
+      path.className = "relationship-path";
+      path.textContent = (from ? from.title : "MISSING: " + link.fromCode) + "  →  " + (to ? to.title : "MISSING: " + link.toCode);
+      const refs = document.createElement("small");
+      refs.textContent = link.fromCode + " → " + link.toCode + " · " + new Date(link.createdAt).toLocaleString();
+      const note = document.createElement("p");
+      note.className = "knowledge-evidence";
+      note.textContent = link.note || "No reason/evidence note supplied.";
+      card.append(head, path, refs, note);
+      relationList.append(card);
+    });
+    auditRelationships();
+  }
+
+  relationForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const fromCode = fromSelect.value;
+    const toCode = toSelect.value;
+    if (!memoryByCode(fromCode) || !memoryByCode(toCode)) {
+      relationAudit.textContent = "Choose two existing memory drafts before recording a link.";
+      return;
+    }
+    if (fromCode === toCode) {
+      relationAudit.textContent = "A memory cannot be linked to itself in this prototype.";
+      return;
+    }
+    const type = typeSelect.value;
+    if (relationships.some((link) => link.fromCode === fromCode && link.toCode === toCode && link.type === type)) {
+      relationAudit.textContent = "That exact directed relationship already exists. Review the existing link instead of creating a duplicate.";
+      return;
+    }
+    relationships.unshift({
+      code: "DRAFT-REL-" + String(relationships.length + 1).padStart(3, "0"),
+      fromCode, toCode, type, note: noteInput.value.trim(),
+      createdAt: new Date().toISOString(),
+      assessment: "unreviewed"
+    });
+    renderRelationships();
+    noteInput.value = "";
+  });
+
+  relationExport.addEventListener("click", () => {
+    if (!relationships.length) return;
+    const payload = {
+      exportType: "cosmo-memory-relationships-session-drafts",
+      schemaVersion: "1.0",
+      exportedAt: new Date().toISOString(),
+      warning: "Session-only relationship assertions. Not permanent records, verified truth, or a backup.",
+      relationships
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "cosmo-memory-relationships-drafts.json";
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  // Refresh endpoint choices whenever a memory is added.
+  const originalUpdateOptions = updateMemoryLinkOptions;
+  window.cosmoRefreshRelationshipChoices = fillMemoryChoices;
+  fillMemoryChoices();
+  renderRelationships();
+})();
