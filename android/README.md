@@ -9,6 +9,7 @@ The web application is being prepared as three separately installable Android Tr
 | Cosmo AI | `/manifest.webmanifest` | `/` | `za.co.cosmoai.app` |
 | Cosmo Work | `/work.webmanifest` | `/work.html` | `za.co.cosmoai.work` |
 | Cosmo Admin Portal | `/admin.webmanifest` | `/admin.html` | `za.co.cosmoai.admin` |
+| Cosmo QR Retail | `/retail.webmanifest` | `/retail.html` | `za.co.cosmoai.retail` |
 
 ## What must happen before APK builds
 
@@ -40,4 +41,4 @@ Do not generate final APKs against a temporary GitHub Pages URL and then assume 
 
 ## Current status
 
-The three web manifests, SVG app icons, service-worker shell and separate app pages are committed. **No APK has been generated or signed yet.** Domain setup, HTTPS verification, PNG launcher assets, Android build environment and owner-controlled signing remain outstanding.
+The four web manifests, SVG app icons, service-worker shell and separate app pages are committed. **No APK has been generated or signed yet.** Domain setup, HTTPS verification, PNG launcher assets, Android build environment and owner-controlled signing remain outstanding.
