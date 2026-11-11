@@ -37,6 +37,8 @@ These are design and audit documents, not evidence that the described services h
 
 - **Knowledge Engine capture panel:** front-end draft capture for claims, observations, hypotheses, predictions and decisions; provenance labels; optional evidence notes/source URLs; and JSON export. Drafts remain in browser memory for the current page session only. They are not permanent records, are not verified, and are not sent to a database.
 
+- **Memory Vault interface:** separate Main Memories index and Master History source archive, session-only draft capture, optional memory-to-source linking, text search and JSON export. Temporary draft codes are not permanent identifiers and no sensitive information should be entered.
+
 ## Status vocabulary
 
 - **Planned:** documented, not built.
