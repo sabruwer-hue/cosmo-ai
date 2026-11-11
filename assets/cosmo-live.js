@@ -62,7 +62,7 @@
     showStatus(authStatus, "Sending your secure sign-in link…");
     const { error } = await client.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin + window.location.pathname }
+      options: { emailRedirectTo: window.location.origin + window.location.pathname, shouldCreateUser: false }
     });
     submit.disabled = false;
     if (error) {
