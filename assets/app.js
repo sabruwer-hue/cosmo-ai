@@ -149,3 +149,160 @@ if (knowledgeExport) {
     URL.revokeObjectURL(url);
   });
 }
+
+
+// Memory Vault interface prototype. All data remains in this page session only.
+const memoryForm = document.querySelector("#memory-form");
+const historyForm = document.querySelector("#history-form");
+const memoryList = document.querySelector("#memory-list");
+const historyList = document.querySelector("#history-list");
+const memoryEmpty = document.querySelector("#memory-empty");
+const historyEmpty = document.querySelector("#history-empty");
+const memoryCount = document.querySelector("#memory-count");
+const historyCount = document.querySelector("#history-count");
+const historyMemoryLink = document.querySelector("#history-memory-link");
+const vaultSearch = document.querySelector("#vault-search");
+const vaultExport = document.querySelector("#vault-export");
+const memoryDrafts = [];
+const historyDrafts = [];
+
+function makeVaultCode(prefix, count) {
+  return "DRAFT-" + prefix + "-" + String(count).padStart(3, "0");
+}
+
+function addTextElement(parent, tag, className, value) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  element.textContent = value;
+  parent.append(element);
+  return element;
+}
+
+function updateMemoryLinkOptions() {
+  const selected = historyMemoryLink.value;
+  historyMemoryLink.replaceChildren();
+  const none = document.createElement("option");
+  none.value = "";
+  none.textContent = "No memory link yet";
+  historyMemoryLink.append(none);
+  memoryDrafts.forEach((memory) => {
+    const option = document.createElement("option");
+    option.value = memory.code;
+    option.textContent = memory.code + " · " + memory.title;
+    historyMemoryLink.append(option);
+  });
+  if (memoryDrafts.some((memory) => memory.code === selected)) historyMemoryLink.value = selected;
+}
+
+function renderVault() {
+  const term = (vaultSearch.value || "").trim().toLowerCase();
+  memoryList.replaceChildren();
+  historyList.replaceChildren();
+
+  const visibleMemories = memoryDrafts.filter((item) =>
+    [item.code, item.title, item.summary, item.category, item.classification].join(" ").toLowerCase().includes(term)
+  );
+  const visibleHistory = historyDrafts.filter((item) =>
+    [item.code, item.title, item.content, item.sourceType, item.memoryCode].join(" ").toLowerCase().includes(term)
+  );
+
+  memoryEmpty.hidden = visibleMemories.length > 0;
+  historyEmpty.hidden = visibleHistory.length > 0;
+  memoryCount.textContent = memoryDrafts.length + " DRAFTS";
+  historyCount.textContent = historyDrafts.length + " DRAFTS";
+  vaultExport.disabled = memoryDrafts.length + historyDrafts.length === 0;
+
+  visibleMemories.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "vault-record";
+    const head = document.createElement("div");
+    head.className = "knowledge-record-top";
+    addTextElement(head, "strong", "", item.code);
+    addTextElement(head, "span", "tag", item.category + " · " + item.classification);
+    card.append(head);
+    addTextElement(card, "h4", "vault-record-title", item.title);
+    addTextElement(card, "p", "knowledge-evidence", item.summary);
+    const linked = historyDrafts.filter((source) => source.memoryCode === item.code);
+    addTextElement(card, "small", "", "DRAFT · SESSION ONLY · " + linked.length + " LINKED SOURCE(S)");
+    memoryList.append(card);
+  });
+
+  visibleHistory.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "vault-record";
+    const head = document.createElement("div");
+    head.className = "knowledge-record-top";
+    addTextElement(head, "strong", "", item.code);
+    addTextElement(head, "span", "tag", item.sourceType);
+    card.append(head);
+    addTextElement(card, "h4", "vault-record-title", item.title);
+    addTextElement(card, "p", "knowledge-evidence", item.content);
+    addTextElement(card, "small", "", "LINKED MEMORY: " + (item.memoryCode || "NONE") + " · SESSION ONLY");
+    historyList.append(card);
+  });
+}
+
+if (memoryForm && historyForm) {
+  memoryForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const title = document.querySelector("#memory-title").value.trim();
+    const summary = document.querySelector("#memory-summary").value.trim();
+    if (!title || !summary) return;
+    memoryDrafts.unshift({
+      code: makeVaultCode("MEM", memoryDrafts.length + 1),
+      title,
+      summary,
+      category: document.querySelector("#memory-category").value,
+      classification: document.querySelector("#memory-classification").value,
+      createdAt: new Date().toISOString(),
+      version: 1
+    });
+    updateMemoryLinkOptions();
+    renderVault();
+    memoryForm.reset();
+    document.querySelector("#memory-title").focus();
+  });
+
+  historyForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const title = document.querySelector("#history-title").value.trim();
+    const content = document.querySelector("#history-content").value.trim();
+    if (!title || !content) return;
+    historyDrafts.unshift({
+      code: makeVaultCode("HIS", historyDrafts.length + 1),
+      title,
+      content,
+      sourceType: document.querySelector("#history-type").value,
+      memoryCode: historyMemoryLink.value,
+      createdAt: new Date().toISOString(),
+      version: 1
+    });
+    renderVault();
+    historyForm.reset();
+  });
+}
+
+if (vaultSearch) vaultSearch.addEventListener("input", renderVault);
+
+if (vaultExport) {
+  vaultExport.addEventListener("click", () => {
+    if (!memoryDrafts.length && !historyDrafts.length) return;
+    const bundle = {
+      exportType: "cosmo-memory-history-session-drafts",
+      schemaVersion: "1.0",
+      exportedAt: new Date().toISOString(),
+      warning: "Temporary, unverified session drafts only. Not permanent records or a backup.",
+      mainMemories: memoryDrafts,
+      masterHistory: historyDrafts
+    };
+    const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "cosmo-memory-history-drafts.json";
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
+}
