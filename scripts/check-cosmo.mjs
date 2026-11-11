@@ -6,7 +6,7 @@ import { spawnSync } from "node:child_process";
 const required = [
   "index.html", "work.html", "admin.html", "service-worker.js",
   "manifest.webmanifest", "work.webmanifest", "admin.webmanifest",
-  "assets/app.js", "assets/cosmo-live.js"
+  "assets/app.js", "assets/cosmo-live.js",\n  "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts"
 ];
 for (const file of required) readFileSync(file, "utf8");
 
@@ -43,4 +43,9 @@ const admin = readFileSync("admin.html", "utf8");
 for (const id of ["mission-form", "knowledge-form", "lesson-form", "gate-warning"]) {
   if (!admin.includes('id="' + id + '"')) throw new Error("Cosmo Admin is missing required control: " + id);
 }
-console.log("Cosmo checks passed: files, manifests, JavaScript syntax, PWA hooks and key workspace controls.");
+const chat = readFileSync("supabase/functions/cosmo-chat/index.ts", "utf8");
+for (const tool of ["create_task", "list_tasks", "search_knowledge", "create_mission", "list_missions", "request_approval"]) {
+  if (!chat.includes('name: "' + tool + '"')) throw new Error("Cosmo agent tool is missing: " + tool);
+}
+if (!chat.includes("parallel_tool_calls: false")) throw new Error("Cosmo agent must keep tool execution sequential.");
+console.log("Cosmo checks passed: files, manifests, JavaScript syntax, PWA hooks, workspace controls and agent tool registry.");
