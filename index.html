@@ -170,6 +170,33 @@
               <div id="relationship-list" class="relationship-list" aria-live="polite"></div>
             </article>
           </div>
+        <section class="version-review-section" id="memory-versioning">
+          <div class="section-heading"><div><p class="eyebrow">MEMORY GOVERNANCE</p><h2>Versioning & Contradiction Review</h2></div><span class="muted">Session-only review workflow</span></div>
+          <div class="relationship-intro"><strong>Changes create history; reviews create accountable decisions.</strong><span>Older versions remain visible in this session. Contradictions are reviewed as evidence conflicts, not automatically resolved by recency or confidence scores.</span></div>
+          <div class="version-review-grid">
+            <article class="panel">
+              <div class="panel-title"><div><p class="eyebrow">CONTROLLED REVISION</p><h3>Create a new memory version</h3></div><span class="panel-symbol">↻</span></div>
+              <form id="memory-version-form" class="vault-form">
+                <label for="version-memory">Memory to revise</label><select id="version-memory" required><option value="">Create a memory first</option></select>
+                <label for="version-summary">New summary</label><textarea id="version-summary" rows="4" maxlength="1200" required placeholder="Enter the revised summary. The previous version will remain in the timeline."></textarea>
+                <label for="version-reason">Why is this changing?</label><textarea id="version-reason" rows="2" maxlength="700" required placeholder="Describe new evidence, correction, scope change or reason."></textarea>
+                <label for="version-source">Change basis</label><select id="version-source"><option value="new_evidence">New evidence</option><option value="correction">Correction</option><option value="scope_change">Scope clarification</option><option value="user_update">User update</option><option value="other">Other / needs review</option></select>
+                <button class="send-btn" type="submit">Create next version <b>↗</b></button>
+              </form>
+              <p class="prototype-note">A version is a new snapshot, not an overwrite. Production must add actor identity, authorization and append-only audit events.</p>
+            </article>
+            <article class="panel">
+              <div class="panel-title"><div><p class="eyebrow">VERSION TIMELINE</p><h3>Memory history</h3></div><span class="tag" id="version-count">0 VERSIONS</span></div>
+              <label class="sr-only" for="version-timeline-memory">Choose memory timeline</label><select id="version-timeline-memory" class="review-select"><option value="">Choose a memory</option></select>
+              <div id="version-timeline" class="version-timeline"><p class="knowledge-empty">Create or select a memory to inspect its version history.</p></div>
+            </article>
+          </div>
+          <article class="panel contradiction-review-panel">
+            <div class="panel-title"><div><p class="eyebrow">CONFLICT REGISTER</p><h3>Contradiction review queue</h3></div><span class="tag" id="contradiction-count">0 OPEN</span></div>
+            <p class="knowledge-evidence">Only links explicitly marked “Contradicts” appear here. Review outcomes are recorded with a rationale; neither side is deleted.</p>
+            <div id="contradiction-queue" class="contradiction-queue"><p class="knowledge-empty">No contradiction links to review yet.</p></div>
+          </article>
+        </section>
         </section>
         <p class="prototype-note">Prototype only: temporary draft IDs are not permanent Cosmo codes. Nothing here is saved to a database, backed up, access-controlled or retained after the page session ends. Do not enter sensitive or private information.</p>
       </section>
