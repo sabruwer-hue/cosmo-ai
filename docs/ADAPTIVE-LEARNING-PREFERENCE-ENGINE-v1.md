@@ -102,3 +102,9 @@ The interface can create session-only profiles per named agent, capture communic
 - ADAPT-4: offline evaluation, drift monitoring and rollback.
 - ADAPT-5: specialist-agent coordination with scoped shared learning.
 - ADAPT-6: carefully governed model adaptation only after data rights, consent, evaluation and safety gates are approved.
+
+## 11. Persistent implementation dependency
+
+The persistent production design is defined separately in [Persistent Learning & Preference Data Architecture v1.0](PERSISTENT-LEARNING-PREFERENCE-DATA-ARCHITECTURE-v1.md). That specification covers durable profiles and versions, feedback/outcome ledgers, learning candidates, approval-bound adaptation proposals, evaluation runs, releases, rollback, permissions, retention, export and recovery. It remains provider-neutral and is not a deployed backend.
+
+The production sequence is identity/tenancy first, then durable preferences, feedback/outcomes, governed proposals, evaluation/release, and finally recovery/deletion. Model-weight training is optional and must never be conflated with retrieval, in-context examples or preference storage.
