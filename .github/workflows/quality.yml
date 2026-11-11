@@ -18,5 +18,15 @@ jobs:
       - uses: denoland/setup-deno@v2
       - name: Validate Cosmo application files
         run: node scripts/check-cosmo.mjs
-      - name: Type-check Supabase Edge Functions
-        run: deno check supabase/functions/cosmo-chat/index.ts supabase/functions/cosmo-admin-gate/index.ts supabase/functions/cosmo-access-gate/index.ts supabase/functions/cosmo-yoco-checkout/index.ts supabase/functions/cosmo-yoco-webhook/index.ts supabase/functions/cosmo-payfast-checkout/index.ts supabase/functions/cosmo-payfast-itn/index.ts
+      - name: Type-check Cosmo chat
+        run: deno check supabase/functions/cosmo-chat/index.ts
+      - name: Type-check Cosmo admin gate
+        run: deno check supabase/functions/cosmo-admin-gate/index.ts
+      - name: Type-check lifetime entitlement gate
+        run: deno check supabase/functions/cosmo-access-gate/index.ts
+      - name: Type-check Yoco checkout
+        run: deno check supabase/functions/cosmo-yoco-checkout/index.ts
+      - name: Type-check Yoco webhook
+        run: deno check supabase/functions/cosmo-yoco-webhook/index.ts
+      - name: Type-check retired PayFast stubs
+        run: deno check supabase/functions/cosmo-payfast-checkout/index.ts supabase/functions/cosmo-payfast-itn/index.ts
