@@ -35,7 +35,17 @@
 
   async function setSession(session) {
     const authenticated = Boolean(session?.user);
-    overlay.hidden = authenticated;
+    if (authenticated) {
+      const { data: gate, error: gateError } = await client.functions.invoke("cosmo-admin-gate", { body: {} });
+      if (gateError || !gate?.allowed) {
+        overlay.hidden = false;
+        document.body.classList.remove("cosmo-authenticated");
+        if (signOut) signOut.hidden = true;
+        showStatus(authStatus, gate?.error || gateError?.message || "This account is not authorised for Cosmo.", true);
+        return;
+      }
+    }
+    overlay.hidden = !authenticated;
     document.body.classList.toggle("cosmo-authenticated", authenticated);
     if (signOut) signOut.hidden = !authenticated;
     const pill = document.querySelector(".demo-pill");
@@ -45,11 +55,12 @@
     }
     if (authenticated) {
       const user = session.user;
-      await client.from("cosmo_profiles").upsert({
+      const { error } = await client.from("cosmo_profiles").upsert({
         user_id: user.id,
-        display_name: user.user_metadata?.full_name || "Fanus"
+        display_name: user.user_metadata?.full_name || "Cosmo Owner"
       }, { onConflict: "user_id" });
-      showStatus(authStatus, "Signed in. Cosmo's private workspace is unlocked.");
+      if (error) showStatus(authStatus, "Signed in, but profile setup needs attention: " + error.message, true);
+      else showStatus(authStatus, "Owner verified. Cosmo's private workspace is unlocked.");
     }
   }
 
