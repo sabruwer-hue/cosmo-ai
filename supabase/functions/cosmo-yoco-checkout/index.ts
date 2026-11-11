@@ -43,6 +43,13 @@ Deno.serve(async (req: Request) => {
     .eq("owner_id",user.id).eq("product_id",product.id).eq("status","active").maybeSingle();
   if (owned) return json({error:"This account already owns this lifetime package. Restore it from Purchased Packages instead of buying it again."},409);
 
+  const recentCutoff = new Date(Date.now()-30*60*1000).toISOString();
+  const {data:pendingCheckout} = await db.from("cosmo_yoco_checkouts")
+    .select("checkout_id,redirect_url,amount_cents")
+    .eq("owner_id",user.id).eq("product_id",product.id).eq("status","pending")
+    .gte("created_at",recentCutoff).order("created_at",{ascending:false}).limit(1).maybeSingle();
+  if (pendingCheckout?.redirect_url) return json({ok:true,redirect_url:pendingCheckout.redirect_url,amount_cents:pendingCheckout.amount_cents,currency:"ZAR",resumed:true});
+
   const {data:links,error:linksError} = await db.from("cosmo_subscription_product_tools")
     .select("tool_id,cosmo_subscription_tools!inner(id,tool_code,name,lifetime_price_cents,lifetime_pricing_approved,active)")
     .eq("product_id",product.id).eq("optional_addon",true).eq("cosmo_subscription_tools.active",true);
@@ -88,7 +95,7 @@ Deno.serve(async (req: Request) => {
 
   const {error:saveError} = await db.from("cosmo_yoco_checkouts").insert({
     checkout_id:checkout.id,owner_id:user.id,product_id:product.id,invoice_id:invoice.id,
-    tool_ids:selected.map((x:any)=>x.tool_id),amount_cents:totalCents,currency:"ZAR",status:"pending",
+    tool_ids:selected.map((x:any)=>x.tool_id),amount_cents:totalCents,currency:"ZAR",status:"pending",redirect_url:checkout.redirectUrl,
     metadata:{invoice_code:invoiceCode,idempotency_key:idempotencyKey}
   });
   if (saveError) return json({error:"Checkout was created but could not be linked to the account. Contact support before retrying."},500);
