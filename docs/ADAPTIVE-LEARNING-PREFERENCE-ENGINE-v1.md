@@ -108,3 +108,7 @@ The interface can create session-only profiles per named agent, capture communic
 The persistent production design is defined separately in [Persistent Learning & Preference Data Architecture v1.0](PERSISTENT-LEARNING-PREFERENCE-DATA-ARCHITECTURE-v1.md). That specification covers durable profiles and versions, feedback/outcome ledgers, learning candidates, approval-bound adaptation proposals, evaluation runs, releases, rollback, permissions, retention, export and recovery. It remains provider-neutral and is not a deployed backend.
 
 The production sequence is identity/tenancy first, then durable preferences, feedback/outcomes, governed proposals, evaluation/release, and finally recovery/deletion. Model-weight training is optional and must never be conflated with retrieval, in-context examples or preference storage.
+
+## 12. Continuous improvement and method portfolio
+
+Adaptive preferences operate within the wider [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md). Preference and learning methods are evaluated by context and retained in a method portfolio. The most successful current method may be preferred for a defined context, but alternatives remain discoverable and can be re-evaluated when conditions change. A feedback event or inferred preference does not by itself authorise a production change.
