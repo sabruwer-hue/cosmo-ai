@@ -243,3 +243,94 @@ Only after P3 evidence, legal clearance, broker permissions, independent securit
 Every feature carries status: Proposed, Researched, Specified, Prototyped, Implemented, Deployed, Verified or Production-ready. Each status requires evidence. A simulated market scanner, generated bookkeeping demo, mock social post or sample listing is not a live service.
 
 Maintain a living decision register for assumptions, counter-evidence, costs, risks, dependencies, acceptance tests and approval history. Reassess continuously rather than postponing analysis until launch.
+
+
+### 6.7 Market Indicator & Scenario Engine — core intelligence component
+
+**Purpose:** continuously evaluate authorised market data, identify meaningful changes and plausible future scenarios, then alert Cosmo's decision system. The engine informs decisions; it does not independently authorise investments or place orders.
+
+#### A. Indicator families
+
+Maintain versioned, instrument-appropriate indicators across several independent families:
+
+1. **Price and trend:** returns across multiple horizons, moving averages, trend strength, momentum, breakouts, support/resistance hypotheses and price gaps.
+2. **Volatility and market stress:** realised/implied volatility where licensed, volatility changes, range expansion, drawdown, correlations and stress proxies.
+3. **Liquidity and execution:** bid/ask spread, depth where available, traded volume, turnover, market impact estimates, slippage and liquidity deterioration.
+4. **Breadth and participation:** advance/decline measures, participation, concentration, sector/asset breadth and volume confirmation where applicable.
+5. **Macro and rates:** inflation, policy rates, bond yields, central-bank events, employment/growth releases, commodity drivers and relevant South African/global macro data.
+6. **Currency and cross-asset relationships:** USD/ZAR and other permitted FX pairs, dollar strength, rates differentials, commodities, equity indices, crypto correlations and cross-market stress.
+7. **Fundamental and instrument-specific context:** earnings, guidance, valuation, corporate actions, dividends, splits, token supply/unlock events and other relevant instrument facts.
+8. **Sentiment and positioning:** only from lawful, licensed and quality-assessed sources; distinguish measured positioning from noisy social sentiment.
+9. **Calendar and event risk:** scheduled economic releases, earnings, exchange closures, policy decisions and known protocol/market events.
+10. **Data quality and operational health:** stale feeds, missing candles, outliers, symbol changes, exchange outages and clock misalignment. Data-quality failure suppresses affected signals.
+
+Do not apply every indicator to every asset. Each indicator declares its applicable instrument classes, horizon, required inputs, data frequency, warm-up period, failure conditions and known limitations.
+
+#### B. Indicator registry and provenance
+
+Every indicator has a stable ID and version, formula/specification, author/source, inputs, transformations, timestamp convention, applicable market/horizon, missing-data behaviour, calibration history, known failure modes, licence and test suite. Store raw input references and computed outputs so any alert can be reproduced. Avoid silent formula changes.
+
+#### C. Regime and scenario classification
+
+The engine maintains a probabilistic, multi-label market-regime view rather than forcing one certain label. Candidate regimes include:
+- directional uptrend / downtrend;
+- range-bound or low-conviction market;
+- volatility expansion / contraction;
+- liquidity stress / disorderly market;
+- event-driven uncertainty;
+- correlation breakdown or contagion;
+- trend exhaustion / reversal risk.
+
+For each material market change, create a scenario card with:
+- instrument and time horizon;
+- current regime estimate and probability/confidence calibration;
+- base, upside, downside and relevant tail scenarios;
+- evidence supporting each branch and contrary evidence;
+- trigger conditions and invalidation conditions;
+- estimated move/risk ranges only where statistically defensible;
+- upcoming events, liquidity and execution constraints;
+- data freshness, missing fields and uncertainty;
+- expiry/reassessment time.
+
+Scenario probabilities are estimates, not facts. If evidence is weak or regimes conflict, the correct output is “unclear / no actionable signal.”
+
+#### D. Signal fusion and alert routing
+
+Signals from different families are combined only after testing dependence and overlap; correlated indicators must not be counted as independent votes. Use a transparent, versioned scoring model with calibrated probabilities and confidence intervals. Compare against simple baselines and evaluate false-positive rates.
+
+Alert levels:
+- **Informational:** notable change; no action implied.
+- **Watch:** conditions are developing; gather more evidence.
+- **Opportunity candidate:** pre-defined conditions are met; prepare a research card.
+- **Risk warning:** thesis invalidation, volatility/liquidity deterioration, event risk or exposure concentration requires attention.
+- **Data/system warning:** data or service health is compromised; suspend affected recommendations.
+
+Alerts routed to Cosmo include a concise reason, evidence, counter-evidence, confidence, horizon, expected costs/risks, invalidation trigger, data freshness and a link to the full research record. Apply severity thresholds, deduplication, cooldowns and escalation rules to avoid alert floods. Never suppress a critical risk warning merely to reduce notification volume.
+
+#### E. Cosmo decision protocol
+
+When an alert arrives, Cosmo follows a controlled decision tree:
+1. Verify feed health, timestamp alignment and instrument identity.
+2. Retrieve the relevant scenario, strategy rules, current exposure and market calendar.
+3. Check contradictory indicators and independent sources.
+4. Estimate net expected value only if the model is validated for that instrument and horizon, including costs and uncertainty.
+5. Check position, portfolio, liquidity, drawdown and policy limits.
+6. Select one outcome: ignore, monitor, request more research, alert the user, recommend a paper trade, or (only at an authorised future tier) prepare a user-approved order.
+7. Record why it acted or abstained and schedule outcome verification.
+
+**No-trade is a valid and often preferred decision.** The indicator engine cannot turn an alert into an investment instruction or live order by itself. It cannot override the risk engine, broker permission, legal restrictions or user approval.
+
+#### F. Validation and acceptance tests
+
+Before any signal is used beyond research:
+- Test formulas against hand-calculated fixtures and independent implementations.
+- Test missing, delayed, duplicated, reordered and corrupted data.
+- Verify no look-ahead, survivorship or timestamp leakage.
+- Run chronological out-of-sample and walk-forward tests by instrument and horizon.
+- Compare signal quality against naive and no-signal baselines.
+- Measure precision/recall where labels are appropriate, false-alert rate, calibration, net-of-cost outcomes, drawdown and stability by regime.
+- Test alert deduplication, cooldown, escalation and stale-signal expiry.
+- Replay known historical stress periods without changing thresholds after seeing outcomes.
+- Require independent review and version-bound approval before promoting a signal model.
+
+The first release is a research dashboard and alert feed operating on historical/replay data, then authorised delayed/live market feeds. Paper-trading integration follows only after the alert quality and data pipeline are verified. Real-money execution remains governed by the authority ladder in section 6.5.
