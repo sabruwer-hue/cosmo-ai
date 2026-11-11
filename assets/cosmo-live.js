@@ -36,12 +36,12 @@
   async function setSession(session) {
     const authenticated = Boolean(session?.user);
     if (authenticated) {
-      const { data: gate, error: gateError } = await client.functions.invoke("cosmo-admin-gate", { body: {} });
+      const { data: gate, error: gateError } = await client.functions.invoke("cosmo-access-gate", { body: { product_code: "COSMO-CORE" } });
       if (gateError || !gate?.allowed) {
         overlay.hidden = false;
         document.body.classList.remove("cosmo-authenticated");
-        if (signOut) signOut.hidden = true;
-        showStatus(authStatus, gate?.error || gateError?.message || "This account is not authorised for Cosmo.", true);
+        if (signOut) signOut.hidden = false;
+        showStatus(authStatus, (gate?.reason || gate?.error || gateError?.message || "Cosmo Core membership is required.") + " Choose a free tier or trial in the Membership Portal.", true);
         return;
       }
     }
@@ -50,7 +50,7 @@
     if (signOut) signOut.hidden = !authenticated;
     const pill = document.querySelector(".demo-pill");
     if (pill && authenticated) {
-      pill.textContent = "PRIVATE SESSION";
+      pill.textContent = "COSMO CORE ACTIVE";
       pill.classList.add("private-pill");
     }
     if (authenticated) {
@@ -60,7 +60,7 @@
         display_name: user.user_metadata?.full_name || "Cosmo Owner"
       }, { onConflict: "user_id" });
       if (error) showStatus(authStatus, "Signed in, but profile setup needs attention: " + error.message, true);
-      else showStatus(authStatus, "Owner verified. Cosmo's private workspace is unlocked.");
+      else showStatus(authStatus, "Cosmo Core access verified. Your private account workspace is unlocked.");
     }
   }
 
@@ -73,7 +73,7 @@
     showStatus(authStatus, "Sending your secure sign-in link…");
     const { error } = await client.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin + window.location.pathname, shouldCreateUser: false }
+      options: { emailRedirectTo: window.location.origin + window.location.pathname, shouldCreateUser: true }
     });
     submit.disabled = false;
     if (error) {
