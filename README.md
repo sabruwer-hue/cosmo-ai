@@ -2,16 +2,18 @@
 
 A public-safe interface prototype for the Cosmo AI project.
 
-> **Current status (11 November 2026):** The browser workspace now has an email-link authentication client and a Supabase-backed chat gateway. A dedicated private Supabase project is active; its initial private schema has nine tables with Row Level Security, and the `cosmo-chat` Edge Function is deployed with JWT verification and an owner-email allowlist. The system is **not yet operational for the creator**: the owner account, owner-email secret, model-provider API key, Auth redirect allowlist, and successful website deployment still need configuration. Other dashboard modules remain prototype-only until explicitly connected and tested.
+> **Current status (11 November 2026):** The browser workspace now has an email-link authentication client and a Supabase-backed chat gateway. A dedicated private Supabase project is active; its initial private schema has nine tables with Row Level Security, and the `cosmo-chat` Edge Function is deployed with JWT verification and an owner-email allowlist. The system is **not yet operational for the creator**: the owner account, owner-email secret, model-provider API key, Auth redirect allowlist, and successful website deployment still need configuration. The new `work.html` page provides persistent task/step tracking, an approval queue and a package registry; `admin.html` provides an owner-verified mission, knowledge and training studio. The main knowledge/memory/retrieval/adaptive-learning panels remain session-only prototypes until connected and tested.
 
 ## Run locally
 Open `index.html` in a modern browser, or serve this folder with any static web server. The private authentication and chat gateway require the deployed Supabase project and an authorised owner account; local file preview alone will not connect to the production service.
 
 ## Current private backend
 - Supabase project: `cosmo-core` (São Paulo region).
-- Database foundation: profiles, missions, knowledge records, memory relationships, conversations, messages, training lessons, training evaluations and audit events.
+- Database foundation: profiles, missions, knowledge records, memory relationships, conversations, messages, training lessons, training evaluations and audit events, plus packages, package releases, agent tasks, task steps, append-only task events and agent approvals.
 - Row Level Security is enabled on all nine tables. Knowledge, message, evaluation and audit records are append-only through the normal authenticated client policies.
-- Edge Function: `cosmo-chat` (JWT verification enabled). It retrieves approved training lessons and creator-owned mission/knowledge context, carries forward recent conversation history, and calls an OpenAI-compatible model endpoint server-side.
+- Edge Functions: `cosmo-chat` (JWT verification enabled) and `cosmo-admin-gate` (JWT verification plus server-side owner-email verification). Chat retrieves approved training lessons and creator-owned mission/knowledge context, carries forward recent conversation history, and calls an OpenAI-compatible model endpoint server-side.
+- Operational workspace: `work.html` supports persistent task creation, task status updates, ordered task steps, append-only task events, an approval queue and package registry. `admin.html` supports owner-verified mission management, permanent knowledge capture and draft/approved training lessons. These interfaces require an authenticated account and the Data API grants/RLS in the deployed project.
+- Installable web foundations: separate manifests and icons for Cosmo, Cosmo Work and Cosmo Admin, plus a service worker that caches only the application shell and deliberately bypasses Auth, Data API and Edge Function requests. These are PWA foundations, **not APK files**.
 - The function requires the server-side secrets `COSMO_OWNER_EMAIL` and `COSMO_MODEL_API_KEY`. Optional configuration: `COSMO_MODEL_NAME` and `COSMO_MODEL_BASE_URL`. Never put these secrets in browser code or Git.
 - The model provider API is separately billed. The current default model is `gpt-6-luna` for lower-cost initial testing; set `COSMO_MODEL_NAME=gpt-6.1-sol` when you want stronger reasoning and accept the higher API cost.
 - Sign-in uses Supabase email magic links. The owner must exist in Supabase Auth and the deployed site URL must be added to the Auth redirect allowlist.
@@ -25,15 +27,15 @@ The GitHub Pages workflow is committed, but GitHub currently rejects the deploym
 - Never place API keys, passwords, access tokens, personal data, or production secrets in browser code or Git history.
 
 ## Next engineering stages
-1. Confirm repository privacy and establish a protected source-of-truth for private project material.
-2. Agree the production architecture, threat model, data classification, and approval boundaries.
-3. Add a secure backend and database; keep provider keys server-side.
-4. Implement authenticated identity, permission checks, audit trails, and backup/restore.
-5. Connect a model provider through a server-side model router.
-6. Replace simulated interface actions with tested backend workflows.
+1. Resolve repository privacy and keep private Genesis history and creator-only training material out of the public repository.
+2. Finish owner account, server secrets, Auth redirect and GitHub Pages deployment.
+3. Connect and verify `cosmo-ai.co.za`, then add `app.cosmo-ai.co.za` and `admin.cosmo-ai.co.za` routing if desired.
+4. Test Work, Admin, chat, database persistence, approvals and package registry with the real owner session.
+5. Build signed Android Trusted Web Activity APKs for the user app and Admin Portal after the final HTTPS domain is live; signing and Android release configuration still require a manual owner-side step.
+6. Connect the remaining knowledge, memory, retrieval, training evaluation and agent-orchestration modules to persistent services.
 
 ## Domain
-The intended custom domain is `cosmo-ai.co.za`. DNS and hosting should only be changed after a deployment target is selected and verified.
+The intended primary domain is `cosmo-ai.co.za`. The preferred app routes are `app.cosmo-ai.co.za` and `admin.cosmo-ai.co.za`. DNS and HTTPS must be configured after a successful GitHub Pages deployment is confirmed. The APKs cannot be finalized until the verified HTTPS origin and Android signing configuration are ready.
 
 ## Engineering documents
 
