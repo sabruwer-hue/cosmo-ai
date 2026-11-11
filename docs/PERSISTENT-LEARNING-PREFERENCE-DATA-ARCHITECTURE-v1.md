@@ -213,3 +213,7 @@ Before executable migrations are prepared, the owner must confirm backend/databa
 ## 15. Continuous improvement integration
 
 The cross-system review, experiment and method-portfolio lifecycle is specified in [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md). Improvement observations and lessons must link to feedback, outcomes, preference versions, evidence, memory versions and approvals. A successful adaptation is not automatically generalised beyond its tested user, agent, task or workspace scope.
+
+## 16. Accuracy and prototype lifecycle integration
+
+Persistent learning records should link verified outcome events and method evaluations to exact prototype candidates, source commits, model/prompt/tool versions, test datasets, approvals and releases. The design contracts are defined in [Persistent Accuracy & Outcome Learning Engine v1.0](PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md) and [Prototype Factory, Verification & Release Lifecycle v1.0](PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md). Do not generalise a lesson beyond its verified scope.
