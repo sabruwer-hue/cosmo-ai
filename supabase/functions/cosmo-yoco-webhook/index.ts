@@ -1,3 +1,4 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const plain = (s:string,status=200) => new Response(s,{status,headers:{"Content-Type":"text/plain; charset=utf-8","Cache-Control":"no-store"}});
