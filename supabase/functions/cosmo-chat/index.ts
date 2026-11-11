@@ -61,6 +61,16 @@ const agentTools = [
 
 async function executeAgentTool(supabase, ownerId, name, args, callId) {
   const fail = (message) => ({ ok: false, error: message });
+  if (["create_task","list_tasks","request_approval"].includes(name) && !ownerAccess) {
+    const { data: workProduct } = await supabase.from("cosmo_subscription_products").select("id").eq("product_code","COSMO-WORK").maybeSingle();
+    const { data: workSubs } = workProduct ? await supabase.from("cosmo_subscriptions").select("id,status,trial_ends_at,current_period_end").eq("owner_id",ownerId).eq("product_id",workProduct.id).in("status",["free","trialing","active"]).order("created_at",{ascending:false}).limit(1) : {data:[]};
+    const workSub = workSubs?.[0];
+    const workEnd = workSub?.trial_ends_at ?? workSub?.current_period_end;
+    if (!workSub || (workEnd && new Date(workEnd).getTime() <= Date.now())) return fail("This action requires an active Cosmo Work package. You can activate it in the subscription portal.");
+  }
+  if (name === "search_knowledge" && !ownerAccess && !activeTools.includes("CORE-MEMORY")) {
+    return fail("Private Memory Vault search requires the Memory Vault add-on for Cosmo Core.");
+  }
   if (name === "create_task") {
     const title = typeof args.title === "string" ? args.title.trim().slice(0,180) : "";
     if (!title) return fail("A task title is required.");
@@ -198,14 +208,55 @@ Deno.serve(async (req: Request) => {
     if (userError || !userData.user) {
       return new Response(JSON.stringify({ error: "Your sign-in session is invalid or expired." }), { status: 401, headers: corsHeaders });
     }
-    const ownerEmail = Deno.env.get("COSMO_OWNER_EMAIL")?.trim().toLowerCase();
-    if (!ownerEmail) {
-      return new Response(JSON.stringify({ error: "Cosmo's private owner email has not been configured." }), { status: 503, headers: corsHeaders });
-    }
-    if ((userData.user.email ?? "").toLowerCase() !== ownerEmail) {
-      return new Response(JSON.stringify({ error: "This is a private Cosmo workspace. This account is not authorised." }), { status: 403, headers: corsHeaders });
-    }
+    const ownerEmail = Deno.env.get("COSMO_OWNER_EMAIL")?.trim().toLowerCase() ?? "";
+    const ownerAccess = Boolean(ownerEmail && (userData.user.email ?? "").toLowerCase() === ownerEmail);
     const ownerId = userData.user.id;
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!serviceKey) {
+      return new Response(JSON.stringify({ error: "Cosmo's entitlement service is not configured." }), { status: 503, headers: corsHeaders });
+    }
+    const serviceDb = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { data: coreProduct, error: coreProductError } = await serviceDb.from("cosmo_subscription_products")
+      .select("id,free_tier_limits").eq("product_code", "COSMO-CORE").eq("active", true).single();
+    if (coreProductError || !coreProduct) {
+      return new Response(JSON.stringify({ error: "Cosmo Core subscription product is unavailable." }), { status: 503, headers: corsHeaders });
+    }
+    let activeSubscription: any = null;
+    let activeTools: string[] = [];
+    if (!ownerAccess) {
+      const { data: subscriptions, error: subscriptionError } = await serviceDb.from("cosmo_subscriptions")
+        .select("id,status,trial_ends_at,current_period_end,metadata")
+        .eq("owner_id", ownerId).eq("product_id", coreProduct.id)
+        .in("status", ["free", "trialing", "active"])
+        .order("created_at", { ascending: false }).limit(1);
+      if (subscriptionError) return new Response(JSON.stringify({ error: "Could not verify your Cosmo Core membership." }), { status: 503, headers: corsHeaders });
+      activeSubscription = subscriptions?.[0] ?? null;
+      if (!activeSubscription) {
+        return new Response(JSON.stringify({ error: "Cosmo Core access is not active. Choose the free tier or start a 14-day trial in the subscription portal.", code: "SUBSCRIPTION_REQUIRED" }), { status: 402, headers: corsHeaders });
+      }
+      const periodEnd = activeSubscription.trial_ends_at ?? activeSubscription.current_period_end;
+      if (periodEnd && new Date(periodEnd).getTime() <= Date.now()) {
+        await serviceDb.from("cosmo_subscriptions").update({ status: "expired" })
+          .eq("id", activeSubscription.id).eq("owner_id", ownerId);
+        return new Response(JSON.stringify({ error: "Your Cosmo Core access period has ended. Renew or choose the free tier.", code: "SUBSCRIPTION_EXPIRED" }), { status: 402, headers: corsHeaders });
+      }
+      const { data: toolRows } = await serviceDb.from("cosmo_subscription_tool_items")
+        .select("cosmo_subscription_tools(tool_code)").eq("owner_id", ownerId)
+        .eq("subscription_id", activeSubscription.id).eq("status", "active");
+      activeTools = (toolRows ?? []).map((row: any) => row.cosmo_subscription_tools?.tool_code).filter(Boolean);
+      if (activeSubscription.status === "free") {
+        const limits = coreProduct.free_tier_limits ?? {};
+        const cap = Number(limits.chat_messages_per_month ?? 30);
+        const monthStart = new Date();
+        monthStart.setUTCDate(1); monthStart.setUTCHours(0,0,0,0);
+        const { count, error: usageError } = await serviceDb.from("cosmo_usage_ledger")
+          .select("id", { count: "exact", head: true }).eq("owner_id", ownerId)
+          .eq("product_id", coreProduct.id).eq("meter", "chat_message")
+          .gte("occurred_at", monthStart.toISOString());
+        if (usageError) return new Response(JSON.stringify({ error: "Could not verify free-tier usage." }), { status: 503, headers: corsHeaders });
+        if ((count ?? 0) >= cap) return new Response(JSON.stringify({ error: "You have reached this month's free Cosmo message allowance. Upgrade to continue.", code: "FREE_LIMIT_REACHED" }), { status: 429, headers: corsHeaders });
+      }
+    }
 
     const body = await req.json();
     const message = typeof body.message === "string" ? body.message.trim() : "";
@@ -241,11 +292,11 @@ Deno.serve(async (req: Request) => {
     ]);
 
     const context = [
-      "CREATOR KNOWLEDGE RECORDS (source data; verify and qualify):",
+      "ACCOUNT KNOWLEDGE RECORDS (source data; verify and qualify):",
       JSON.stringify(knowledgeResult.data ?? []),
       "APPROVED TRAINING LESSONS (teaching material; apply thoughtfully):",
       JSON.stringify(lessonsResult.data ?? []),
-      "CREATOR MISSIONS (mission records, not proof of implementation):",
+      "ACCOUNT MISSIONS (mission records, not proof of implementation):",
       JSON.stringify(missionsResult.data ?? []),
     ].join("\n");
 
@@ -336,6 +387,12 @@ Deno.serve(async (req: Request) => {
       metadata: { model: modelName, provider_url: modelUrl, response_id: finalCompletion?.id ?? null, tools_used: toolTrace },
     });
     if (assistantSaveError) throw new Error("Cosmo replied but the response could not be saved.");
+
+    await serviceDb.from("cosmo_usage_ledger").insert({
+      owner_id: ownerId, product_id: coreProduct.id, usage_code: "COSMO-USAGE-" + crypto.randomUUID().replaceAll("-","").slice(0,16).toUpperCase(),
+      meter: "chat_message", quantity: 1, unit: "message",
+      metadata: { model: modelName, response_id: finalCompletion?.id ?? null, owner_access: ownerAccess, tools_used: toolTrace.map(item => item.name) }
+    });
 
     await supabase.from("cosmo_conversations").update({ updated_at: new Date().toISOString() })
       .eq("id", conversationId).eq("owner_id", ownerId);
