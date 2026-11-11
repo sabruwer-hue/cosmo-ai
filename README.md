@@ -61,7 +61,7 @@ These are design and audit documents, not evidence that the described services h
 - [Cosmo Subscription Product Portfolio v1.0](docs/COSMO-SUBSCRIPTION-PRODUCT-PORTFOLIO-v1.md) — standalone products, bundles, Ad Studio, Team Up AI, Creator Studio, Cosmo Office and the continuous analytical build framework.
 - [Business, Social, Advertising & Trading Intelligence Extensions v1.0](docs/COSMO-BUSINESS-SOCIAL-ADS-TRADING-INTELLIGENCE-v1.md) — AccountIT AI, Social Hub, Ad Page and staged trading research/controls.
 
-## Subscription portfolio demo
+- [Lifetime Package Licence & Tool Membership Model](docs/COSMO-LIFETIME-PACKAGE-LICENCE-AND-TOOL-MEMBERSHIPS-v1.md) — one-off package ownership, restorable entitlements, optional tool memberships, usage billing and payment controls.\n- [QR Retail Intelligence](docs/COSMO-QR-RETAIL-INTELLIGENCE-v1.md) — product information hubs, QR shelf labels, expiry batches, low-stock and replenishment workflows.\n\n## Subscription portfolio demo
 
 - [Open the interactive subscription portfolio prototype](prototypes/cosmo-subscription-portfolio-demo.html) — demo-only product catalogue and bundle shortlist. It does not process subscriptions or payments.
 
