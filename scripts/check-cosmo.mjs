@@ -6,7 +6,8 @@ import { spawnSync } from "node:child_process";
 const required = [
   "index.html", "work.html", "admin.html", "service-worker.js",
   "manifest.webmanifest", "work.webmanifest", "admin.webmanifest",
-  "assets/app.js", "assets/cosmo-live.js",\n  "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts"
+  "assets/app.js", "assets/cosmo-live.js",
+  "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts"
 ];
 for (const file of required) readFileSync(file, "utf8");
 
@@ -36,7 +37,7 @@ for (const file of ["index.html", "work.html", "admin.html"]) {
 }
 
 const work = readFileSync("work.html", "utf8");
-for (const id of ["task-form", "task-list", "step-form", "approval-list", "package-form", "package-list"]) {
+for (const id of ["task-form", "task-list", "step-form", "approval-list", "package-form", "package-list", "release-form", "release-list"]) {
   if (!work.includes('id="' + id + '"')) throw new Error("Cosmo Work is missing required control: " + id);
 }
 const admin = readFileSync("admin.html", "utf8");
