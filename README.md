@@ -44,6 +44,7 @@ These are design and audit documents, not evidence that the described services h
 - [Historical Intelligence, Scenario Analysis & Decision Engine v1.0](docs/HISTORICAL-INTELLIGENCE-SCENARIO-DECISION-ENGINE-v1.md) — 5–50 year historical research, source reliability assessment, private/public evidence reconciliation, time-aware comparisons, scenario outcome maps, real-data simulation and decision briefs.
 - [Technological Intelligence & Discovery Map v1.0](docs/TECHNOLOGICAL-INTELLIGENCE-DISCOVERY-MAP-v1.md) — technology graph, science and component discovery, maturity/evidence, invention hypotheses, multi-branch technology pathways and technical solution packs.
 - [Cosmo Subscription Product Portfolio v1.0](docs/COSMO-SUBSCRIPTION-PRODUCT-PORTFOLIO-v1.md) — standalone products, bundles, Ad Studio, Team Up AI, Creator Studio, Cosmo Office and the continuous analytical build framework.
+- [Business, Social, Advertising & Trading Intelligence Extensions v1.0](docs/COSMO-BUSINESS-SOCIAL-ADS-TRADING-INTELLIGENCE-v1.md) — AccountIT AI, Social Hub, Ad Page and staged trading research/controls.
 
 ## Subscription portfolio demo
 
