@@ -22,6 +22,7 @@
         <a class="nav-item" href="#projects"><span>▦</span> Projects</a>
         <a class="nav-item" href="#research"><span>⌕</span> Research</a>
         <a class="nav-item" href="#memory"><span>◉</span> Memory vault</a>
+        <a class="nav-item" href="#knowledge"><span>✳</span> Knowledge engine</a>
       </nav>
       <div class="sidebar-bottom">
         <div class="profile"><div class="avatar">F</div><div><strong>Workspace owner</strong><small>Prototype account</small></div><span class="dots">···</span></div>
@@ -75,6 +76,37 @@
           <div class="status-row"><span>Secure memory database</span><b class="status-off">Not connected</b></div>
           <div class="status-row"><span>Authentication</span><b class="status-off">Not connected</b></div>
         </article>
+      </section>
+      <section class="section knowledge-section" id="knowledge">
+        <div class="section-heading"><div><p class="eyebrow">NEXT BUILD MODULE</p><h2>Knowledge Engine preview</h2></div><span class="muted">Interactive front-end prototype</span></div>
+        <div class="knowledge-grid">
+          <article class="panel knowledge-form-panel">
+            <div class="panel-title"><div><p class="eyebrow">CAPTURE A CLAIM</p><h3>New knowledge draft</h3></div><span class="panel-symbol">✳</span></div>
+            <form id="knowledge-form">
+              <label for="knowledge-claim">Claim or observation</label>
+              <textarea id="knowledge-claim" rows="3" maxlength="500" required placeholder="Write one clear statement to investigate…"></textarea>
+              <label for="knowledge-source">Where did it come from?</label>
+              <select id="knowledge-source" required>
+                <option value="user_provided">User provided</option>
+                <option value="external_source">External source</option>
+                <option value="system_observed">System observed</option>
+                <option value="model_generated">Model generated</option>
+                <option value="inference">Inference</option>
+                <option value="hypothesis">Hypothesis</option>
+                <option value="speculation">Speculation</option>
+              </select>
+              <label for="knowledge-evidence">Evidence or source note</label>
+              <textarea id="knowledge-evidence" rows="2" maxlength="500" placeholder="Add a source, reference or explain what still needs checking…"></textarea>
+              <button class="send-btn" type="submit">Add draft <b>＋</b></button>
+            </form>
+            <p class="prototype-note">Prototype only: drafts exist in this page session and are not sent to a secure database.</p>
+          </article>
+          <article class="panel knowledge-records-panel">
+            <div class="panel-title"><div><p class="eyebrow">RECORD REGISTER</p><h3>Draft knowledge items</h3></div><span class="tag" id="knowledge-count">0 ITEMS</span></div>
+            <div id="knowledge-empty" class="knowledge-empty">No draft records yet. Add a claim to see how Cosmo will classify and track knowledge.</div>
+            <div id="knowledge-list" class="knowledge-list" aria-live="polite"></div>
+          </article>
+        </div>
       </section>
       <footer><span> COSMO AI <b>·</b> PROTOTYPE BUILD</span><span>Ideas deserve evidence. Progress deserves a record.</span></footer>
     </main>
