@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /supabase/
+Disallow: /android/
+Disallow: /docs/
+Disallow: /prototypes/
+Disallow: /scripts/
+
+Sitemap: https://cosmo-ai.co.za/sitemap.xml
