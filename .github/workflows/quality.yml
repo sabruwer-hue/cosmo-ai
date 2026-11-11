@@ -15,5 +15,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - uses: denoland/setup-deno@v2
       - name: Validate Cosmo application files
         run: node scripts/check-cosmo.mjs
+      - name: Type-check Supabase Edge Functions
+        run: deno check supabase/functions/cosmo-chat/index.ts supabase/functions/cosmo-admin-gate/index.ts
