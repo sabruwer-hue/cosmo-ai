@@ -288,3 +288,16 @@ Only bundle products after independent product value is demonstrated. Add analyt
 
 **Document control:** COSMO-PRODUCT-PORTFOLIO-001 · v1.0  
 **Review rule:** update this document when customer evidence, architecture, costs or product boundaries change. Preserve prior decisions and reasons rather than silently overwriting them.
+
+
+## 11. Additional product families
+
+The business administration, social publishing, paid listing marketplace and trading intelligence extensions are specified in [Cosmo Business, Social, Advertising & Trading Intelligence Extensions v1.0](COSMO-BUSINESS-SOCIAL-ADS-TRADING-INTELLIGENCE-v1.md).
+
+New standalone candidates:
+- **AccountIT AI** — business administration, bookkeeping and financial operations.
+- **Social Hub** — connected social content planning, creation handoff, scheduling and publishing.
+- **Ad Page** — paid classified/listing marketplace with listing subscriptions and optional promoted placement.
+- **Cosmo Trading Intelligence** — market scanning, research, backtesting, paper trading, risk and strictly gated broker execution.
+
+These products are separate from the existing Ad Studio, Creator Studio and Cosmo Office responsibilities. The trading product begins as research and alerts; no live trading authority is implied.
