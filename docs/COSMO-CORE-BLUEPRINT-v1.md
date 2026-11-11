@@ -249,3 +249,10 @@ Additional products such as Research & Intelligence, Data & Analytics, Automatio
 All subscriptions use shared identity and billing foundations with explicit product entitlements and metered usage. Subscription fees, usage charges, media generation, paid placements, transaction commissions and third-party fees must remain distinct and transparent. Earlier pricing and commission figures are hypotheses until validated.
 
 Product development follows a continuous evidence-led cycle: discover, define, research, compare, model, decide, design, prototype, test, measure, revise, approve, release and monitor. Every feature records customer evidence, assumptions, architecture, costs, unit economics, security/privacy risks, acceptance tests, rollback and verified status. No simulated prototype capability may be represented as a live or production-ready service.
+
+
+## 20. Business, social, advertising and trading intelligence
+
+The expanded product requirements are maintained in [Cosmo Business, Social, Advertising & Trading Intelligence Extensions v1.0](COSMO-BUSINESS-SOCIAL-ADS-TRADING-INTELLIGENCE-v1.md). This adds AccountIT AI, Social Hub, Ad Page and Cosmo Trading Intelligence as distinct product domains with shared platform services and explicit data boundaries.
+
+Trading intelligence must progress from market observation and alerts to research, reproducible backtesting and paper trading before any consideration of broker-connected execution. Live financial actions require legal review, broker permission, explicit user authorisation, independent risk controls, hard loss/exposure limits, revocable access and auditable execution. No return or accuracy guarantee is permitted.
