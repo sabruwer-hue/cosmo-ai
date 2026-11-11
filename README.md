@@ -43,7 +43,6 @@ These are design and audit documents, not evidence that the described services h
 - [Repository Review & Improvement Update](docs/REPOSITORY-REVIEW-IMPROVEMENT-UPDATE-2026-11-11.md) — source-level findings, current gaps, readiness and recommended build order.
 - [Historical Intelligence, Scenario Analysis & Decision Engine v1.0](docs/HISTORICAL-INTELLIGENCE-SCENARIO-DECISION-ENGINE-v1.md) — 5–50 year historical research, source reliability assessment, private/public evidence reconciliation, time-aware comparisons, scenario outcome maps, real-data simulation and decision briefs.
 - [Technological Intelligence & Discovery Map v1.0](docs/TECHNOLOGICAL-INTELLIGENCE-DISCOVERY-MAP-v1.md) — technology graph, science and component discovery, maturity/evidence, invention hypotheses, multi-branch technology pathways and technical solution packs.
-- [Genesis–Cosmo Historical Requirements & Identity Audit v1.0](docs/GENESIS-COSMO-HISTORICAL-REQUIREMENTS-IDENTITY-AUDIT-v1.md) — recovered Genesis doctrine, identity, morals/constitution draft, creator-context training, TIVA/CIPHER, historical modules, conflicts and archive recovery backlog.
 
 ## Current prototype modules
 
