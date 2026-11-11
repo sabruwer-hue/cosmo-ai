@@ -1,305 +1,70 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-ZA">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1220">
-  <meta name="description" content="Cosmo AI — an intelligent workspace prototype.">
-  <title>Cosmo AI — Private Intelligence Workspace</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css">
-
-  <style>
-    .cosmo-auth-overlay{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(5,10,19,.94);backdrop-filter:blur(16px)}
-    .cosmo-auth-overlay[hidden]{display:none}
-    .cosmo-auth-card{width:min(100%,420px);padding:30px;border:1px solid #34445d;border-radius:18px;background:#111e31;box-shadow:0 25px 90px rgba(0,0,0,.45);display:grid;gap:13px}
-    .cosmo-auth-card .brand-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#9c83ef;color:#101629;font:700 22px 'Space Grotesk',sans-serif}
-    .cosmo-auth-card h1{font:600 28px 'Space Grotesk',sans-serif;margin:0;color:#f3f5fb}
-    .cosmo-auth-card p{font-size:12px;line-height:1.6;color:#9eacc2;margin:0}
-    .cosmo-auth-card label{font-size:11px;color:#c3cee0;margin-top:8px}
-    .cosmo-auth-card input{width:100%;background:#0c1728;border:1px solid #3b4c67;border-radius:9px;color:#f1f5fb;padding:13px;font:13px 'DM Sans',sans-serif}
-    .cosmo-auth-card button{justify-self:start;margin-top:5px}
-    .cosmo-auth-status[data-state="error"]{color:#f1a6a6}
-    .cosmo-auth-status[data-state="ok"]{color:#87d8b7}
-    .private-pill{color:#8de0bd!important}
-    .cosmo-chat-item{padding:12px 14px;margin:10px 0;border:1px solid #34445d;border-radius:9px;background:#0e192a}
-    .cosmo-chat-item strong{display:block;font:600 10px 'Space Grotesk',sans-serif;color:#b9a5ff;margin-bottom:7px}
-    .cosmo-chat-item p{white-space:pre-wrap;line-height:1.65;font-size:12px;color:#e8eef8;margin:0}
-    #cosmo-signout[hidden]{display:none}
-  </style>
-\n  <link rel="manifest" href="manifest.webmanifest">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<meta name="description" content="Cosmo is a modular AI workspace for personal intelligence, work management and QR-powered retail product information. Start with a package and add only the tools you need.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://cosmo-ai.co.za/">
+<link rel="icon" href="assets/cosmo-icon.svg" type="image/svg+xml">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Cosmo AI">
+<meta property="og:title" content="Cosmo AI — Intelligence that works with you">
+<meta property="og:description" content="A modular AI workspace for thinking, getting work done and making everyday retail information useful.">
+<meta property="og:url" content="https://cosmo-ai.co.za/">
+<meta property="og:image" content="https://cosmo-ai.co.za/assets/cosmo-icon.svg">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="Cosmo AI">
+<meta name="twitter:description" content="Personal intelligence, practical work tools and QR-powered retail information hubs.">
+<title>Cosmo AI | Personal Intelligence, Work & QR Retail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#080e19;--panel:#111e31;--line:#293b55;--muted:#9aaac0;--text:#eef3fb;--violet:#b9a5ff;--mint:#82d8b5;--amber:#f0c77b}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#29204c 0,transparent 34%),var(--bg);color:var(--text);font:15px 'DM Sans',sans-serif}a{color:inherit}.wrap{width:min(1120px,calc(100% - 36px));margin:auto}.nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font:700 24px 'Space Grotesk';text-decoration:none}.brand span{color:var(--violet)}.navlinks{display:flex;gap:20px;align-items:center}.navlinks a{text-decoration:none;color:var(--muted);font-size:12px}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:9px;padding:12px 17px;background:var(--violet);color:#111629;text-decoration:none;font-weight:700;font-size:12px}.btn.secondary{background:#182840;color:var(--text);border:1px solid var(--line)}.hero{padding:78px 0 60px;display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center}.eyebrow{font:700 10px 'Space Grotesk';letter-spacing:2px;color:var(--violet)}h1,h2,h3{font-family:'Space Grotesk'}h1{font-size:clamp(42px,6vw,70px);line-height:1.02;letter-spacing:-2.8px;margin:15px 0 20px}.hero p{color:var(--muted);font-size:16px;line-height:1.75;max-width:620px}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}.orb{aspect-ratio:1;border-radius:50%;max-width:360px;margin:auto;background:radial-gradient(circle at 40% 35%,#e0d6ff 0 3%,#987eea 12%,#46376e 36%,#17283e 65%,#0a111e 75%);box-shadow:0 0 90px #8c70e655,inset 0 0 40px #b9a5ff66;position:relative}.orb:after{content:"";position:absolute;inset:14%;border:1px solid #d3c8ff66;border-radius:50%;transform:rotate(-32deg) scaleX(1.35)}.section{padding:50px 0}.section-head{max-width:680px;margin-bottom:22px}.section h2{font-size:clamp(28px,4vw,40px);margin:8px 0}.section-head p,.muted{color:var(--muted);line-height:1.7;font-size:13px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:#111e31cc;border:1px solid var(--line);border-radius:15px;padding:22px;min-height:225px}.card .symbol{width:40px;height:40px;border-radius:11px;background:#282342;color:var(--violet);display:grid;place-items:center;font-size:20px}.card h3{font-size:19px;margin:18px 0 8px}.card p{font-size:12px;line-height:1.7;color:var(--muted)}.pricegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.pricecard{border:1px solid var(--line);border-radius:14px;background:#0e192a;padding:19px}.pricecard h3{margin:0 0 7px}.price{font:700 29px 'Space Grotesk';margin:12px 0}.price small{font:400 11px 'DM Sans';color:var(--muted)}.tool-list{margin:14px 0 0;padding:0;list-style:none}.tool-list li{padding:8px 0;border-top:1px solid #293b55;color:var(--muted);font-size:11px;line-height:1.5}.tool-list strong{color:var(--text)}.note{border:1px solid #5d5034;background:#282316;color:#eed6a0;border-radius:10px;padding:14px;font-size:12px;line-height:1.7;margin-top:18px}.how{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.step{border-left:2px solid var(--violet);padding:4px 13px}.step strong{font:600 13px 'Space Grotesk'}.step p{font-size:11px;color:var(--muted);line-height:1.6}.faq{display:grid;grid-template-columns:1fr 1fr;gap:12px}.faq article{padding:17px;border:1px solid var(--line);border-radius:11px}.faq h3{font-size:14px;margin:0 0 8px}.faq p{font-size:12px;color:var(--muted);line-height:1.65;margin:0}.footer{border-top:1px solid var(--line);padding:28px 0;margin-top:30px;color:var(--muted);font-size:11px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+@media(max-width:820px){.hero{grid-template-columns:1fr;padding:50px 0}.orb{max-width:230px}.cards,.pricegrid{grid-template-columns:1fr 1fr}.how{grid-template-columns:1fr 1fr}}@media(max-width:560px){.navlinks a:not(.btn){display:none}.cards,.pricegrid,.faq{grid-template-columns:1fr}.wrap{width:min(100% - 28px,1120px)}h1{letter-spacing:-1.7px}}
+</style>
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"Organization",
+ "name":"Cosmo AI",
+ "url":"https://cosmo-ai.co.za/",
+ "logo":"https://cosmo-ai.co.za/assets/cosmo-icon.svg",
+ "description":"A modular AI workspace for personal intelligence, work management and QR-powered retail product information."
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context":"https://schema.org",
+ "@type":"SoftwareApplication",
+ "name":"Cosmo AI",
+ "applicationCategory":"BusinessApplication",
+ "operatingSystem":"Web, Android",
+ "description":"Modular AI workspace with personal intelligence, work management and QR-powered retail product information hubs.",
+ "url":"https://cosmo-ai.co.za/"
+}
+</script>
 </head>
 <body>
-
-  <div id="cosmo-auth-overlay" class="cosmo-auth-overlay" role="dialog" aria-modal="true" aria-labelledby="cosmo-auth-title">
-    <form id="cosmo-auth-form" class="cosmo-auth-card">
-      <div class="brand-mark">C</div>
-      <p class="eyebrow">PRIVATE CREATOR WORKSPACE</p>
-      <h1 id="cosmo-auth-title">Welcome back.</h1>
-      <p>Sign in to your private Cosmo workspace. A secure email link will be sent to you.</p>
-      <label for="cosmo-auth-email">Your email address</label>
-      <input id="cosmo-auth-email" type="email" autocomplete="email" required placeholder="you@example.com">
-      <button class="send-btn" type="submit">Send sign-in link <b>↗</b></button>
-      <p id="cosmo-auth-status" class="cosmo-auth-status" aria-live="polite">Only your authorised account can use Cosmo.</p>
-    </form>
-  </div>
-\n  <div class="shell">
-    <aside class="sidebar">
-      <a class="brand" href="#" aria-label="Cosmo home"><span class="brand-mark">C</span><span>cosmo<span class="brand-ai">.ai</span></span></a>
-      <div class="workspace-label">WORKSPACE</div>
-      <nav>
-        <a class="nav-item active" href="#overview"><span>◫</span> Overview</a>
-        <a class="nav-item" href="#assistant"><span>✳</span> Assistant</a>
-        <a class="nav-item" href="#projects"><span>▦</span> Projects</a>
-        <a class="nav-item" href="work.html"><span>✓</span> Work queue & packages</a>
-        <a class="nav-item" href="retail.html"><span>▦</span> QR Retail</a>
-        <a class="nav-item" href="#research"><span>⌕</span> Research</a>
-        <a class="nav-item" href="#memory-vault"><span>◉</span> Memory vault</a>
-        <a class="nav-item" href="#knowledge"><span>✳</span> Knowledge engine</a>
-      </nav>
-      <div class="sidebar-bottom">
-        <div class="profile"><div class="avatar">F</div><div><strong>Workspace owner</strong><small>Prototype account</small></div><span class="dots">···</span></div>
-      </div>
-    </aside>
-
-    <main class="main" id="overview">
-      <header class="topbar">
-        <div class="crumb">Workspace <span>/</span> Overview</div>
-        <div class="top-actions"><a class="export-btn" href="work.html">Work queue</a><a class="export-btn" href="admin.html">Admin portal</a><a class="export-btn" href="retail.html">QR Retail</a><span class="demo-pill"><i></i> PRIVATE WORKSPACE</span><button class="export-btn" id="cosmo-signout" type="button" hidden>Sign out</button></div>
-      </header>
-
-      <section class="welcome">
-        <div>
-          <p class="eyebrow">YOUR INTELLIGENCE WORKSPACE</p>
-          <h1>Good to see you.<br><em>What shall we build?</em></h1>
-          <p class="subhead">A private workspace to think, research, plan and move ideas forward. Open the Work Queue to create persistent tasks and manage Cosmo packages.</p>
-        </div>
-        <div class="orb-wrap" aria-hidden="true"><div class="orb"><div class="orb-core"></div></div><span class="orb-caption">COSMO CORE <b>·</b> CONCEPT</span></div>
-      </section>
-
-      <section class="assistant-card" id="assistant">
-        <div class="assistant-head"><div class="spark">✳</div><div><strong>Talk to Cosmo</strong><small>Explore an idea or start a task</small></div><span class="online"><i></i> Interface ready</span></div>
-        <form id="prompt-form">
-          <label class="sr-only" for="prompt">Your message</label>
-          <textarea id="prompt" rows="2" placeholder="Ask a question, explore an idea, or describe what you want to work on…"></textarea>
-          <div class="composer-foot"><span>↳ <span>Secure chat gateway · model key setup pending.</span></span><button class="send-btn" type="submit">Send <b>↗</b></button></div>
-        </form>
-        <div class="response" id="response" aria-live="polite" hidden></div>
-      </section>
-
-      <section class="section" id="projects">
-        <div class="section-heading"><div><p class="eyebrow">YOUR CONTROL CENTRE</p><h2>Operational workspace</h2></div><span class="muted">Connected application modules</span></div>
-        <div class="stat-grid">
-          <a class="stat-card" href="work.html" style="text-decoration:none;color:inherit"><div class="stat-icon violet">✓</div><span class="stat-label">Cosmo Work</span><strong>Open</strong><small>Persistent tasks, steps and approvals</small></a>
-          <a class="stat-card" href="work.html" style="text-decoration:none;color:inherit"><div class="stat-icon blue">▦</div><span class="stat-label">Package registry</span><strong>Open</strong><small>Packages, versions and APK release records</small></a>
-          <a class="stat-card" href="admin.html" style="text-decoration:none;color:inherit"><div class="stat-icon mint">⌘</div><span class="stat-label">Admin portal</span><strong>Open</strong><small>Missions, knowledge and training studio</small></a>
-          <a class="stat-card" href="#assistant" style="text-decoration:none;color:inherit"><div class="stat-icon amber">✳</div><span class="stat-label">Agent tools</span><strong>Ready for setup</strong><small>Tasks, missions, private knowledge search and approvals</small></a>
-        </div>
-      </section>
-
-      <section class="lower-grid">
-        <article class="panel" id="research"><div class="panel-title"><div><p class="eyebrow">RECENT ACTIVITY</p><h3>Research & discoveries</h3></div><span class="panel-symbol">⌕</span></div>
-          <div class="activity"><span class="activity-dot purple"></span><div><strong>Evidence review</strong><small>Example record · awaiting source verification</small></div><span class="tag">DRAFT</span></div>
-          <div class="activity"><span class="activity-dot blue-dot"></span><div><strong>New concept captured</strong><small>Example record · not saved to a database</small></div><span class="tag">DEMO</span></div>
-          <div class="activity"><span class="activity-dot green-dot"></span><div><strong>Prototype workspace</strong><small>Interface foundation created</small></div><span class="tag">READY</span></div>
-        </article>
-        <article class="panel" id="memory"><div class="panel-title"><div><p class="eyebrow">SYSTEM STATUS</p><h3>Connected foundations</h3></div><span class="panel-symbol">⌘</span></div>
-          <div class="status-row"><span>Web interface</span><b class="status-ready">Ready</b></div>
-          <div class="status-row"><span>AI model connection</span><b class="status-off">Awaiting model API key</b></div>
-          <div class="status-row"><span>Secure memory database</span><b class="status-ready">Connected · awaiting owner data</b></div>
-          <div class="status-row"><span>Authentication</span><b class="status-off">Owner setup pending</b></div>
-        </article>
-      </section>
-      <section class="section knowledge-section" id="knowledge">
-        <div class="section-heading"><div><p class="eyebrow">NEXT BUILD MODULE</p><h2>Knowledge Engine preview</h2></div><span class="muted">Interactive front-end prototype</span></div>
-        <div class="knowledge-grid">
-          <article class="panel knowledge-form-panel">
-            <div class="panel-title"><div><p class="eyebrow">CAPTURE A CLAIM</p><h3>New knowledge draft</h3></div><span class="panel-symbol">✳</span></div>
-            <form id="knowledge-form">
-              <label for="knowledge-kind">Record type</label>
-              <select id="knowledge-kind" required>
-                <option value="claim">Claim to assess</option>
-                <option value="observation">Direct observation</option>
-                <option value="hypothesis">Hypothesis to test</option>
-                <option value="prediction">Prediction to verify later</option>
-                <option value="decision">Decision record</option>
-              </select>
-              <label for="knowledge-claim">Claim or observation</label>
-              <textarea id="knowledge-claim" rows="3" maxlength="500" required placeholder="Write one clear statement to investigate…"></textarea>
-              <label for="knowledge-source">Where did it come from?</label>
-              <select id="knowledge-source" required>
-                <option value="user_provided">User provided</option>
-                <option value="external_source">External source</option>
-                <option value="system_observed">System observed</option>
-                <option value="model_generated">Model generated</option>
-                <option value="inference">Inference</option>
-                <option value="hypothesis">Hypothesis</option>
-                <option value="speculation">Speculation</option>
-              </select>
-              <label for="knowledge-evidence">Evidence or source note</label>
-              <textarea id="knowledge-evidence" rows="2" maxlength="500" placeholder="Add a source, reference or explain what still needs checking…"></textarea>
-              <label for="knowledge-url">Source URL (optional)</label>
-              <input id="knowledge-url" type="url" maxlength="1000" placeholder="https://…">
-              <button class="send-btn" type="submit">Add draft <b>＋</b></button>
-            </form>
-            <p class="prototype-note">Prototype only: drafts exist in this page session and are not sent to a secure database.</p>
-          </article>
-          <article class="panel knowledge-records-panel">
-            <div class="panel-title"><div><p class="eyebrow">RECORD REGISTER</p><h3>Draft knowledge items</h3></div><div class="knowledge-tools"><span class="tag" id="knowledge-count">0 ITEMS</span><button class="export-btn" id="knowledge-export" type="button" disabled>Export JSON ↓</button></div></div>
-            <div id="knowledge-empty" class="knowledge-empty">No draft records yet. Add a claim to see how Cosmo will classify and track knowledge.</div>
-            <div id="knowledge-list" class="knowledge-list" aria-live="polite"></div>
-          </article>
-        </div>
-      </section>
-      <section class="section vault-section" id="memory-vault">
-        <div class="section-heading"><div><p class="eyebrow">MEMORY & HISTORY FOUNDATION</p><h2>Main Memories Vault</h2></div><span class="muted">Session-only interface prototype</span></div>
-        <div class="vault-intro"><strong>Two connected shelves, two different jobs.</strong><span>Main Memories is the searchable index of what Cosmo has learned. Master History preserves the original source material behind those memories.</span></div>
-        <div class="vault-toolbar"><label class="sr-only" for="vault-search">Search memory and history drafts</label><input id="vault-search" type="search" placeholder="Search codes, subjects, summaries or source notes…"><button class="export-btn" id="vault-export" type="button" disabled>Export vault JSON ↓</button></div>
-        <div class="vault-grid">
-          <article class="panel vault-panel">
-            <div class="panel-title"><div><p class="eyebrow">INDEX / CANONICAL MEMORY REGISTER</p><h3>Main Memories Vault</h3></div><span class="panel-symbol">◉</span></div>
-            <form id="memory-form" class="vault-form">
-              <label for="memory-title">Memory subject</label><input id="memory-title" maxlength="140" required placeholder="Short subject or title">
-              <label for="memory-summary">Summary</label><textarea id="memory-summary" rows="3" maxlength="1200" required placeholder="Concise summary. Keep source facts and uncertainty clear."></textarea>
-              <div class="vault-fields"><div><label for="memory-category">Category</label><select id="memory-category"><option>Project</option><option>Preference</option><option>Decision</option><option>Research</option><option>Person or organisation</option><option>System requirement</option><option>Other</option></select></div><div><label for="memory-classification">Access class</label><select id="memory-classification"><option value="workspace">Workspace</option><option value="confidential">Confidential</option><option value="restricted">Restricted</option><option value="public">Public</option></select></div></div>
-              <button class="send-btn" type="submit">Add memory draft <b>＋</b></button>
-            </form>
-            <div class="vault-list-head"><strong>Memory index</strong><span class="tag" id="memory-count">0 DRAFTS</span></div><div id="memory-empty" class="knowledge-empty">No memory drafts yet.</div><div id="memory-list" class="vault-list" aria-live="polite"></div>
-          </article>
-          <article class="panel vault-panel">
-            <div class="panel-title"><div><p class="eyebrow">ORIGINAL SOURCES / ARCHIVE</p><h3>Master History Vault</h3></div><span class="panel-symbol">▤</span></div>
-            <form id="history-form" class="vault-form">
-              <label for="history-title">Source record title</label><input id="history-title" maxlength="160" required placeholder="Name of conversation, file, note or source">
-              <label for="history-content">Original excerpt or source note</label><textarea id="history-content" rows="3" maxlength="1800" required placeholder="Preserve the relevant original wording or describe the source location."></textarea>
-              <div class="vault-fields"><div><label for="history-type">Source type</label><select id="history-type"><option value="conversation">Conversation</option><option value="document">Document or file</option><option value="external_source">External source</option><option value="user_note">User note</option><option value="system_record">System record</option></select></div><div><label for="history-memory-link">Link to memory</label><select id="history-memory-link"><option value="">No memory link yet</option></select></div></div>
-              <button class="send-btn" type="submit">Archive source draft <b>＋</b></button>
-            </form>
-            <div class="vault-list-head"><strong>Source archive</strong><span class="tag" id="history-count">0 DRAFTS</span></div><div id="history-empty" class="knowledge-empty">No source drafts yet.</div><div id="history-list" class="vault-list" aria-live="polite"></div>
-          </article>
-        </div>
-
-        <section class="relationship-section" id="memory-relationships">
-          <div class="section-heading"><div><p class="eyebrow">KNOWLEDGE GRAPH FOUNDATION</p><h2>Memory Relationship Engine</h2></div><span class="muted">Explicit links · session-only demo</span></div>
-          <div class="relationship-intro"><strong>Relationships describe how records connect.</strong><span>Cosmo must preserve disagreements and show why a link exists. A relationship is a recorded assertion, not proof that either record is true.</span></div>
-          <div class="relationship-grid">
-            <article class="panel relationship-form-panel">
-              <div class="panel-title"><div><p class="eyebrow">CREATE A TRACEABLE LINK</p><h3>New relationship</h3></div><span class="panel-symbol">⌁</span></div>
-              <form id="relationship-form" class="vault-form">
-                <label for="relationship-from">From memory</label><select id="relationship-from" required><option value="">Create a memory first</option></select>
-                <label for="relationship-type">Relationship type</label>
-                <select id="relationship-type" required>
-                  <option value="supports">Supports</option><option value="contradicts">Contradicts</option><option value="refines">Refines / adds detail</option><option value="supersedes">Supersedes / replaces current guidance</option><option value="duplicate_of">Possible duplicate of</option><option value="depends_on">Depends on</option><option value="related_to">Related to</option><option value="derived_from">Derived from</option>
-                </select>
-                <label for="relationship-to">To memory</label><select id="relationship-to" required><option value="">Create at least two memories</option></select>
-                <label for="relationship-note">Reason / evidence note</label><textarea id="relationship-note" rows="3" maxlength="900" placeholder="Why is this link being recorded? Add evidence, uncertainty or review context."></textarea>
-                <button class="send-btn" type="submit">Record relationship <b>＋</b></button>
-              </form>
-              <p class="prototype-note">Links are session-only assertions. Cosmo does not automatically resolve contradictions or decide which memory is correct.</p>
-            </article>
-            <article class="panel relationship-records-panel">
-              <div class="panel-title"><div><p class="eyebrow">LINK REGISTER</p><h3>Relationship map</h3></div><div class="knowledge-tools"><span class="tag" id="relationship-count">0 LINKS</span><button class="export-btn" id="relationship-export" type="button" disabled>Export links ↓</button></div></div>
-              <div class="relationship-audit" id="relationship-audit" aria-live="polite">No relationships recorded. Add at least two memory drafts to begin.</div>
-              <div id="relationship-empty" class="knowledge-empty">No relationships yet.</div>
-              <div id="relationship-list" class="relationship-list" aria-live="polite"></div>
-            </article>
-          </div>
-        <section class="version-review-section" id="memory-versioning">
-          <div class="section-heading"><div><p class="eyebrow">MEMORY GOVERNANCE</p><h2>Versioning & Contradiction Review</h2></div><span class="muted">Session-only review workflow</span></div>
-          <div class="relationship-intro"><strong>Changes create history; reviews create accountable decisions.</strong><span>Older versions remain visible in this session. Contradictions are reviewed as evidence conflicts, not automatically resolved by recency or confidence scores.</span></div>
-          <div class="version-review-grid">
-            <article class="panel">
-              <div class="panel-title"><div><p class="eyebrow">CONTROLLED REVISION</p><h3>Create a new memory version</h3></div><span class="panel-symbol">↻</span></div>
-              <form id="memory-version-form" class="vault-form">
-                <label for="version-memory">Memory to revise</label><select id="version-memory" required><option value="">Create a memory first</option></select>
-                <label for="version-summary">New summary</label><textarea id="version-summary" rows="4" maxlength="1200" required placeholder="Enter the revised summary. The previous version will remain in the timeline."></textarea>
-                <label for="version-reason">Why is this changing?</label><textarea id="version-reason" rows="2" maxlength="700" required placeholder="Describe new evidence, correction, scope change or reason."></textarea>
-                <label for="version-source">Change basis</label><select id="version-source"><option value="new_evidence">New evidence</option><option value="correction">Correction</option><option value="scope_change">Scope clarification</option><option value="user_update">User update</option><option value="other">Other / needs review</option></select>
-                <button class="send-btn" type="submit">Create next version <b>↗</b></button>
-              </form>
-              <p class="prototype-note">A version is a new snapshot, not an overwrite. Production must add actor identity, authorization and append-only audit events.</p>
-            </article>
-            <article class="panel">
-              <div class="panel-title"><div><p class="eyebrow">VERSION TIMELINE</p><h3>Memory history</h3></div><span class="tag" id="version-count">0 VERSIONS</span></div>
-              <label class="sr-only" for="version-timeline-memory">Choose memory timeline</label><select id="version-timeline-memory" class="review-select"><option value="">Choose a memory</option></select>
-              <div id="version-timeline" class="version-timeline"><p class="knowledge-empty">Create or select a memory to inspect its version history.</p></div>
-            </article>
-          </div>
-          <article class="panel contradiction-review-panel">
-            <div class="panel-title"><div><p class="eyebrow">CONFLICT REGISTER</p><h3>Contradiction review queue</h3></div><span class="tag" id="contradiction-count">0 OPEN</span></div>
-            <p class="knowledge-evidence">Only links explicitly marked “Contradicts” appear here. Review outcomes are recorded with a rationale; neither side is deleted.</p>
-            <div id="contradiction-queue" class="contradiction-queue"><p class="knowledge-empty">No contradiction links to review yet.</p></div>
-          </article>
-        </section>
-        </section>
-        <p class="prototype-note">Prototype only: temporary draft IDs are not permanent Cosmo codes. Nothing here is saved to a database, backed up, access-controlled or retained after the page session ends. Do not enter sensitive or private information.</p>
-      </section>
-      <section class="section retrieval-section" id="memory-intelligence">
-        <div class="section-heading"><div><p class="eyebrow">MEMORY INTELLIGENCE</p><h2>Intelligent Retrieval & Trace</h2></div><span class="muted">Local keyword search · session-only</span></div>
-        <div class="relationship-intro"><strong>Find the record, inspect its context, follow the evidence.</strong><span>Searches the memory index, original source notes, knowledge drafts and relationship register. Results are ranked by transparent keyword matching—not AI or semantic similarity.</span></div>
-        <article class="panel retrieval-panel">
-          <form id="retrieval-form" class="retrieval-form">
-            <label for="retrieval-query">What are you looking for?</label>
-            <input id="retrieval-query" type="search" maxlength="240" required placeholder="Search a subject, phrase, code, source or claim…">
-            <div class="retrieval-filters">
-              <div><label for="retrieval-type">Search in</label><select id="retrieval-type"><option value="all">All record types</option><option value="memory">Main Memories</option><option value="source">Master History sources</option><option value="claim">Knowledge claims</option><option value="relationship">Relationships</option></select></div>
-              <div><label for="retrieval-category">Memory category</label><select id="retrieval-category"><option value="all">All categories</option><option>Project</option><option>Preference</option><option>Decision</option><option>Research</option><option>Person or organisation</option><option>System requirement</option><option>Other</option></select></div>
-            </div>
-            <div class="retrieval-actions"><button class="send-btn" type="submit">Search Cosmo records <b>⌕</b></button><button class="export-btn" id="retrieval-export" type="button" disabled>Export search trace ↓</button></div>
-          </form>
-          <div class="retrieval-summary" id="retrieval-summary" aria-live="polite">Search will inspect only records currently present in this browser session.</div>
-          <div id="retrieval-results" class="retrieval-results"><div class="knowledge-empty">Enter a search phrase or record code to begin.</div></div>
-        </article>
-        <p class="prototype-note">Prototype limitation: this is local keyword retrieval over unsaved drafts. No vector search, semantic reasoning, persistent index, permission service or cross-session history is connected. Search cannot recover records that have not been added to this page session.</p>
-      </section>
-      <section class="section adaptive-section" id="adaptive-learning">
-        <div class="section-heading"><div><p class="eyebrow">PERSONAL INTELLIGENCE</p><h2>Adaptive Learning & Preferences</h2></div><span class="muted">Governed learning · session-only demo</span></div>
-        <div class="relationship-intro"><strong>Cosmo should adapt to the person, not force the person to adapt to Cosmo.</strong><span>Each dedicated household agent can have its own preference profile, while shared knowledge is permission-controlled. Preferences are not the same as facts, and feedback is not automatic permission to train a model.</span></div>
-        <div class="adaptive-grid">
-          <article class="panel">
-            <div class="panel-title"><div><p class="eyebrow">PERSONAL PREFERENCE PROFILE</p><h3>Teach Cosmo how to work with you</h3></div><span class="panel-symbol">◎</span></div>
-            <form id="preference-form" class="vault-form">
-              <label for="preference-agent">Agent / household profile</label>
-              <input id="preference-agent" maxlength="90" required placeholder="e.g. Cosmo Main, Kitchen Agent, Home Guardian">
-              <div class="vault-fields"><div><label for="preference-communication">Communication style</label><select id="preference-communication"><option value="concise">Concise and direct</option><option value="conversational">Conversational</option><option value="detailed">Detailed explanations</option><option value="stepwise">One step at a time</option><option value="visual">Visual / examples first</option></select></div><div><label for="preference-detail">Detail level</label><select id="preference-detail"><option value="brief">Brief</option><option value="balanced" selected>Balanced</option><option value="deep">Deep / comprehensive</option></select></div></div>
-              <div class="vault-fields"><div><label for="preference-pace">Working pace</label><select id="preference-pace"><option value="slow">Slow and careful</option><option value="steady" selected>Steady</option><option value="fast">Fast when safe</option></select></div><div><label for="preference-initiative">Initiative</label><select id="preference-initiative"><option value="ask">Ask before suggesting</option><option value="balanced" selected>Balanced suggestions</option><option value="proactive">Proactively identify next steps</option></select></div></div>
-              <label for="preference-interests">Interests, priorities and helpful context</label><textarea id="preference-interests" rows="2" maxlength="900" placeholder="Topics, goals, routines, accessibility needs or context the agent may use…"></textarea>
-              <label for="preference-avoid">Things to avoid or handle carefully</label><textarea id="preference-avoid" rows="2" maxlength="700" placeholder="Topics, styles, assumptions or actions to avoid…"></textarea>
-              <div class="vault-fields"><div><label for="preference-source">How learned?</label><select id="preference-source"><option value="explicit">Explicitly told by user</option><option value="feedback">Repeated feedback</option><option value="observed">Observed pattern — tentative</option><option value="inferred">Inferred — needs confirmation</option></select></div><div><label for="preference-consent">Use permission</label><select id="preference-consent"><option value="session_only">This session only</option><option value="proposed">Propose for approval</option><option value="approved">Approved for this agent</option></select></div></div>
-              <button class="send-btn" type="submit">Record preference draft <b>＋</b></button>
-            </form>
-            <p class="prototype-note">An inferred or observed preference remains tentative. The interface does not save profiles after this session or train a model.</p>
-          </article>
-          <article class="panel">
-            <div class="panel-title"><div><p class="eyebrow">FEEDBACK & OUTCOME LOOP</p><h3>Learn from what worked</h3></div><span class="panel-symbol">↗</span></div>
-            <form id="learning-feedback-form" class="vault-form">
-              <label for="feedback-agent">Agent / profile</label><select id="feedback-agent" required><option value="">Create a preference profile first</option></select>
-              <label for="feedback-task">Task or response being evaluated</label><input id="feedback-task" maxlength="180" required placeholder="What did the agent do?">
-              <div class="vault-fields"><div><label for="feedback-rating">User feedback</label><select id="feedback-rating"><option value="5">Excellent · 5</option><option value="4">Good · 4</option><option value="3" selected>Acceptable · 3</option><option value="2">Poor · 2</option><option value="1">Wrong / harmful · 1</option></select></div><div><label for="feedback-outcome">Observed outcome</label><select id="feedback-outcome"><option value="successful">Successful</option><option value="partially_successful">Partly successful</option><option value="failed">Failed</option><option value="unknown">Not yet known</option></select></div></div>
-              <label for="feedback-note">What should change next time?</label><textarea id="feedback-note" rows="3" maxlength="800" required placeholder="Specific correction, preferred approach, outcome or lesson…"></textarea>
-              <label for="feedback-consent">Learning scope</label><select id="feedback-consent"><option value="single_task">This task only</option><option value="agent_candidate">Suggest profile update for this agent</option><option value="shared_candidate">Suggest shared rule — requires separate approval</option></select>
-              <button class="send-btn" type="submit">Record feedback <b>＋</b></button>
-            </form>
-            <p class="prototype-note">Feedback creates a learning candidate. It does not silently change a permanent preference, train model weights or alter safety rules.</p>
-          </article>
-        </div>
-        <div class="adaptive-lower-grid">
-          <article class="panel">
-            <div class="panel-title"><div><p class="eyebrow">LEARNING METHODS REGISTER</p><h3>Cosmo's learning toolkit</h3></div><span class="tag">GOVERNED</span></div>
-            <div class="learning-method-list" id="learning-method-list"></div>
-          </article>
-          <article class="panel">
-            <div class="panel-title"><div><p class="eyebrow">PROFILE & FEEDBACK REGISTER</p><h3>Learning records</h3></div><div class="knowledge-tools"><span class="tag" id="adaptive-count">0 RECORDS</span><button class="export-btn" id="adaptive-export" type="button" disabled>Export JSON ↓</button></div></div>
-            <div id="adaptive-records" class="adaptive-records"><p class="knowledge-empty">No preference or feedback drafts yet.</p></div>
-          </article>
-        </div>
-        <p class="prototype-note">Safety boundary: safety-critical, medical, financial, access-control and physical-control decisions must use approved rules, constraints and human authorization. No trial-and-error reinforcement learning on live systems. Household profiles stay separate unless an authorised user explicitly approves a specific shared preference.</p>
-      </section>
-      <footer><span> COSMO AI <b>·</b> FOUNDATION BUILD</span><span>Ideas deserve evidence. Progress deserves a record.</span></footer>
-    </main>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n  <script src="assets/cosmo-live.js"></script>\n  <script src="assets/app.js"></script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(error=>console.warn("Cosmo offline shell unavailable",error)));}</script>
-</body>
-</html>
+<header class="wrap nav"><a class="brand" href="/">cosmo<span>.ai</span></a><nav class="navlinks"><a href="#products">Products</a><a href="#pricing">Pricing</a><a href="#how">How it works</a><a class="btn secondary" href="app.html">Owner sign-in</a></nav></header>
+<main>
+<section class="wrap hero"><div><p class="eyebrow">INTELLIGENCE THAT WORKS WITH YOU</p><h1>Think bigger.<br>Get things done.</h1><p>Cosmo brings personal AI, practical work tools and QR-powered product information together in one modular platform. Start with the package you need. Add tools as your work grows.</p><div class="hero-actions"><a class="btn" href="#products">Explore Cosmo</a><a class="btn secondary" href="#pricing">See pricing structure</a></div></div><div class="orb" role="img" aria-label="Abstract Cosmo intelligence core artwork"></div></section>
+<section class="wrap section" id="products"><div class="section-head"><p class="eyebrow">A CONNECTED PRODUCT FAMILY</p><h2>One platform. Separate useful packages.</h2><p>Each package has its own purpose and app experience. The same secure account and subscription engine will let customers activate only the tools they need.</p></div><div class="cards">
+<article class="card"><div class="symbol">✳</div><h3>Cosmo Core</h3><p>A personal AI workspace for conversation, planning, knowledge, memory and research. The aim is an assistant that helps turn ideas into organised, evidence-aware action.</p></article>
+<article class="card"><div class="symbol">✓</div><h3>Cosmo Work</h3><p>A practical workbench for tasks, projects, steps, approvals and operational workflows. Keep work traceable and know what is waiting, moving or complete.</p></article>
+<article class="card"><div class="symbol">▦</div><h3>Cosmo QR Retail</h3><p>Create a QR information hub for each product shelf. Customers can scan to view product details, current price, specials, low-stock status, next delivery and recorded expiry information.</p></article>
+</div></section>
+<section class="wrap section" id="pricing"><div class="section-head"><p class="eyebrow">MODULAR SUBSCRIPTIONS</p><h2>Pay for the package. Add only the tools you want.</h2><p>The starting proposal is a low monthly package fee plus a simple price for each optional tool. Prices are stored in the live product catalogue and will be confirmed before checkout is enabled.</p></div><div id="catalogue" class="pricegrid"><article class="pricecard"><h3>Loading product catalogue…</h3><p class="muted">Connecting to Cosmo's subscription catalogue.</p></article></div><div class="note"><strong>Launch offer under preparation:</strong> a limited free tier plus a 14-day trial for eligible packages. The trial and payment workflow are not active yet. This page is a pricing preview, not a checkout or purchase form.</div></section>
+<section class="wrap section" id="how"><div class="section-head"><p class="eyebrow">SIMPLE BY DESIGN</p><h2>Start small. Grow when it helps.</h2></div><div class="how"><div class="step"><strong>01 · Choose a package</strong><p>Pick the Cosmo app that solves the problem you have today.</p></div><div class="step"><strong>02 · Activate tools</strong><p>Add optional capabilities individually, with clear monthly prices.</p></div><div class="step"><strong>03 · Use real workflows</strong><p>Keep your work, product information and records in a secure account.</p></div><div class="step"><strong>04 · Expand when ready</strong><p>Add tools or another package as your needs grow.</p></div></div></section>
+<section class="wrap section"><div class="section-head"><p class="eyebrow">TRANSPARENCY FIRST</p><h2>What is available today?</h2></div><div class="faq">
+<article><h3>Are all Cosmo tools already live?</h3><p>No. Core authentication, database foundations, chat gateway, task workflows, owner administration and the first QR Retail data services have been built. Some modules are still under development and will be marked clearly as they are verified.</p></article>
+<article><h3>Can customers subscribe and pay today?</h3><p>Not yet. The product and tool catalogue and billing data structure are being prepared. Payment provider onboarding, checkout, verified webhooks and subscription entitlement enforcement must pass testing before sales begin.</p></article>
+<article><h3>Will every customer see my private Cosmo history?</h3><p>No. Customer records must remain isolated by account. The private creator administration portal is separate from customer package access.</p></article>
+<article><h3>Will the QR shelf labels stay current?</h3><p>They use a stable QR link to a product information hub. The page reads the latest saved product price, active promotion, stock, recorded expiry and incoming delivery information. Accuracy depends on store records being kept up to date.</p></article>
+</div></section>
+</main>
+<footer class="wrap footer"><span>© 2026 Cosmo AI · cosmo-ai.co.za</span><span>Modular intelligence · Practical tools · Transparent access</span><a href="app.html">Owner workspace</a></footer>
+<script>
+(async()=>{const el=document.getElementById("catalogue");try{const {createClient}=window.supabase||{};const client=createClient("https://yevkzktlzxjrlvsxtnez.supabase.co","sb_publishable_8TCKfyaRJwbvqY8kdn8nTA_KvlslawM");const [{data:products,error:pErr},{data:tools,error:tErr}]=await Promise.all([client.from("cosmo_subscription_products").select("id,product_code,name,description,base_price_cents,trial_days,sort_order").eq("active",true).eq("public_enabled",true).order("sort_order"),client.from("cosmo_subscription_tools").select("id,tool_code,name,description,monthly_price_cents,sort_order").eq("active",true).order("sort_order")]);if(pErr||tErr)throw new Error(pErr?.message||tErr?.message);const {data:links,error:lErr}=await client.from("cosmo_subscription_product_tools").select("product_id,tool_id,cosmo_subscription_tools(name,description,monthly_price_cents)").eq("optional_addon",true);if(lErr)throw new Error(lErr.message);el.replaceChildren();for(const p of products||[]){const card=document.createElement("article");card.className="pricecard";const h=document.createElement("h3");h.textContent=p.name;const d=document.createElement("p");d.className="muted";d.textContent=p.description;const price=document.createElement("div");price.className="price";price.textContent="R"+(Number(p.base_price_cents)/100).toFixed(0);const small=document.createElement("small");small.textContent=" / month base";price.append(small);const list=document.createElement("ul");list.className="tool-list";const relevant=(links||[]).filter(x=>x.product_id===p.id);if(!relevant.length){const li=document.createElement("li");li.textContent="Core package features";list.append(li)}for(const item of relevant){const li=document.createElement("li");const strong=document.createElement("strong");strong.textContent=item.cosmo_subscription_tools.name+" · R"+(Number(item.cosmo_subscription_tools.monthly_price_cents)/100)+"/mo";li.append(strong);if(item.cosmo_subscription_tools.description){const span=document.createElement("div");span.textContent=item.cosmo_subscription_tools.description;li.append(span)}list.append(li)}const trial=document.createElement("p");trial.className="muted";trial.textContent=p.trial_days+"-day trial proposed";card.append(h,d,price,list,trial);el.append(card)}if(!products?.length)el.textContent="The product catalogue is being prepared."}catch(e){el.textContent="The live catalogue is temporarily unavailable. Proposed starting structure: R50/month per package and R50/month per optional tool."}})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>if("serviceWorker"in navigator)navigator.serviceWorker.register("./service-worker.js").catch(()=>{});</script>
+</body></html>
