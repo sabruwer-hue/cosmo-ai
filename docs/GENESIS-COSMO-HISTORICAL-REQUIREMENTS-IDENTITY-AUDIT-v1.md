@@ -166,6 +166,14 @@ Additional prototype components found in the 6 November Unified Intelligence pro
 
 These are historical design entries. Their presence in a prototype file does not prove production implementation.
 
+### 9.1 Origin energy and research clue ledger
+
+The early Cosmo material describes Cosmo Energy and modular solar as an origin project, including a 100-panel planning scenario, four-panel modular frames, expandable battery concepts, multiple MPPTs and a Power Gateway. These remain design concepts requiring qualified electrical engineering, certified components, protection, testing and regulatory review.
+
+The original Genesis research ambition includes 100% Safe Nuclear Energy and Human-AI Harmony. Preserve the mission as a research question, not a promise that such a technology exists. Keep nuclear-related work conceptual and evidence-led; do not generate DIY reactor, radioactive-source handling, nuclear-material processing or weaponisation instructions. Any work involving nuclear materials or radiation belongs only in appropriately licensed institutions under qualified, independent safety oversight.
+
+A permanent **Clue Ledger** must link early technologies, abandoned approaches, partial findings, anomalies and negative results to larger research questions. Rank clues by evidence and usefulness, not novelty or presentation confidence. Revisit older clues when new data or methods become available.
+
 ## 10. Additional technology and decision capabilities now required
 
 Add the following to the historical baseline:
