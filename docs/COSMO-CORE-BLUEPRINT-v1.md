@@ -199,3 +199,9 @@ Users must be able to inspect, correct, reject, expire, export and delete profil
 The persistent learning design is specified in [Persistent Learning & Preference Data Architecture v1.0](PERSISTENT-LEARNING-PREFERENCE-DATA-ARCHITECTURE-v1.md). It defines user/workspace/agent-scoped profiles, immutable preference versions, feedback and verified outcome ledgers, learning candidates, approval-bound adaptation proposals, evaluation runs, controlled releases, rollback and auditable deletion/export/recovery.
 
 The production sequence begins with identity, tenancy and server-side authorization. No durable profile or learning event may be exposed across household members or agents by default. Background jobs must re-check permission and consent. No adaptation is activated from a rating alone; it must pass proposal, approval and evaluation gates. This is a provider-neutral design, not deployed persistence.
+
+## 14. Continuous improvement and meta-learning
+
+Cosmo's cross-system improvement doctrine and architecture are defined in [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md). It establishes proportionate pre-decision reviews, post-task learning reviews, system-wide diagnostics, a persistent improvement registry, a context-aware method portfolio, safe experiments, background monitoring controls, relationship-engine self-review, controlled releases and rollback.
+
+The intended behaviour is continuous analysis and improvement proposals, not unchecked self-modification. Background analysis is read-only by default; consequential changes require designated approvals, tests and rollback controls. The method portfolio preserves useful alternatives rather than discarding every method except the current leader. This remains a design specification, not an operating background service.
