@@ -88,3 +88,8 @@ These are design and audit documents, not evidence that the described services h
 - **Production-ready:** operational, privacy, security, monitoring and recovery checks passed.
 
 Do not describe a planned or demo-only capability as live.
+
+## Search visibility and payments
+
+- [SEO and Google indexing checklist](docs/COSMO-SEO-AND-GOOGLE-INDEXING-v1.md)
+- [Yoco checkout and lifetime entitlements](docs/COSMO-YOCO-PAYMENTS-v1.md)
