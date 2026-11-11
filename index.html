@@ -200,6 +200,24 @@
         </section>
         <p class="prototype-note">Prototype only: temporary draft IDs are not permanent Cosmo codes. Nothing here is saved to a database, backed up, access-controlled or retained after the page session ends. Do not enter sensitive or private information.</p>
       </section>
+      <section class="section retrieval-section" id="memory-intelligence">
+        <div class="section-heading"><div><p class="eyebrow">MEMORY INTELLIGENCE</p><h2>Intelligent Retrieval & Trace</h2></div><span class="muted">Local keyword search · session-only</span></div>
+        <div class="relationship-intro"><strong>Find the record, inspect its context, follow the evidence.</strong><span>Searches the memory index, original source notes, knowledge drafts and relationship register. Results are ranked by transparent keyword matching—not AI or semantic similarity.</span></div>
+        <article class="panel retrieval-panel">
+          <form id="retrieval-form" class="retrieval-form">
+            <label for="retrieval-query">What are you looking for?</label>
+            <input id="retrieval-query" type="search" maxlength="240" required placeholder="Search a subject, phrase, code, source or claim…">
+            <div class="retrieval-filters">
+              <div><label for="retrieval-type">Search in</label><select id="retrieval-type"><option value="all">All record types</option><option value="memory">Main Memories</option><option value="source">Master History sources</option><option value="claim">Knowledge claims</option><option value="relationship">Relationships</option></select></div>
+              <div><label for="retrieval-category">Memory category</label><select id="retrieval-category"><option value="all">All categories</option><option>Project</option><option>Preference</option><option>Decision</option><option>Research</option><option>Person or organisation</option><option>System requirement</option><option>Other</option></select></div>
+            </div>
+            <div class="retrieval-actions"><button class="send-btn" type="submit">Search Cosmo records <b>⌕</b></button><button class="export-btn" id="retrieval-export" type="button" disabled>Export search trace ↓</button></div>
+          </form>
+          <div class="retrieval-summary" id="retrieval-summary" aria-live="polite">Search will inspect only records currently present in this browser session.</div>
+          <div id="retrieval-results" class="retrieval-results"><div class="knowledge-empty">Enter a search phrase or record code to begin.</div></div>
+        </article>
+        <p class="prototype-note">Prototype limitation: this is local keyword retrieval over unsaved drafts. No vector search, semantic reasoning, persistent index, permission service or cross-session history is connected. Search cannot recover records that have not been added to this page session.</p>
+      </section>
       <footer><span> COSMO AI <b>·</b> PROTOTYPE BUILD</span><span>Ideas deserve evidence. Progress deserves a record.</span></footer>
     </main>
   </div>
