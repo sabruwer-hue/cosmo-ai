@@ -1,0 +1,10 @@
+{
+  "domain": "cosmo-ai.co.za",
+  "packages": [
+    {"name":"Cosmo AI","manifest":"manifest.webmanifest","startUrl":"/","applicationId":"za.co.cosmoai.app","icon":"assets/cosmo-icon.svg"},
+    {"name":"Cosmo Work","manifest":"work.webmanifest","startUrl":"/work.html","applicationId":"za.co.cosmoai.work","icon":"assets/cosmo-work-icon.svg"},
+    {"name":"Cosmo Admin Portal","manifest":"admin.webmanifest","startUrl":"/admin.html","applicationId":"za.co.cosmoai.admin","icon":"assets/cosmo-admin-icon.svg"}
+  ],
+  "digitalAssetLinksPath":"/.well-known/assetlinks.json",
+  "apkSigning":"Owner-controlled; never store keystores or passwords in Git"
+}
