@@ -188,6 +188,10 @@ For each technology, preserve predicted versus observed performance, failure mod
 
 The engine should identify recurring technical bottlenecks across projects and propose reusable components, standards, test rigs or methods. Any proposed generalisation must be validated against other use cases and preserve counterexamples.
 
+### 10.1 Research Clue Ledger
+
+Maintain a permanent, searchable Clue Ledger linking early technologies, partial ideas, anomalies, abandoned approaches, negative results and unresolved observations to larger research questions. Rank clues by evidence quality and potential usefulness, not novelty or confidence of presentation. Revisit older clues when new evidence, methods, materials or technologies become available. Preserve the original context and why a clue was previously accepted, rejected or deferred; a clue is not itself proof.
+
 ## 11. Evaluation tests
 
 - A technology record links to original evidence and states its maturity and scope.
