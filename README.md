@@ -45,6 +45,10 @@ These are design and audit documents, not evidence that the described services h
 - [Technological Intelligence & Discovery Map v1.0](docs/TECHNOLOGICAL-INTELLIGENCE-DISCOVERY-MAP-v1.md) — technology graph, science and component discovery, maturity/evidence, invention hypotheses, multi-branch technology pathways and technical solution packs.
 - [Cosmo Subscription Product Portfolio v1.0](docs/COSMO-SUBSCRIPTION-PRODUCT-PORTFOLIO-v1.md) — standalone products, bundles, Ad Studio, Team Up AI, Creator Studio, Cosmo Office and the continuous analytical build framework.
 
+## Subscription portfolio demo
+
+- [Open the interactive subscription portfolio prototype](prototypes/cosmo-subscription-portfolio-demo.html) — demo-only product catalogue and bundle shortlist. It does not process subscriptions or payments.
+
 ## Current prototype modules
 
 - **Knowledge Engine capture panel:** front-end draft capture for claims, observations, hypotheses, predictions and decisions; provenance labels; optional evidence notes/source URLs; and JSON export. Drafts remain in browser memory for the current page session only. They are not permanent records, are not verified, and are not sent to a database.
