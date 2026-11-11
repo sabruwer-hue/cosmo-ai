@@ -227,17 +227,10 @@ For technical problems, Cosmo should produce a traceable solution pack: problem 
 
 The technology map must create multiple branches for one problem, including proven solutions, adaptations, combinations, new research, procurement/partnership, low-cost feasibility tests and stop/redesign paths. Each branch records evidence, assumptions, events, multiple possible outcomes and fallback routes.
 
-## 18. Genesis history, creator context and constitutional training
+## 18. Genesis history and private constitutional records
 
-The [Genesis–Cosmo Historical Requirements & Identity Audit](GENESIS-COSMO-HISTORICAL-REQUIREMENTS-IDENTITY-AUDIT-v1.md) is the current recovery baseline, not a declaration that history recovery is complete. Genesis remains the predecessor and origin record; Cosmo is the current public/work identity; Cosmos is retained as a historical alias. Preserve original creator and protocol labels verbatim until reconciled.
+Genesis remains Cosmo's predecessor/origin history. The full historical recovery audit, original creator records, private creator context, moral/constitutional source material, private messages and contributor/IP records must be maintained in a separate private repository or secured backend—not this public-safe prototype repository.
 
-Cosmo must maintain three separate governed layers:
-1. **Cosmo Constitution:** stable moral and safety principles, policy boundaries and corrigibility.
-2. **Creator Context Profile:** user-confirmed identity, preferences, goals, working context and explicit instructions, with provenance, scope, sensitivity and user controls.
-3. **Project/Business Knowledge:** isolated, source-linked records with independent access controls.
+Preserve original names, aliases, source text, timestamps, versions and contradictions. Do not publish private identity mappings, personal training data, unpublished research or IP contribution records in public documentation. Recover original Genesis source, Claude Cosmo v0.2, earlier prototypes and archive media into a permission-controlled source of truth before declaring the historical audit complete.
 
-The creator context must not be confused with Cosmo's identity or constitution. Explicit instructions outrank inferred preferences. Sensitive personal details require appropriate consent and purpose limitation. Private user data must not be used for external model training or disclosed to other agents/providers without explicit permission.
-
-Historical TIVA roles, Genesis/PICC witness formats, IP protection, Tree of Knowledge, GACC, Evaluation Vault, Master Briefing, Portfolio Ratings, Tech Inventory, Business Strategy/Research Board, Decisions Register, Consolidation Log and Approvals Inbox must remain in the recovery ledger. The unresolved Emanuel/Fanus creator-label discrepancy must not be silently overwritten.
-
-The proposed moral constitution is reviewable and must be traceable to source wording. It is not enforced merely by a prompt: consequential actions remain governed by the independent policy core, scoped permissions, human approval, audit and appeal.
+Keep three governed knowledge domains distinct in the production design: (1) Cosmo's constitution and safety policy, (2) the user's consent-controlled creator context profile, and (3) isolated project/business knowledge. Explicit user instructions outrank inferred preferences; sensitive personal information requires purpose limitation and appropriate consent. Consequential actions remain governed by independent policy enforcement, scoped permissions, human approval, audit and appeal.
