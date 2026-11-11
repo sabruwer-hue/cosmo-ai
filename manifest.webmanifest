@@ -1,0 +1,1 @@
+{"id":"./","name":"Cosmo AI","short_name":"Cosmo","description":"Private Cosmo intelligence workspace.","start_url":"./","scope":"./","display":"standalone","background_color":"#0b1220","theme_color":"#0b1220","orientation":"portrait-primary","icons":[{"src":"assets/cosmo-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
