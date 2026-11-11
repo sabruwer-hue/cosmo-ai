@@ -818,3 +818,133 @@ if (vaultExport) {
     document.body.append(link); link.click(); link.remove(); URL.revokeObjectURL(url);
   });
 })();
+
+
+// Adaptive Learning & Preference Engine v1 — governed, session-only preference and feedback capture.
+(() => {
+  const preferenceForm = document.querySelector("#preference-form");
+  if (!preferenceForm) return;
+  const feedbackForm = document.querySelector("#learning-feedback-form");
+  const agentSelect = document.querySelector("#feedback-agent");
+  const recordsNode = document.querySelector("#adaptive-records");
+  const countNode = document.querySelector("#adaptive-count");
+  const exportButton = document.querySelector("#adaptive-export");
+  const methodsNode = document.querySelector("#learning-method-list");
+  const profiles = [];
+  const feedbackEvents = [];
+  const methods = [
+    ["Explicit preference learning","Use direct user instructions as the strongest preference signal; ask before interpreting ambiguity.","User-approved settings; never override safety policy."],
+    ["Supervised learning","Learn from labelled examples and corrections with known target outcomes.","Requires lawful, consented datasets, quality labels and evaluation."],
+    ["Feedback / preference learning","Use ratings, comparisons and corrections to propose better responses.","Keep task feedback separate from durable profile changes."],
+    ["Contextual adaptation","Adapt to task, time, device, environment, role and current constraints.","Context is temporary unless the user approves saving it."],
+    ["Online / incremental learning","Update a bounded preference estimate as new feedback arrives.","Use drift checks, rollback and human review; no silent model updates."],
+    ["Active learning","Ask the user the most useful clarifying question when uncertainty matters.","Minimise interruptions; never infer sensitive traits."],
+    ["Unsupervised pattern discovery","Find recurring patterns, clusters and possible duplicates in authorised data.","Patterns are hypotheses, not facts or user preferences."],
+    ["Semi-supervised learning","Combine limited human labels with larger unlabelled datasets.","Track label origin and uncertainty; validate before use."],
+    ["Transfer learning","Reuse general capabilities across tasks without copying private profile data.","Transfer only approved, non-sensitive capability; isolate user memory."],
+    ["Few-shot / in-context learning","Use a small set of approved examples within the current task or session.","Context examples are not permanent training."],
+    ["Meta-learning","Evaluate which learning strategy works best for a task or user-approved profile.","Requires comparative tests; do not assume a universal best method."],
+    ["Reinforcement learning","Optimise actions against explicit reward and constraint models in simulation or safe sandboxes.","Never trial-and-error on live safety-critical, medical, financial or physical controls."],
+    ["Imitation / demonstration learning","Learn task patterns from user demonstrations and approved workflows.","Require permission, provenance and a way to correct demonstrations."],
+    ["Retrieval-augmented learning","Retrieve approved memories and sources to ground current responses.","Retrieval is not model-weight training; cite source records."],
+    ["Multi-agent / collaborative learning","Let specialist agents exchange scoped findings and lessons through shared contracts.","No unrestricted profile sharing; enforce workspace and field-level permissions."],
+    ["Outcome and prediction learning","Compare predictions with verified outcomes and evaluate calibration over time.","Score only after outcome verification; preserve the original forecast."],
+    ["Continual learning governance","Monitor drift, regressions, stale preferences, forgetting and rollback.","Version datasets, prompts, adapters and policies; retain evaluation baselines."]
+  ];
+  methods.forEach(([name,description,guard]) => {
+    const item = document.createElement("article"); item.className = "learning-method";
+    const title = document.createElement("strong"); title.textContent = name;
+    const detail = document.createElement("p"); detail.textContent = description;
+    const boundary = document.createElement("small"); boundary.textContent = guard;
+    item.append(title,detail,boundary); methodsNode.append(item);
+  });
+  function populateAgents() {
+    const selected = agentSelect.value;
+    agentSelect.replaceChildren();
+    const placeholder = document.createElement("option"); placeholder.value = "";
+    placeholder.textContent = profiles.length ? "Choose a profile" : "Create a preference profile first";
+    agentSelect.append(placeholder);
+    profiles.forEach((profile) => {
+      const option = document.createElement("option");
+      option.value = profile.code; option.textContent = profile.agent;
+      agentSelect.append(option);
+    });
+    if (profiles.some((profile) => profile.code === selected)) agentSelect.value = selected;
+  }
+  function render() {
+    recordsNode.replaceChildren();
+    countNode.textContent = (profiles.length + feedbackEvents.length) + " RECORDS";
+    exportButton.disabled = profiles.length + feedbackEvents.length === 0;
+    if (!profiles.length && !feedbackEvents.length) {
+      const empty = document.createElement("p"); empty.className = "knowledge-empty";
+      empty.textContent = "No preference or feedback drafts yet."; recordsNode.append(empty); return;
+    }
+    profiles.forEach((profile) => {
+      const card = document.createElement("article"); card.className = "adaptive-record";
+      const head = document.createElement("div"); head.className = "knowledge-record-top";
+      addTextElement(head,"strong","","" + profile.code + " · " + profile.agent);
+      addTextElement(head,"span","tag",profile.source.replaceAll("_"," ") + " · " + profile.consent.replaceAll("_"," "));
+      addTextElement(card,"p","knowledge-evidence","Style: " + profile.communication + " · Detail: " + profile.detail + " · Pace: " + profile.pace + " · Initiative: " + profile.initiative);
+      addTextElement(card,"p","knowledge-evidence","Interests/context: " + (profile.interests || "Not supplied"));
+      addTextElement(card,"p","knowledge-evidence","Avoid/handle carefully: " + (profile.avoid || "Not supplied"));
+      card.append(head); recordsNode.append(card);
+    });
+    feedbackEvents.forEach((event) => {
+      const card = document.createElement("article"); card.className = "adaptive-record";
+      const head = document.createElement("div"); head.className = "knowledge-record-top";
+      addTextElement(head,"strong","",event.code + " · " + event.agent);
+      addTextElement(head,"span","tag","RATING " + event.rating + "/5 · " + event.outcome.replaceAll("_"," "));
+      card.append(head);
+      addTextElement(card,"p","knowledge-claim",event.task);
+      addTextElement(card,"p","knowledge-evidence",event.lesson);
+      addTextElement(card,"small","", "Scope: " + event.scope.replaceAll("_"," ") + " · Candidate only · " + event.createdAt);
+      recordsNode.append(card);
+    });
+  }
+  preferenceForm.addEventListener("submit",(event) => {
+    event.preventDefault();
+    const agent = document.querySelector("#preference-agent").value.trim();
+    if (!agent) return;
+    const profile = {
+      code:"DRAFT-PREF-" + String(profiles.length+1).padStart(3,"0"),
+      agent, communication:document.querySelector("#preference-communication").value,
+      detail:document.querySelector("#preference-detail").value,
+      pace:document.querySelector("#preference-pace").value,
+      initiative:document.querySelector("#preference-initiative").value,
+      interests:document.querySelector("#preference-interests").value.trim(),
+      avoid:document.querySelector("#preference-avoid").value.trim(),
+      source:document.querySelector("#preference-source").value,
+      consent:document.querySelector("#preference-consent").value,
+      createdAt:new Date().toISOString()
+    };
+    profiles.push(profile); populateAgents(); agentSelect.value = profile.code;
+    render(); preferenceForm.reset();
+  });
+  feedbackForm.addEventListener("submit",(event) => {
+    event.preventDefault();
+    const profile = profiles.find((item) => item.code === agentSelect.value);
+    const task = document.querySelector("#feedback-task").value.trim();
+    const lesson = document.querySelector("#feedback-note").value.trim();
+    if (!profile || !task || !lesson) return;
+    feedbackEvents.unshift({
+      code:"DRAFT-FEEDBACK-" + String(feedbackEvents.length+1).padStart(3,"0"),
+      profileCode:profile.code,agent:profile.agent,task,
+      rating:Number(document.querySelector("#feedback-rating").value),
+      outcome:document.querySelector("#feedback-outcome").value,
+      lesson,scope:document.querySelector("#feedback-consent").value,
+      createdAt:new Date().toISOString(),status:"candidate_only"
+    });
+    render(); feedbackForm.reset(); agentSelect.value = profile.code;
+  });
+  exportButton.addEventListener("click",() => {
+    const payload = {
+      exportType:"cosmo-adaptive-learning-session-drafts",schemaVersion:"1.0",
+      exportedAt:new Date().toISOString(),
+      warning:"Session-only preference and feedback drafts. Not permanent profile data, model training or a backup.",
+      profiles,feedbackEvents,learningMethods:methods.map(([name,description,guard])=>({name,description,guard}))
+    };
+    const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}));
+    const link=document.createElement("a");link.href=url;link.download="cosmo-adaptive-learning-drafts.json";
+    document.body.append(link);link.click();link.remove();URL.revokeObjectURL(url);
+  });
+})();
