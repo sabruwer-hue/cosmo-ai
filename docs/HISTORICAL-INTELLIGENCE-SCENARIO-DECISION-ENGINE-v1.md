@@ -325,3 +325,11 @@ This document specifies the intended architecture. It does not mean Cosmo curren
 
 ---
 **Document control:** COSMO-HIST-INTEL-001 · Version 1.0.
+
+
+## 19. Technological intelligence integration
+
+For technical, scientific and invention-related decisions, the Historical Intelligence Engine should call the [Technological Intelligence & Discovery Map](TECHNOLOGICAL-INTELLIGENCE-DISCOVERY-MAP-v1.md). Historical cases, prior-art research, technology maturity, patent status, standards, component dependencies, failure records and prototype outcomes become evidence nodes in the same scenario graph.
+
+A technology scenario may branch across different design choices and different events within each design: target met, partial performance, early failure, supply interruption, new regulation, unexpected discovery or unsafe behaviour. Each event can produce multiple downstream outcomes and next actions. The resulting technology pathway and test evidence are linked to CIPHER, PICC, the Evaluation Vault, both Memory Vaults and the verified outcome ledger.
+
