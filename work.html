@@ -172,15 +172,15 @@
   $("package-form").reset();status("package-status","Package registered: "+code,"ok");loadPackages();
  });
  document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b===btn));document.querySelectorAll(".section").forEach(s=>s.hidden=s.id!==btn.dataset.tab);if(btn.dataset.tab==="approvals")loadApprovals();if(btn.dataset.tab==="packages")loadPackages()}));
- $("auth-form").addEventListener("submit",async e=>{e.preventDefault();status("auth-status","Sending secure sign-in link…");const {error}=await db.auth.signInWithOtp({email:$("email").value.trim(),options:{emailRedirectTo:location.href,shouldCreateUser:false}});status("auth-status",error?error.message:"Check your email and open the sign-in link on this device.",error?"error":"ok")});
+ $("auth-form").addEventListener("submit",async e=>{e.preventDefault();status("auth-status","Sending secure sign-in link…");const {error}=await db.auth.signInWithOtp({email:$("email").value.trim(),options:{emailRedirectTo:location.href,shouldCreateUser:true}});status("auth-status",error?error.message:"Check your email and open the sign-in link on this device.",error?"error":"ok")});
  $("signout").addEventListener("click",async()=>{await db.auth.signOut();location.reload()});
  db.auth.onAuthStateChange((_event,session)=>setSession(session));
  async function setSession(session){
   user=session?.user||null;
   if(!user){$("auth").hidden=false;$("session-pill").textContent="Not signed in";return}
-  const {data:gate,error:gateError}=await db.functions.invoke("cosmo-admin-gate",{body:{}});
-  if(gateError||!gate?.allowed){user=null;$("auth").hidden=false;$("session-pill").textContent="Owner verification required";status("auth-status",gate?.error||gateError?.message||"This account is not authorised for Cosmo Work.","error");return}
-  $("auth").hidden=true;$("session-pill").textContent="Owner verified · "+(user.email||"Cosmo owner");
+  const {data:gate,error:gateError}=await db.functions.invoke("cosmo-access-gate",{body:{product_code:"COSMO-WORK"}});
+  if(gateError||!gate?.allowed){$("auth").hidden=false;$("session-pill").textContent="Cosmo Work membership required";status("auth-status",(gate?.reason||gate?.error||gateError?.message||"Cosmo Work package required.")+" Choose a free tier or trial in the Membership Portal.","error");return}
+  $("auth").hidden=true;$("session-pill").textContent="Cosmo Work · "+(gate.subscription?.status||"Creator access");
   await loadTasks();await loadApprovals();await loadPackages();
  }
  db.auth.getSession().then(({data})=>setSession(data.session));
