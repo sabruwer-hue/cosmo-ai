@@ -418,3 +418,86 @@ Monitor live/paper performance against expected distributions, execution quality
 ### I. Required acceptance tests
 
 Test reproducible builds; deterministic replay; strategy version lineage; parameter-boundary enforcement; no-look-ahead and leakage resistance; realistic fees and fills; adversarial and stress periods; multiple-testing and overfitting controls; champion/challenger switching stability; kill-switch operation; broker outage and duplicate-order handling; permission boundaries; and verified rollback. Independent reviewers must be able to reproduce the result from the recorded data and version identifiers.
+
+
+## 6.9 Strategy Analysis & Allocation Engine
+
+**Purpose:** independently analyse market conditions, the available strategy library and each strategy's current fitness, then recommend the most suitable eligible strategy (or no strategy) for a particular instrument, timeframe, portfolio and risk mandate.
+
+This is a distinct decision-support layer between the Market Indicator & Scenario Engine, Strategy Evolution Engine and Trading Engine. It does not itself create market facts, bypass risk controls or authorise orders.
+
+### A. Three-sided analysis
+
+The analyzer evaluates three connected evidence sets:
+
+1. **Market suitability:** current regime probabilities, trend, volatility, liquidity, breadth, event calendar, macro/cross-asset context, data quality and scenario triggers/invalidation.
+2. **Strategy fitness:** each strategy's declared purpose, instrument/timeframe compatibility, historical and out-of-sample performance, recent paper/live performance, drawdown, tail risk, costs, slippage sensitivity, stability and known failure conditions.
+3. **Portfolio and execution suitability:** existing positions, correlated exposure, available capital, concentration, liquidity/capacity, risk budget, trading hours, broker/instrument constraints and operational health.
+
+### B. Strategy compatibility matrix
+
+Maintain a versioned compatibility matrix for each strategy × instrument × timeframe × market regime. Record:
+- eligible, conditional or ineligible status;
+- evidence period and sample size;
+- expected performance range and uncertainty;
+- drawdown/tail-risk profile;
+- cost and liquidity sensitivity;
+- regime transitions in which it tends to fail;
+- minimum data and execution requirements;
+- last review and expiry/reassessment date.
+
+A strategy that is not validated for a particular instrument or timeframe cannot be assumed suitable merely because it worked elsewhere.
+
+### C. Comparative strategy scorecard
+
+First apply non-negotiable eligibility gates: data quality, legal/instrument availability, tested compatibility, operational status, drawdown and exposure limits, and required approval tier. Only eligible candidates are ranked.
+
+Compare candidates using a transparent scorecard that includes:
+- market-regime fit;
+- net-of-cost, out-of-sample risk-adjusted performance;
+- downside/tail risk and drawdown;
+- stability across rolling windows and similar historical regimes;
+- execution quality, liquidity and capacity;
+- portfolio diversification and incremental risk;
+- model uncertainty, sample size and complexity penalty;
+- recent degradation and drift.
+
+Display component scores and evidence, not only one opaque overall number. Weights are versioned and cannot be altered by a strategy to improve its own ranking. The analyzer must not optimize solely for maximum projected profit or win rate.
+
+### D. Analyzer outputs
+
+For each instrument and decision horizon, return one of:
+- **Preferred candidate:** best eligible fit, with evidence and limitations;
+- **Conditional candidate:** potentially suitable if stated conditions are met;
+- **Monitor:** regime or evidence is not sufficiently clear;
+- **No suitable strategy:** none passes the gates;
+- **Pause:** data, execution, risk or operational conditions require suspension.
+
+Each recommendation includes alternatives, reasons for rejection, confidence/calibration, contrary evidence, expected cost assumptions, risk contribution, triggers for reassessment and a validity/expiry time. Explain why the next-best candidate ranked lower.
+
+### E. Continuous re-analysis
+
+Re-evaluate on material market-regime changes, indicator alerts, scheduled review intervals, strategy performance drift, execution-cost changes, portfolio changes, instrument events and data-quality warnings. Use minimum dwell times, hysteresis and switching-cost analysis to avoid unnecessary strategy churn. A strategy switch is not triggered by a single noisy indicator.
+
+Before switching, compare the incumbent and candidate under the same current data, constraints and cost assumptions. If no candidate is clearly eligible, keep the approved incumbent only if its safety conditions still hold; otherwise reduce exposure or stop trading.
+
+### F. Human-readable strategy decision card
+
+Every decision card records:
+- instrument, venue, timeframe and timestamp;
+- detected market regime and scenario references;
+- current strategy and candidate alternatives;
+- compatibility and scorecard breakdown;
+- evidence window, sample size and test versions;
+- portfolio/risk constraints checked;
+- recommended action: retain, switch candidate, monitor, pause or no trade;
+- exact conditions that would change the recommendation;
+- approval tier and who/what authorised any subsequent action.
+
+### G. Learning and feedback
+
+After each review period or completed trade, compare expected conditions and strategy behaviour with observed outcomes. Attribute performance to market regime, signal, sizing, execution, costs and operational factors where possible. Update strategy evidence only through reproducible evaluation; preserve losing periods and rejected candidates. Do not allow a single profitable trade to validate a strategy or a short losing streak alone to invalidate it.
+
+### H. Required tests and boundaries
+
+Test compatibility decisions against historical regime transitions, conflicting indicators, low sample sizes, stale data, correlated strategies, changing spreads, portfolio concentration, sudden volatility, missing broker data and repeated switching. Confirm that hard eligibility gates override rankings and that the analyzer can return no suitable strategy. The analyzer may recommend or request a switch; the execution gateway enforces authority, approvals and risk limits independently.
