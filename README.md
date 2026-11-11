@@ -36,6 +36,7 @@ These are design and audit documents, not evidence that the described services h
 - [Memory Versioning & Contradiction Review v1.0](docs/MEMORY-VERSIONING-CONTRADICTION-REVIEW-v1.md) — immutable version snapshots, review outcomes, evidence discipline and production acceptance tests.
 - [Memory Intelligence & Retrieval Engine v1.0](docs/MEMORY-INTELLIGENCE-RETRIEVAL-ENGINE-v1.md) — retrieval pipeline, traceability, provenance, ranking and production acceptance tests.
 - [Adaptive Learning & Preference Engine v1.0](docs/ADAPTIVE-LEARNING-PREFERENCE-ENGINE-v1.md) — preference model, learning techniques, feedback lifecycle, agent isolation, safety boundaries and acceptance tests.
+- [Persistent Learning & Preference Data Architecture v1.0](docs/PERSISTENT-LEARNING-PREFERENCE-DATA-ARCHITECTURE-v1.md) — persistent logical records, API contracts, approval lifecycle, security, retention, recovery and production acceptance tests.
 
 ## Current prototype modules
 
@@ -46,6 +47,7 @@ These are design and audit documents, not evidence that the described services h
 - **Memory Versioning & Contradiction Review:** creates immutable-in-session memory snapshots with change reasons and basis, displays version timelines, and records a reasoned review outcome for contradiction links without deleting either side. All data remains session-only.
 - **Memory Intelligence & Retrieval Engine:** searches session-only memory, history, knowledge and relationship drafts using transparent keyword matching; supports filters, relevance ordering, provenance/relationship/version inspection and JSON retrieval-trace export. This is not semantic AI search and cannot retrieve records absent from the current page session.
 - **Adaptive Learning & Preference Engine:** separate agent preference profiles, feedback/outcome capture, learning-method catalogue, scoped learning candidates and JSON export. Session-only; no model training or persistent adaptation.
+- **Persistent Learning & Preference Data Architecture:** provider-neutral production design for durable user/workspace/agent profiles, immutable preference versions, feedback/outcome ledgers, approval-bound learning proposals, evaluation, rollback, permission isolation, export, deletion and recovery. Design only; no backend has been deployed.
 
 ## Status vocabulary
 
