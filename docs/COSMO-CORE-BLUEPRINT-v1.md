@@ -273,3 +273,8 @@ Cosmo Trading Intelligence maintains a versioned library of instrument- and regi
 ## 23. Strategy Analysis & Allocation Engine
 
 A dedicated analyzer evaluates market-regime suitability, strategy fitness and portfolio/execution constraints for each instrument and timeframe. It applies hard eligibility gates before comparing approved strategies on transparent, risk-adjusted, net-of-cost and out-of-sample evidence. It returns a preferred candidate, conditional candidate, monitor, no-suitable-strategy or pause outcome, with reasons, alternatives, uncertainty and reassessment triggers. It continuously re-evaluates material changes while using switching hysteresis to avoid churn. The analyzer recommends; the independent risk engine and execution gateway enforce permissions, limits and approvals.
+
+
+## 24. Cosmo Trading Wallet & Capital Management
+
+Cosmo Trading Intelligence includes a dedicated Trading Wallet and capital ledger to separate user-allocated trading capital from personal and other project funds. The initial design is non-custodial: actual funds remain in the user's own authorised bank, broker or exchange account; Cosmo records allocations and reconciles provider-confirmed balances through read-only connections first. Paper balances remain separate. Funding and withdrawals require direct user action and provider authentication. Bots and AI agents have no withdrawal authority and cannot raise budgets, leverage or risk limits. Any future custody, payment initiation or third-party asset handling requires separate legal, regulatory, security and licensing review.
