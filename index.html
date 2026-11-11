@@ -144,6 +144,33 @@
             <div class="vault-list-head"><strong>Source archive</strong><span class="tag" id="history-count">0 DRAFTS</span></div><div id="history-empty" class="knowledge-empty">No source drafts yet.</div><div id="history-list" class="vault-list" aria-live="polite"></div>
           </article>
         </div>
+
+        <section class="relationship-section" id="memory-relationships">
+          <div class="section-heading"><div><p class="eyebrow">KNOWLEDGE GRAPH FOUNDATION</p><h2>Memory Relationship Engine</h2></div><span class="muted">Explicit links · session-only demo</span></div>
+          <div class="relationship-intro"><strong>Relationships describe how records connect.</strong><span>Cosmo must preserve disagreements and show why a link exists. A relationship is a recorded assertion, not proof that either record is true.</span></div>
+          <div class="relationship-grid">
+            <article class="panel relationship-form-panel">
+              <div class="panel-title"><div><p class="eyebrow">CREATE A TRACEABLE LINK</p><h3>New relationship</h3></div><span class="panel-symbol">⌁</span></div>
+              <form id="relationship-form" class="vault-form">
+                <label for="relationship-from">From memory</label><select id="relationship-from" required><option value="">Create a memory first</option></select>
+                <label for="relationship-type">Relationship type</label>
+                <select id="relationship-type" required>
+                  <option value="supports">Supports</option><option value="contradicts">Contradicts</option><option value="refines">Refines / adds detail</option><option value="supersedes">Supersedes / replaces current guidance</option><option value="duplicate_of">Possible duplicate of</option><option value="depends_on">Depends on</option><option value="related_to">Related to</option><option value="derived_from">Derived from</option>
+                </select>
+                <label for="relationship-to">To memory</label><select id="relationship-to" required><option value="">Create at least two memories</option></select>
+                <label for="relationship-note">Reason / evidence note</label><textarea id="relationship-note" rows="3" maxlength="900" placeholder="Why is this link being recorded? Add evidence, uncertainty or review context."></textarea>
+                <button class="send-btn" type="submit">Record relationship <b>＋</b></button>
+              </form>
+              <p class="prototype-note">Links are session-only assertions. Cosmo does not automatically resolve contradictions or decide which memory is correct.</p>
+            </article>
+            <article class="panel relationship-records-panel">
+              <div class="panel-title"><div><p class="eyebrow">LINK REGISTER</p><h3>Relationship map</h3></div><div class="knowledge-tools"><span class="tag" id="relationship-count">0 LINKS</span><button class="export-btn" id="relationship-export" type="button" disabled>Export links ↓</button></div></div>
+              <div class="relationship-audit" id="relationship-audit" aria-live="polite">No relationships recorded. Add at least two memory drafts to begin.</div>
+              <div id="relationship-empty" class="knowledge-empty">No relationships yet.</div>
+              <div id="relationship-list" class="relationship-list" aria-live="polite"></div>
+            </article>
+          </div>
+        </section>
         <p class="prototype-note">Prototype only: temporary draft IDs are not permanent Cosmo codes. Nothing here is saved to a database, backed up, access-controlled or retained after the page session ends. Do not enter sensitive or private information.</p>
       </section>
       <footer><span> COSMO AI <b>·</b> PROTOTYPE BUILD</span><span>Ideas deserve evidence. Progress deserves a record.</span></footer>
