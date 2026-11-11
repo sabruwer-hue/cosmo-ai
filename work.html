@@ -61,7 +61,7 @@
    const sel=document.createElement("select");["backlog","planned","in_progress","blocked","awaiting_approval","completed","cancelled"].forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v.replaceAll("_"," ");o.selected=v===t.status;sel.append(o)});
    sel.addEventListener("change",()=>changeTaskStatus(t,sel.value));
    const open=document.createElement("button");open.textContent="Break into steps";open.addEventListener("click",()=>openTask(t));
-   actions.append(sel,open);card.append(head,desc,meta,actions);$("task-list").append(card);
+   const request=document.createElement("button");request.textContent="Request approval";request.addEventListener("click",async()=>{const summary=window.prompt("Describe the action that needs your approval:");if(!summary?.trim())return;const {data,error}=await db.from("cosmo_agent_approvals").insert({owner_id:user.id,task_id:t.id,action_summary:summary.trim(),risk_level:"medium"}).select("approval_code").single();if(error){status("list-status","Approval request failed: "+error.message,"error");return}await eventLog(t.id,"approval_requested","Approval requested: "+summary.trim(),{approval_code:data.approval_code});status("list-status","Approval request saved: "+data.approval_code,"ok")});actions.append(sel,open,request);card.append(head,desc,meta,actions);$("task-list").append(card);
   });
  }
  async function changeTaskStatus(task,next){
