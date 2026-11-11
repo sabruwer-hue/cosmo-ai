@@ -334,3 +334,87 @@ Before any signal is used beyond research:
 - Require independent review and version-bound approval before promoting a signal model.
 
 The first release is a research dashboard and alert feed operating on historical/replay data, then authorised delayed/live market feeds. Paper-trading integration follows only after the alert quality and data pipeline are verified. Real-money execution remains governed by the authority ladder in section 6.5.
+
+
+## 6.8 Cosmo Strategy Evolution Engine
+
+**Purpose:** generate, evaluate, adapt and select trading-strategy candidates as market conditions change. It is a research and controlled optimisation system, not an unrestricted self-modifying live trader.
+
+### A. Strategy portfolio, not one universal bot
+
+Maintain a versioned library of strategies with explicit instrument coverage, timeframe, market-regime suitability, entry/exit logic, position sizing, stop/invalidation rules, maximum holding period, liquidity requirements, cost assumptions and known failure modes. Candidate families may include trend-following, mean-reversion, breakout, momentum, volatility-aware, event-aware and defensive/no-trade strategies. A strategy must be allowed to declare itself unsuitable for the current regime.
+
+### B. Strategy fitness and selection scale
+
+For each candidate, calculate a transparent, multi-dimensional score. Do not rank strategies by raw profit or win rate alone. The scorecard includes:
+- net returns after realistic fees, spreads, slippage, funding, borrow and currency conversion;
+- risk-adjusted return and downside risk;
+- maximum drawdown, tail loss and recovery time;
+- stability across instruments, time periods and market regimes;
+- out-of-sample and walk-forward performance;
+- trade count and statistical uncertainty;
+- capacity, liquidity and market-impact limits;
+- exposure, correlation and portfolio diversification;
+- operational reliability and data sensitivity;
+- complexity and overfitting penalty.
+
+Use hard eligibility gates before any weighted score. A candidate that breaches a risk limit, lacks sufficient out-of-sample evidence, relies on poor-quality data or fails operational tests is ineligible regardless of its return. Weights and thresholds are versioned, justified and independently reviewed; never quietly tune them to favour a desired result.
+
+### C. Adaptive strategy creation loop
+
+1. Detect a possible market-regime change using the Market Indicator & Scenario Engine.
+2. Explain which existing strategy assumptions may no longer fit.
+3. Generate one or more candidate strategies or parameter variants from approved templates and a constrained strategy specification.
+4. Record the hypothesis, intended regime, expected edge, risks, parameters, code/specification version and parent strategy.
+5. Run static checks, unit tests, risk-policy checks and reproducible historical replay.
+6. Test chronologically using train, validation and untouched test periods; use walk-forward evaluation and regime-specific holdouts.
+7. Include realistic transaction costs, slippage, spreads, partial fills, latency, funding, market impact and data outages.
+8. Compare candidates against the current champion, simple baselines and a no-trade/cash baseline.
+9. Run paper trading in shadow mode and monitor divergence between simulated and observed execution.
+10. Promote only through the release gates below. Otherwise reject, revise or archive the candidate with its failure evidence.
+
+### D. Controlled strategy rewriting
+
+The engine may automatically draft revised strategy logic, parameters and candidate code. It must not directly edit a live production bot's active strategy. Prefer a typed, constrained strategy definition or domain-specific language for orders, conditions and risk rules; generated executable code, if needed, runs in a network-restricted sandbox with no broker credentials, secrets, withdrawal capability or production order route.
+
+Every revision receives a new immutable version ID and records:
+- parent version and exact diff;
+- hypothesis and reason for change;
+- market data snapshot IDs and timestamps;
+- model/tool versions and generation parameters;
+- test results, rejected cases and unresolved limitations;
+- reviewer and approval records;
+- promotion, rollback and retirement history.
+
+Never overwrite a strategy version or erase losing experiments. Reproducibility and rollback are mandatory.
+
+### E. Champion–challenger and regime switching
+
+Keep the currently approved strategy as the **champion**. New candidates are **challengers** and first operate in offline replay, then shadow/paper mode. Compare them over predeclared windows and regimes. Switch only if the challenger passes all evidence, risk, operational and approval gates. Use hysteresis, minimum observation periods and cooldowns to prevent rapid switching when indicators fluctuate. If no candidate qualifies, retain the safe fallback or do not trade.
+
+A strategy's suitability score is conditional on instrument, horizon and regime. Do not assume a strategy that performs well on Bitcoin also works on USD/ZAR or equities.
+
+### F. Objective: best risk-adjusted outcome, not maximum possible win
+
+The optimisation objective is to seek robust, net-of-cost, risk-adjusted performance within explicit capital and loss constraints. It is not to maximise a backtest's profit, win rate, trade frequency or leverage. The engine must model downside and tail scenarios, capital preservation, concentration, correlation, liquidity and the possibility of losing money. A no-trade decision can be the highest-quality decision.
+
+No strategy can know the maximum it could have won from a future scenario. Optimisation must avoid hindsight and use only information available at the decision time.
+
+### G. Promotion and authority gates
+
+- **E0 — Draft:** generate a candidate specification; no trading.
+- **E1 — Offline tested:** reproducible replay and test suite passed; no live orders.
+- **E2 — Shadow:** evaluate live signals without sending orders.
+- **E3 — Paper champion:** paper-trade with realistic simulated execution and monitoring.
+- **E4 — Human-approved limited pilot:** only after independent review, legal/broker clearance, security review and explicit user approval; strict capital, per-trade, daily-loss, drawdown, exposure and instrument limits.
+- **E5 — Bounded automation:** disabled by default; requires separate opt-in and review, broker-side controls, revocable scoped credentials, independent kill switch, outage-safe behaviour, alerts and periodic re-authorisation.
+
+No automatic promotion to E4 or E5. A strategy rewrite cannot grant itself greater authority, increase its own limits, disable safeguards or select a broker. Withdrawals, transfers and changes to beneficiaries remain outside the bot's authority.
+
+### H. Monitoring, degradation and rollback
+
+Monitor live/paper performance against expected distributions, execution quality, slippage, drift, calibration, drawdown, feed health and regime suitability. Automatically pause the affected strategy on stale/corrupt data, unexplained behaviour, breached limits, broker errors or material drift. Roll back to the last approved version or stop trading; never automatically increase risk to recover losses. Record incident evidence and require human review before restart.
+
+### I. Required acceptance tests
+
+Test reproducible builds; deterministic replay; strategy version lineage; parameter-boundary enforcement; no-look-ahead and leakage resistance; realistic fees and fills; adversarial and stress periods; multiple-testing and overfitting controls; champion/challenger switching stability; kill-switch operation; broker outage and duplicate-order handling; permission boundaries; and verified rollback. Independent reviewers must be able to reproduce the result from the recorded data and version identifiers.
