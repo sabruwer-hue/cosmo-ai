@@ -109,6 +109,21 @@ An AI-native productivity suite, not merely a chatbot that generates text. **His
 
 **Critical correctness controls:** spreadsheet formulas and transformations must be inspectable and testable; never silently overwrite source files; maintain version history and undo; preserve formatting where supported; clearly label unsupported file features; protect confidential files; validate exports by reopening them. AI-generated financial, legal or technical calculations must show assumptions and require suitable review.
 
+## 3A. Lifetime package licences and optional tool memberships
+
+The commercial model is refined by **Cosmo Lifetime Package Licence & Optional Tool Membership Model v1.0**. A package is acquired through a once-off licence purchase and remains in the customer's purchased-package library even when its installation is removed. The customer may restore or re-upload a compatible package without paying for the same licence again.
+
+Keep three billing layers separate:
+1. **Package licence:** once-off lifetime entitlement.
+2. **Tool entitlements:** each tool is classified as lifetime unlock, recurring membership, metered usage, included allowance or hybrid according to its real ongoing cost.
+3. **Optional upgrades:** additional capacity, seats, storage, AI usage or service levels.
+
+A lifetime package licence must not imply unlimited lifetime cloud hosting, AI inference, storage, live data, third-party integrations or provider fees. Those may require optional memberships or metered usage, disclosed before activation. Removing an installation must never cascade-delete the entitlement.
+
+Illustrative modelling only: a simple package could start around R50 once-off; stable lifetime tool unlocks could be priced separately; hosted/AI-heavy tools may offer affordable optional monthly memberships. These amounts are not approved tariffs. A permanent bounded free tier and a clearly disclosed 14-day paid-tool trial are recommended for acquisition; no silent paid conversion.
+
+See `docs/COSMO-LIFETIME-PACKAGE-LICENCE-AND-TOOL-MEMBERSHIPS-v1.md` for entitlement records, payment/webhook controls, customer flows and acceptance criteria.
+
 ## 3. Cosmo packages and bundle model
 
 Products remain independently purchasable. Bundles provide convenience and value, not artificial lock-in.
