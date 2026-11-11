@@ -13,9 +13,11 @@ async function validSignature(secret:string,id:string,timestamp:string,raw:strin
   if(!secret.startsWith("whsec_"))return false;
   let keyBytes:Uint8Array;
   try { const binary=atob(secret.slice(6)); keyBytes=Uint8Array.from(binary,c=>c.charCodeAt(0)); } catch { return false; }
-  const key=await crypto.subtle.importKey("raw",keyBytes,{name:"HMAC",hash:"SHA-256"},false,["sign"]);
+  const keyData = new Uint8Array(keyBytes).buffer as ArrayBuffer;
+  const key=await crypto.subtle.importKey("raw",keyData,{name:"HMAC",hash:"SHA-256"},false,["sign"]);
   const signed=id+"."+timestamp+"."+raw;
-  const sig=b64(new Uint8Array(await crypto.subtle.sign("HMAC",key,new TextEncoder().encode(signed))));
+  const messageData = new TextEncoder().encode(signed).buffer as ArrayBuffer;
+  const sig=b64(new Uint8Array(await crypto.subtle.sign("HMAC",key,messageData)));
   return header.split(" ").some(part=>{const [version,value]=part.split(",",2);return version==="v1" && !!value && safeEqual(sig,value);});
 }
 
