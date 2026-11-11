@@ -217,3 +217,27 @@ This engine embodies Cosmo's advisory principle: intelligence is not merely prod
 ## 15. Prototype factory and accuracy learning
 
 The build-test-revise-release process is specified in [Prototype Factory, Verification & Release Lifecycle v1.0](PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md). Accuracy based on persistent verified outcomes is specified in [Persistent Accuracy & Outcome Learning Engine v1.0](PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md). These engines close the gap between architectural ideas and measurable improvements. They remain design specifications until their runtime, datasets, backend and approval controls are implemented.
+
+
+## 17. Technological intelligence, discovery and solution engineering
+
+The central intelligence integrates the [Technological Intelligence & Discovery Map](TECHNOLOGICAL-INTELLIGENCE-DISCOVERY-MAP-v1.md). Cosmo must map scientific principles, technologies, components, materials, patents, standards, suppliers, maturity, dependencies, bottlenecks and failure modes. It should discover possible combinations and design hypotheses, then test them through CIPHER, Engineer, Probe Bot, CC-SIM and the controlled Prototype Factory.
+
+For technical problems, Cosmo should produce a traceable solution pack: problem definition, existing solutions, recommended and alternative architectures, components/interfaces, calculations and assumptions, standards, bill of materials, build sequence, test criteria, hazards/safeguards, cost/time ranges, IP/licensing and unresolved questions. A generated design is not a certified engineering design until qualified review and required testing pass.
+
+The technology map must create multiple branches for one problem, including proven solutions, adaptations, combinations, new research, procurement/partnership, low-cost feasibility tests and stop/redesign paths. Each branch records evidence, assumptions, events, multiple possible outcomes and fallback routes.
+
+## 18. Genesis history, creator context and constitutional training
+
+The [Genesis–Cosmo Historical Requirements & Identity Audit](GENESIS-COSMO-HISTORICAL-REQUIREMENTS-IDENTITY-AUDIT-v1.md) is the current recovery baseline, not a declaration that history recovery is complete. Genesis remains the predecessor and origin record; Cosmo is the current public/work identity; Cosmos is retained as a historical alias. Preserve original creator and protocol labels verbatim until reconciled.
+
+Cosmo must maintain three separate governed layers:
+1. **Cosmo Constitution:** stable moral and safety principles, policy boundaries and corrigibility.
+2. **Creator Context Profile:** user-confirmed identity, preferences, goals, working context and explicit instructions, with provenance, scope, sensitivity and user controls.
+3. **Project/Business Knowledge:** isolated, source-linked records with independent access controls.
+
+The creator context must not be confused with Cosmo's identity or constitution. Explicit instructions outrank inferred preferences. Sensitive personal details require appropriate consent and purpose limitation. Private user data must not be used for external model training or disclosed to other agents/providers without explicit permission.
+
+Historical TIVA roles, Genesis/PICC witness formats, IP protection, Tree of Knowledge, GACC, Evaluation Vault, Master Briefing, Portfolio Ratings, Tech Inventory, Business Strategy/Research Board, Decisions Register, Consolidation Log and Approvals Inbox must remain in the recovery ledger. The unresolved Emanuel/Fanus creator-label discrepancy must not be silently overwritten.
+
+The proposed moral constitution is reviewable and must be traceable to source wording. It is not enforced merely by a prompt: consequential actions remain governed by the independent policy core, scoped permissions, human approval, audit and appeal.
