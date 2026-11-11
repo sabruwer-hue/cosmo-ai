@@ -209,3 +209,7 @@ Do not begin production migrations until the implementation gate in the core dat
 This is a design artifact. No database tables, API endpoints, authentication, persistent profile store, background jobs, training pipeline or production release have been deployed by this document.
 
 Before executable migrations are prepared, the owner must confirm backend/database, authentication, tenancy, initial agent roles, object storage and retention/deletion policy. Once confirmed, translate this logical model into reviewed migrations, indexes, constraints, row-level policies and automated tests.
+
+## 15. Continuous improvement integration
+
+The cross-system review, experiment and method-portfolio lifecycle is specified in [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md). Improvement observations and lessons must link to feedback, outcomes, preference versions, evidence, memory versions and approvals. A successful adaptation is not automatically generalised beyond its tested user, agent, task or workspace scope.
