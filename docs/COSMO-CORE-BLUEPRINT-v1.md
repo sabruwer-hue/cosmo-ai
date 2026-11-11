@@ -205,3 +205,7 @@ The production sequence begins with identity, tenancy and server-side authorizat
 Cosmo's cross-system improvement doctrine and architecture are defined in [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md). It establishes proportionate pre-decision reviews, post-task learning reviews, system-wide diagnostics, a persistent improvement registry, a context-aware method portfolio, safe experiments, background monitoring controls, relationship-engine self-review, controlled releases and rollback.
 
 The intended behaviour is continuous analysis and improvement proposals, not unchecked self-modification. Background analysis is read-only by default; consequential changes require designated approvals, tests and rollback controls. The method portfolio preserves useful alternatives rather than discarding every method except the current leader. This remains a design specification, not an operating background service.
+
+## 15. Prototype factory and accuracy learning
+
+The build-test-revise-release process is specified in [Prototype Factory, Verification & Release Lifecycle v1.0](PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md). Accuracy based on persistent verified outcomes is specified in [Persistent Accuracy & Outcome Learning Engine v1.0](PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md). These engines close the gap between architectural ideas and measurable improvements. They remain design specifications until their runtime, datasets, backend and approval controls are implemented.
