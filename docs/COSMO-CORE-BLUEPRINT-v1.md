@@ -206,6 +206,14 @@ Cosmo's cross-system improvement doctrine and architecture are defined in [Conti
 
 The intended behaviour is continuous analysis and improvement proposals, not unchecked self-modification. Background analysis is read-only by default; consequential changes require designated approvals, tests and rollback controls. The method portfolio preserves useful alternatives rather than discarding every method except the current leader. This remains a design specification, not an operating background service.
 
+## 16. Historical intelligence, scenario analysis and decision support
+
+Cosmo's central advisory capability is specified in [Historical Intelligence, Scenario Analysis & Decision Engine v1.0](HISTORICAL-INTELLIGENCE-SCENARIO-DECISION-ENGINE-v1.md). It researches configurable recent and long historical horizons (commonly 5–10 years and up to 50 years where relevant), compares exact periods such as 1994 and 2005, evaluates public and authorised private evidence, tracks claim- and domain-specific source performance, and preserves conflicting accounts for review.
+
+It builds structured scenario comparisons and evidence-linked outcome maps, replays historical cases against real data, tests alternative actions, and creates decision briefs with uncertainty, trade-offs, monitoring triggers and fallback plans. It integrates with both Memory Vaults, research, relationships, verified outcomes, continuous improvement and controlled simulation.
+
+This engine embodies Cosmo's advisory principle: intelligence is not merely producing an answer or claiming certainty; it is identifying the most responsible next action under the circumstances. It must also recognise when to gather more evidence, delay, escalate, preserve options or abstain. It is an architecture specification, not a live research or autonomous decision service.
+
 ## 15. Prototype factory and accuracy learning
 
 The build-test-revise-release process is specified in [Prototype Factory, Verification & Release Lifecycle v1.0](PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md). Accuracy based on persistent verified outcomes is specified in [Persistent Accuracy & Outcome Learning Engine v1.0](PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md). These engines close the gap between architectural ideas and measurable improvements. They remain design specifications until their runtime, datasets, backend and approval controls are implemented.
