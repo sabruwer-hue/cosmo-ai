@@ -256,3 +256,10 @@ Product development follows a continuous evidence-led cycle: discover, define, r
 The expanded product requirements are maintained in [Cosmo Business, Social, Advertising & Trading Intelligence Extensions v1.0](COSMO-BUSINESS-SOCIAL-ADS-TRADING-INTELLIGENCE-v1.md). This adds AccountIT AI, Social Hub, Ad Page and Cosmo Trading Intelligence as distinct product domains with shared platform services and explicit data boundaries.
 
 Trading intelligence must progress from market observation and alerts to research, reproducible backtesting and paper trading before any consideration of broker-connected execution. Live financial actions require legal review, broker permission, explicit user authorisation, independent risk controls, hard loss/exposure limits, revocable access and auditable execution. No return or accuracy guarantee is permitted.
+
+
+## 21. Market Indicator & Scenario Engine
+
+Cosmo Trading Intelligence includes a dedicated Market Indicator & Scenario Engine. It evaluates price/trend, volatility, liquidity, breadth, macroeconomic, cross-asset, fundamental, sentiment, calendar/event and data-quality indicators as applicable to each instrument. It classifies market regimes probabilistically, creates base/upside/downside/tail scenario cards, records trigger and invalidation conditions, and routes evidence-backed informational, watch, opportunity-candidate, risk and data-health alerts to Cosmo.
+
+Indicator definitions, formulas, source provenance, timestamps, versions, calibration and failure modes are recorded in a registry. Correlated signals are not counted as independent evidence. Cosmo must verify data health, contrary evidence, horizon, costs, portfolio exposure and risk limits before deciding whether to ignore, monitor, research, alert, paper-trade or recommend. "No trade" is an explicit valid outcome. An indicator alert never authorises a live investment or overrides the trading authority ladder.
