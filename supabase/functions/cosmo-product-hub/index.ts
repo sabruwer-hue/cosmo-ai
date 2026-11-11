@@ -36,22 +36,50 @@ Deno.serve(async (req: Request) => {
   const { data: store } = await db.from("cosmo_retail_stores")
     .select("name").eq("id", product.store_id).eq("owner_id", product.owner_id).maybeSingle();
 
+  const ownerEmail = (Deno.env.get("COSMO_OWNER_EMAIL") || "").trim().toLowerCase();
+  const { data: ownerRecord } = await db.auth.admin.getUserById(product.owner_id);
+  const creatorOwner = Boolean(ownerEmail && ownerRecord?.user?.email?.toLowerCase() === ownerEmail);
+  const { data: retailPackage } = await db.from("cosmo_subscription_products")
+    .select("id,free_tier_limits").eq("product_code", "COSMO-QR-RETAIL").single();
+  const { data: subscriptions } = retailPackage ? await db.from("cosmo_subscriptions")
+    .select("id,status,trial_ends_at,current_period_end")
+    .eq("owner_id", product.owner_id).eq("product_id", retailPackage.id)
+    .in("status", ["free","trialing","active"]).order("created_at", { ascending: false }).limit(1) : { data: [] };
+  const subscription = subscriptions?.[0] ?? null;
+  const accessEnd = subscription?.status === "trialing" ? subscription.trial_ends_at : subscription?.current_period_end;
+  if (!creatorOwner && (!subscription || (accessEnd && new Date(accessEnd).getTime() <= Date.now()))) {
+    return json({ error: "This store's QR information service is currently unavailable." }, 403);
+  }
+  const { data: toolRows } = subscription ? await db.from("cosmo_subscription_tool_items")
+    .select("cosmo_subscription_tools(tool_code)").eq("owner_id", product.owner_id)
+    .eq("subscription_id", subscription.id).eq("status", "active") : { data: [] };
+  const activeTools = new Set((toolRows ?? []).map((row: any) => row.cosmo_subscription_tools?.tool_code).filter(Boolean));
+  const hasTool = (code: string) => creatorOwner || activeTools.has(code);
+
   const now = new Date();
   const nowIso = now.toISOString();
   const today = nowIso.slice(0, 10);
 
+  if (subscription?.status === "free" && !creatorOwner) {
+    const monthStart = new Date(); monthStart.setUTCDate(1); monthStart.setUTCHours(0,0,0,0);
+    const { count } = await db.from("cosmo_retail_qr_scans").select("id", { count: "exact", head: true })
+      .eq("owner_id", product.owner_id).gte("scanned_at", monthStart.toISOString());
+    const scanLimit = Number(retailPackage?.free_tier_limits?.monthly_scans ?? 250);
+    if ((count ?? 0) >= scanLimit) return json({ error: "This store has reached its monthly free QR scan allowance." }, 429);
+  }
+
   const [productPromo, storePromo, expiryBatch, restockItems] = await Promise.all([
-    db.from("cosmo_retail_promotions").select("title,description,special_price_cents,starts_at,ends_at")
+    hasTool("RETAIL-PROMO") ? db.from("cosmo_retail_promotions").select("title,description,special_price_cents,starts_at,ends_at")
       .eq("owner_id", product.owner_id).eq("product_id", product.id).eq("active", true)
-      .lte("starts_at", nowIso).gt("ends_at", nowIso).order("ends_at", { ascending: true }).limit(1).maybeSingle(),
-    db.from("cosmo_retail_promotions").select("title,description,special_price_cents,starts_at,ends_at")
+      .lte("starts_at", nowIso).gt("ends_at", nowIso).order("ends_at", { ascending: true }).limit(1).maybeSingle() : Promise.resolve({ data: null }),
+    hasTool("RETAIL-PROMO") ? db.from("cosmo_retail_promotions").select("title,description,special_price_cents,starts_at,ends_at")
       .eq("owner_id", product.owner_id).eq("store_id", product.store_id).is("product_id", null).eq("active", true)
-      .lte("starts_at", nowIso).gt("ends_at", nowIso).order("ends_at", { ascending: true }).limit(1).maybeSingle(),
-    db.from("cosmo_retail_product_batches").select("expiry_date,quantity_remaining")
+      .lte("starts_at", nowIso).gt("ends_at", nowIso).order("ends_at", { ascending: true }).limit(1).maybeSingle() : Promise.resolve({ data: null }),
+    hasTool("RETAIL-EXPIRY") ? db.from("cosmo_retail_product_batches").select("expiry_date,quantity_remaining")
       .eq("owner_id", product.owner_id).eq("product_id", product.id).gt("quantity_remaining", 0)
-      .not("expiry_date", "is", null).gte("expiry_date", today).order("expiry_date", { ascending: true }).limit(1).maybeSingle(),
-    db.from("cosmo_retail_restock_items").select("restock_order_id,quantity_ordered,quantity_received")
-      .eq("owner_id", product.owner_id).eq("product_id", product.id).limit(20)
+      .not("expiry_date", "is", null).gte("expiry_date", today).order("expiry_date", { ascending: true }).limit(1).maybeSingle() : Promise.resolve({ data: null }),
+    hasTool("RETAIL-SUPPLIER") ? db.from("cosmo_retail_restock_items").select("restock_order_id,quantity_ordered,quantity_received")
+      .eq("owner_id", product.owner_id).eq("product_id", product.id).limit(20) : Promise.resolve({ data: [] })
   ]);
 
   let nextRestock: { expected_delivery_at: string | null; quantity: number } | null = null;
@@ -72,7 +100,7 @@ Deno.serve(async (req: Request) => {
   }
 
   let imageUrl: string | null = null;
-  if (product.image_path) {
+  if (product.image_path && hasTool("RETAIL-IMAGES")) {
     const { data } = await db.storage.from("cosmo-retail-product-images").createSignedUrl(product.image_path, 3600);
     imageUrl = data?.signedUrl ?? null;
   }
@@ -94,14 +122,15 @@ Deno.serve(async (req: Request) => {
       price_cents: product.price_cents,
       compare_at_price_cents: product.compare_at_price_cents,
       currency: product.currency,
-      stock_on_hand: product.stock_on_hand,
-      low_stock: Number(product.stock_on_hand) <= Number(product.reorder_level),
-      reorder_level: product.reorder_level
+      stock_on_hand: hasTool("RETAIL-STOCK") ? product.stock_on_hand : null,
+      low_stock: hasTool("RETAIL-STOCK") ? Number(product.stock_on_hand) <= Number(product.reorder_level) : null,
+      reorder_level: hasTool("RETAIL-STOCK") ? product.reorder_level : null
     },
     store: { name: store?.name ?? "Participating store" },
+    features: { images: hasTool("RETAIL-IMAGES"), stock: hasTool("RETAIL-STOCK"), expiry: hasTool("RETAIL-EXPIRY"), promotions: hasTool("RETAIL-PROMO"), supplier_orders: hasTool("RETAIL-SUPPLIER") },
     promotion,
-    next_expiry_date: expiryBatch.data?.expiry_date ?? null,
-    next_restock: nextRestock,
+    next_expiry_date: hasTool("RETAIL-EXPIRY") ? (expiryBatch.data?.expiry_date ?? null) : null,
+    next_restock: hasTool("RETAIL-SUPPLIER") ? nextRestock : null,
     generated_at: nowIso,
     notice: "Stock and delivery information is a live snapshot and may change."
   });
