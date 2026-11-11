@@ -63,7 +63,7 @@ Core product areas:
 
 ### 2.3 Team Up AI
 
-An independently saleable AI-powered team workspace:
+An independently saleable AI-powered team workspace. **Historical continuity:** earlier Cosmo prototypes called a related concept **Team Hub AI** and described multi-agent/multi-provider collaboration, parallel work, specialist roles, task ratings and confidence. Team Up AI is the current proposed product name; preserve Team Hub AI as a historical alias until the original concept's full scope is reconciled. The related **DiscussIt** concept—multi-provider debate, devil's-advocate/optimist/auditor/historian roles, prediction/outcome tracking and simulation—should be evaluated as a decision-review capability within Team Up AI or Cosmo Research, not automatically launched as another subscription.
 - Organisations, workspaces, teams, projects and shared workspaces.
 - Human members, roles, permissions, invitations and offboarding.
 - Shared project context and knowledge spaces with source/provenance.
