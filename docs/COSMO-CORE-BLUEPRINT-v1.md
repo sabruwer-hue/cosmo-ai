@@ -193,3 +193,9 @@ Safety, consent, security, legal compliance, access control and tool permissions
 
 ### 12.6 User control and evaluation
 Users must be able to inspect, correct, reject, expire, export and delete profile data subject to lawful retention. Track task success, correction rates, user satisfaction, calibration, latency, error rates, privacy incidents and performance regressions. Preserve model, prompt, adapter, dataset and policy versions with evaluation baselines and rollback records.
+
+## 13. Persistent learning and preference data
+
+The persistent learning design is specified in [Persistent Learning & Preference Data Architecture v1.0](PERSISTENT-LEARNING-PREFERENCE-DATA-ARCHITECTURE-v1.md). It defines user/workspace/agent-scoped profiles, immutable preference versions, feedback and verified outcome ledgers, learning candidates, approval-bound adaptation proposals, evaluation runs, controlled releases, rollback and auditable deletion/export/recovery.
+
+The production sequence begins with identity, tenancy and server-side authorization. No durable profile or learning event may be exposed across household members or agents by default. Background jobs must re-check permission and consent. No adaptation is activated from a rating alone; it must pass proposal, approval and evaluation gates. This is a provider-neutral design, not deployed persistence.
