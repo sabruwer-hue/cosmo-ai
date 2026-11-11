@@ -577,3 +577,116 @@ Show total user-allocated capital, provider cash by currency, reserved funds, op
 - **W4 — Trading integration:** separate approval for narrowly scoped order permissions; no withdrawal rights, with independent risk gateway and kill switch.
 
 Before any live funding or execution, verify provider legitimacy and permissions, jurisdictional availability, account ownership, data/API terms, legal obligations, security and reconciliation behaviour. In South Africa, obtain qualified advice on the applicable financial-services, exchange, payment, crypto-asset and data-protection requirements before offering custody, payment initiation or third-party services.
+
+
+## 6.11 Trading Intelligence Learning & Confidence Framework
+
+**Purpose:** make historical evidence, scenario replay, calibrated confidence and verified outcomes the foundation of Cosmo's trading intelligence. The system learns from successful, unsuccessful, neutral and missed/no-trade scenarios without treating past results as guarantees of future performance.
+
+### A. Historical Trade & Scenario Knowledge Base
+
+Preserve a queryable, versioned record of:
+- completed winning, losing and breakeven trades;
+- rejected, cancelled, expired and partially filled orders;
+- paper trades and shadow signals, clearly separated from real executions;
+- no-trade decisions and missed opportunities, with the information available at the time;
+- historical market scenarios and regime transitions;
+- strategy versions, parameters, indicator snapshots and decision cards;
+- entry/exit rationale, position sizing, risk limits and intended holding period;
+- actual fills, timestamps, fees, spreads, slippage, funding/borrow costs and currency conversion;
+- maximum favourable/adverse excursion where reliably calculable;
+- realised outcome, drawdown contribution and portfolio context;
+- expected versus actual behaviour, post-trade review and lessons;
+- source provenance, data quality, licence, corrections and immutable version lineage.
+
+A trade record must distinguish decision-time knowledge from later information. Historical records are never rewritten with hindsight. Corrected data creates a linked corrected version and preserves the original.
+
+### B. Scenario Replay & Comparative Learning
+
+For each candidate strategy, replay many historical market situations using only data available at each simulated decision time. Group outcomes by instrument, timeframe, volatility, trend, liquidity, macro/event context and regime transition. Compare:
+- what the strategy expected;
+- what actually happened;
+- how alternative eligible strategies behaved under the same conditions;
+- what a simple baseline and no-trade/cash alternative would have done;
+- whether losses came from signal quality, sizing, execution, costs, data errors or regime change.
+
+Include difficult, rare and adverse periods, not just favourable examples. Preserve negative results and failed hypotheses as first-class evidence. Prevent look-ahead, survivorship, leakage, duplicate/correlated sample contamination and selection bias. Use chronological train/validation/test partitions and walk-forward evaluation. A large trade count does not remove bias or guarantee statistical power.
+
+### C. Confidence & Forecast Quality Analyzer
+
+Every forecast, scenario and strategy recommendation receives a confidence assessment that is separate from the estimated return.
+
+The analyzer evaluates:
+- historical calibration of comparable predictions;
+- sample size and statistical uncertainty;
+- similarity between the current regime and the evidence set;
+- agreement and dependence among independent evidence families;
+- contradictory indicators and alternative explanations;
+- data freshness, completeness, source reliability and feed health;
+- model/strategy drift and recent degradation;
+- out-of-sample performance and robustness;
+- forecast horizon and instrument-specific limitations.
+
+Display calibrated probability where supported, uncertainty interval, evidence coverage, sample size, calibration history and reasons confidence is reduced. If the evidence does not support a reliable probability, display **insufficient evidence** rather than inventing a percentage. Confidence is not a promise and must never be confused with profit probability or expected return.
+
+### D. Expected Outcome & Risk Analyzer
+
+Before any candidate trade, estimate distributions or ranges rather than one certain result:
+- potential gain/loss scenarios and probability estimates where validated;
+- expected net outcome after fees, spread, slippage, funding and conversion;
+- downside, tail loss, drawdown and adverse excursion;
+- stop/invalidation behaviour and gap/market-liquidity risk;
+- holding-period and exit uncertainty;
+- impact on portfolio concentration, correlation and available risk budget;
+- comparison with alternative strategies and no trade.
+
+Report assumptions, source timestamp, confidence and limitations. Do not present a target price or backtest expectation as a guaranteed result. Expected value alone is insufficient if tail risk, uncertainty or capital constraints are unacceptable.
+
+### E. Continuous Training & Model Governance
+
+Maintain a controlled learning cycle:
+1. Capture new market, decision, execution and outcome records.
+2. Verify and reconcile data; label provenance and quality.
+3. Attribute outcomes to the relevant strategy version, market regime, sizing, execution and costs.
+4. Identify recurring success patterns, failure patterns, drift and unexplained residuals.
+5. Propose new features, strategy parameters or candidate models.
+6. Train candidates in isolated, reproducible datasets and environments.
+7. Evaluate chronologically out-of-sample, across regimes and adverse scenarios.
+8. Compare against current approved champion, baselines and no-trade.
+9. Run shadow/paper evaluation and independent review.
+10. Promote only through versioned approval gates; monitor, pause and roll back on degradation.
+
+Do not continuously train or mutate a live strategy on each new trade. Use controlled batches, minimum evidence thresholds, drift monitoring, reproducible datasets and approval-bound releases. Preserve datasets, code, model, feature, parameter, policy and evaluation versions.
+
+### F. Intelligence Quality Dashboard
+
+Provide separate measures rather than one misleading "accuracy" number:
+- forecast calibration and Brier/log scores where appropriate;
+- directional accuracy with class balance and baseline comparison;
+- strategy net return and risk-adjusted performance;
+- win/loss size distribution and payoff ratio;
+- maximum drawdown and tail-risk measures;
+- performance by regime, instrument and horizon;
+- out-of-sample stability and sample size;
+- false alerts, missed events and alert usefulness;
+- slippage and execution shortfall;
+- drift, data quality and unresolved reconciliation;
+- abstention/no-trade rate and whether abstentions avoided risk;
+- model and strategy version comparisons.
+
+A high win rate may still lose money if losses are larger than wins. Metrics must be interpreted together and after realistic costs.
+
+### G. Decision-Time Confidence Contract
+
+Every actionable strategy decision must include:
+- what Cosmo believes may happen and over what horizon;
+- probability/range only where calibrated;
+- what evidence supports and contradicts the view;
+- how many comparable observations support it;
+- expected net outcome and downside range;
+- why the selected strategy fits better than alternatives;
+- what conditions invalidate the thesis;
+- what would cause Cosmo to wait, reduce risk or abstain;
+- when the analysis expires and must be refreshed.
+
+No confidence score can override hard risk controls, user authority, legal restrictions or a no-trade condition.
