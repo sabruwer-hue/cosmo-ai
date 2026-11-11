@@ -19,4 +19,4 @@ jobs:
       - name: Validate Cosmo application files
         run: node scripts/check-cosmo.mjs
       - name: Type-check Supabase Edge Functions
-        run: deno check supabase/functions/cosmo-chat/index.ts supabase/functions/cosmo-admin-gate/index.ts
+        run: deno check supabase/functions/cosmo-chat/index.ts supabase/functions/cosmo-admin-gate/index.ts supabase/functions/cosmo-access-gate/index.ts supabase/functions/cosmo-yoco-checkout/index.ts supabase/functions/cosmo-yoco-webhook/index.ts supabase/functions/cosmo-payfast-checkout/index.ts supabase/functions/cosmo-payfast-itn/index.ts
