@@ -192,6 +192,7 @@ function updateMemoryLinkOptions() {
     historyMemoryLink.append(option);
   });
   if (memoryDrafts.some((memory) => memory.code === selected)) historyMemoryLink.value = selected;
+  if (window.cosmoRefreshRelationshipChoices) window.cosmoRefreshRelationshipChoices();
 }
 
 function renderVault() {
