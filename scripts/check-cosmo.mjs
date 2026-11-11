@@ -23,10 +23,10 @@ for (const file of ["index.html", "work.html", "admin.html"]) {
   const html = readFileSync(file, "utf8");
   if (!html.includes('rel="manifest"')) throw new Error(file + " is missing its web app manifest.");
   if (!html.includes("serviceWorker.register")) throw new Error(file + " is missing service worker registration.");
-  const blocks = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
+  const blocks = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
   let inlineIndex = 0;
   for (const match of blocks) {
-    if (/\\bsrc\\s*=/.test(match[1]) || !match[2].trim()) continue;
+    if (/\bsrc\s*=/.test(match[1]) || !match[2].trim()) continue;
     const temp = join(tmpdir(), "cosmo-inline-" + process.pid + "-" + inlineIndex++ + ".js");
     writeFileSync(temp, match[2]);
     const result = spawnSync(process.execPath, ["--check", temp], { encoding: "utf8" });
