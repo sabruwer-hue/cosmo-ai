@@ -218,6 +218,49 @@
         </article>
         <p class="prototype-note">Prototype limitation: this is local keyword retrieval over unsaved drafts. No vector search, semantic reasoning, persistent index, permission service or cross-session history is connected. Search cannot recover records that have not been added to this page session.</p>
       </section>
+      <section class="section adaptive-section" id="adaptive-learning">
+        <div class="section-heading"><div><p class="eyebrow">PERSONAL INTELLIGENCE</p><h2>Adaptive Learning & Preferences</h2></div><span class="muted">Governed learning · session-only demo</span></div>
+        <div class="relationship-intro"><strong>Cosmo should adapt to the person, not force the person to adapt to Cosmo.</strong><span>Each dedicated household agent can have its own preference profile, while shared knowledge is permission-controlled. Preferences are not the same as facts, and feedback is not automatic permission to train a model.</span></div>
+        <div class="adaptive-grid">
+          <article class="panel">
+            <div class="panel-title"><div><p class="eyebrow">PERSONAL PREFERENCE PROFILE</p><h3>Teach Cosmo how to work with you</h3></div><span class="panel-symbol">◎</span></div>
+            <form id="preference-form" class="vault-form">
+              <label for="preference-agent">Agent / household profile</label>
+              <input id="preference-agent" maxlength="90" required placeholder="e.g. Cosmo Main, Kitchen Agent, Home Guardian">
+              <div class="vault-fields"><div><label for="preference-communication">Communication style</label><select id="preference-communication"><option value="concise">Concise and direct</option><option value="conversational">Conversational</option><option value="detailed">Detailed explanations</option><option value="stepwise">One step at a time</option><option value="visual">Visual / examples first</option></select></div><div><label for="preference-detail">Detail level</label><select id="preference-detail"><option value="brief">Brief</option><option value="balanced" selected>Balanced</option><option value="deep">Deep / comprehensive</option></select></div></div>
+              <div class="vault-fields"><div><label for="preference-pace">Working pace</label><select id="preference-pace"><option value="slow">Slow and careful</option><option value="steady" selected>Steady</option><option value="fast">Fast when safe</option></select></div><div><label for="preference-initiative">Initiative</label><select id="preference-initiative"><option value="ask">Ask before suggesting</option><option value="balanced" selected>Balanced suggestions</option><option value="proactive">Proactively identify next steps</option></select></div></div>
+              <label for="preference-interests">Interests, priorities and helpful context</label><textarea id="preference-interests" rows="2" maxlength="900" placeholder="Topics, goals, routines, accessibility needs or context the agent may use…"></textarea>
+              <label for="preference-avoid">Things to avoid or handle carefully</label><textarea id="preference-avoid" rows="2" maxlength="700" placeholder="Topics, styles, assumptions or actions to avoid…"></textarea>
+              <div class="vault-fields"><div><label for="preference-source">How learned?</label><select id="preference-source"><option value="explicit">Explicitly told by user</option><option value="feedback">Repeated feedback</option><option value="observed">Observed pattern — tentative</option><option value="inferred">Inferred — needs confirmation</option></select></div><div><label for="preference-consent">Use permission</label><select id="preference-consent"><option value="session_only">This session only</option><option value="proposed">Propose for approval</option><option value="approved">Approved for this agent</option></select></div></div>
+              <button class="send-btn" type="submit">Record preference draft <b>＋</b></button>
+            </form>
+            <p class="prototype-note">An inferred or observed preference remains tentative. The interface does not save profiles after this session or train a model.</p>
+          </article>
+          <article class="panel">
+            <div class="panel-title"><div><p class="eyebrow">FEEDBACK & OUTCOME LOOP</p><h3>Learn from what worked</h3></div><span class="panel-symbol">↗</span></div>
+            <form id="learning-feedback-form" class="vault-form">
+              <label for="feedback-agent">Agent / profile</label><select id="feedback-agent" required><option value="">Create a preference profile first</option></select>
+              <label for="feedback-task">Task or response being evaluated</label><input id="feedback-task" maxlength="180" required placeholder="What did the agent do?">
+              <div class="vault-fields"><div><label for="feedback-rating">User feedback</label><select id="feedback-rating"><option value="5">Excellent · 5</option><option value="4">Good · 4</option><option value="3" selected>Acceptable · 3</option><option value="2">Poor · 2</option><option value="1">Wrong / harmful · 1</option></select></div><div><label for="feedback-outcome">Observed outcome</label><select id="feedback-outcome"><option value="successful">Successful</option><option value="partially_successful">Partly successful</option><option value="failed">Failed</option><option value="unknown">Not yet known</option></select></div></div>
+              <label for="feedback-note">What should change next time?</label><textarea id="feedback-note" rows="3" maxlength="800" required placeholder="Specific correction, preferred approach, outcome or lesson…"></textarea>
+              <label for="feedback-consent">Learning scope</label><select id="feedback-consent"><option value="single_task">This task only</option><option value="agent_candidate">Suggest profile update for this agent</option><option value="shared_candidate">Suggest shared rule — requires separate approval</option></select>
+              <button class="send-btn" type="submit">Record feedback <b>＋</b></button>
+            </form>
+            <p class="prototype-note">Feedback creates a learning candidate. It does not silently change a permanent preference, train model weights or alter safety rules.</p>
+          </article>
+        </div>
+        <div class="adaptive-lower-grid">
+          <article class="panel">
+            <div class="panel-title"><div><p class="eyebrow">LEARNING METHODS REGISTER</p><h3>Cosmo's learning toolkit</h3></div><span class="tag">GOVERNED</span></div>
+            <div class="learning-method-list" id="learning-method-list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-title"><div><p class="eyebrow">PROFILE & FEEDBACK REGISTER</p><h3>Learning records</h3></div><div class="knowledge-tools"><span class="tag" id="adaptive-count">0 RECORDS</span><button class="export-btn" id="adaptive-export" type="button" disabled>Export JSON ↓</button></div></div>
+            <div id="adaptive-records" class="adaptive-records"><p class="knowledge-empty">No preference or feedback drafts yet.</p></div>
+          </article>
+        </div>
+        <p class="prototype-note">Safety boundary: safety-critical, medical, financial, access-control and physical-control decisions must use approved rules, constraints and human authorization. No trial-and-error reinforcement learning on live systems. Household profiles stay separate unless an authorised user explicitly approves a specific shared preference.</p>
+      </section>
       <footer><span> COSMO AI <b>·</b> PROTOTYPE BUILD</span><span>Ideas deserve evidence. Progress deserves a record.</span></footer>
     </main>
   </div>
