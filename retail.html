@@ -40,7 +40,7 @@
  const makeCode=p=>p+"-"+crypto.randomUUID().replaceAll("-","").slice(0,10).toUpperCase();
  const tokenFrom=s=>{const v=String(s||"").trim();try{const u=new URL(v);return u.searchParams.get("token")||""}catch{return v}};
  let retailAccess=null;
- const hasTool=code=>Boolean(retailAccess?.owner||(retailAccess?.tools||[]).includes(code));
+ const hasTool=code=>Boolean(retailAccess?.owner||(retailAccess?.tools||[]).some(t=>t.tool_code===code));
  const gate=async()=>{const {data,error}=await db.functions.invoke("cosmo-access-gate",{body:{product_code:"COSMO-QR-RETAIL"}});if(error||!data?.allowed){say("auth-status",(data?.reason||data?.error||error?.message||"QR Retail package required.")+" Choose a free tier or trial in the Membership Portal.","error");return false}retailAccess=data;return true};
  function applyFeatureAccess(){document.querySelectorAll("[data-tab]").forEach(b=>{if(b.dataset.tab==="stock")b.hidden=!(hasTool("RETAIL-STOCK")||hasTool("RETAIL-EXPIRY"));if(b.dataset.tab==="promotions")b.hidden=!hasTool("RETAIL-PROMO");if(b.dataset.tab==="restock")b.hidden=!hasTool("RETAIL-SUPPLIER")});$("movement-form").hidden=!hasTool("RETAIL-STOCK");$("batch-form").hidden=!hasTool("RETAIL-EXPIRY");$("product-image").hidden=!hasTool("RETAIL-IMAGES");$("product-image").previousElementSibling.hidden=!hasTool("RETAIL-IMAGES");}
  async function session(s){user=s?.user||null;if(!user){$("auth").hidden=false;return}if(!(await gate())){$("auth").hidden=false;return}$("auth").hidden=true;$("owner-pill").textContent="QR Retail · "+user.email;applyFeatureAccess();await refresh()}
