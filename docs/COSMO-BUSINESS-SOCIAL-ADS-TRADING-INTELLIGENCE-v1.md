@@ -501,3 +501,79 @@ After each review period or completed trade, compare expected conditions and str
 ### H. Required tests and boundaries
 
 Test compatibility decisions against historical regime transitions, conflicting indicators, low sample sizes, stale data, correlated strategies, changing spreads, portfolio concentration, sudden volatility, missing broker data and repeated switching. Confirm that hard eligibility gates override rankings and that the analyzer can return no suitable strategy. The analyzer may recommend or request a switch; the execution gateway enforces authority, approvals and risk limits independently.
+
+
+## 6.10 Cosmo Trading Wallet & Capital Management
+
+**Purpose:** provide a dedicated, auditable view and control layer for capital the user deliberately allocates to trading. The wallet separates trading funds from personal spending, other businesses and project budgets. It is not automatically a bank, payment service, broker, exchange or custodian.
+
+### A. Initial custody model
+
+For the first releases, use a **non-custodial capital ledger and broker-account connection**:
+- Actual funds remain in a regulated/appropriately authorised bank, broker or exchange account in the user's name, subject to jurisdiction and instrument.
+- Cosmo records the user's declared trading allocation, approved funding events and reconciled broker balances.
+- The wallet may display balances and positions through authorised broker integrations, initially read-only.
+- Funding or withdrawal transfers are initiated and confirmed by the user through the provider's own secure interface; Cosmo must not collect bank passwords, card details, broker passwords, seed phrases or private keys in chat or ordinary memory.
+- Never imply that a displayed ledger balance is independently held cash. Clearly distinguish user-allocated capital, broker cash, reserved margin, open-position exposure, unrealised P&L, realised P&L, fees and unsettled funds.
+
+Do not accept public deposits, pool funds for other people, hold third-party assets, or operate an internal crypto custody/payment rail without specialist legal, regulatory, security and licensing assessment and explicit approval.
+
+### B. Wallet accounts and sub-ledgers
+
+Provide separate, clearly labelled ledgers:
+1. **Trading Allocation:** amount the user has designated for trading; not proof of funds held.
+2. **Broker Cash:** reconciled available cash at each connected provider, currency by currency.
+3. **Reserved / Margin:** funds committed or unavailable for new trades.
+4. **Open Exposure:** market value/notional and risk exposure of open positions, without double-counting as cash.
+5. **Realised Results:** closed-trade gains/losses after costs.
+6. **Unrealised Results:** marked-to-market estimates with price timestamp and source.
+7. **Fees & Funding Costs:** commissions, spreads where measurable, financing, borrow, funding and conversion charges.
+8. **Tax & Reporting Reserve:** optional user-defined planning reserve, clearly not a tax calculation or payment.
+9. **Available Risk Budget:** amount permitted for new risk under user-approved limits, not simply the displayed cash balance.
+
+Every balance is labelled by currency, provider, timestamp, source, reconciliation status and whether it is live, delayed, estimated or manually entered. Support ZAR and other permitted currencies without silently netting unlike currencies.
+
+### C. Funding and transfer workflow
+
+1. User chooses the trading allocation and target provider/account.
+2. Cosmo displays provider, account identity (masked), currency, amount, fees if known, expected settlement and any provider restrictions.
+3. Cosmo explains that the transfer is into the user's own provider account, not into an unregulated Cosmo-held pool.
+4. User completes and authenticates the transfer directly with the provider/bank.
+5. Cosmo imports or receives a provider-confirmed transaction record and reconciles it against the ledger.
+6. Until confirmed, mark the amount **pending / unverified** and exclude it from available trading capital.
+7. Reconcile broker cash, reserved margin, positions, fees and unsettled transactions regularly; surface discrepancies rather than silently adjusting balances.
+
+No transfer is initiated by an indicator, strategy, bot or AI recommendation. Any future payment initiation requires a specifically authorised provider integration, jurisdictional review, explicit transaction confirmation and strong authentication.
+
+### D. Capital allocation and protection
+
+- User sets a total trading-capital ceiling and may allocate sub-budgets by instrument, strategy or risk mandate.
+- Maintain a protected reserve that strategies cannot consume.
+- Define maximum position size, leverage (default none unless separately approved), per-trade risk, daily/weekly loss, total drawdown, concentration and correlated exposure limits.
+- Keep paper-trading balances entirely separate from real funds.
+- Strategies cannot move funds between accounts, increase their own budgets, borrow, use margin or leverage, or change loss limits.
+- On limit breach, block new risk and alert the user; apply the configured safe position-management policy.
+- The wallet cannot be used to fund other Cosmo projects automatically. Any cross-project transfer requires a separate, explicit user-authorised transaction and appropriate accounting.
+
+### E. Withdrawals and access security
+
+- Withdrawal destination changes, external transfers, crypto withdrawals and beneficiary changes always require direct user action and provider authentication.
+- No strategy or AI agent has withdrawal permission.
+- Use least-privilege broker API scopes; begin read-only, then order permissions only if separately approved. Never request withdrawal scope for trading bots.
+- Store integration secrets in a dedicated secrets manager, not in prompts, memory records, source code or logs.
+- Support provider disconnection, credential revocation, session expiry, audit trails, alerts for account changes and incident response.
+- Apply strong authentication and transaction confirmation to any future permitted funding/payment action.
+
+### F. Wallet dashboard and reconciliation
+
+Show total user-allocated capital, provider cash by currency, reserved funds, open exposure, realised/unrealised results, fees, available risk budget, deposits/withdrawals and reconciliation exceptions. Provide dated statements, transaction references, export and audit history. Avoid presenting estimates as guaranteed liquidation value or spendable cash.
+
+### G. Release stages and gates
+
+- **W0 — Design/demo:** simulated balances only, visibly labelled.
+- **W1 — Manual capital ledger:** user records allocations and provider transfers; no live connection or movement.
+- **W2 — Read-only broker connection:** balances, orders and positions imported with timestamp and reconciliation.
+- **W3 — User-directed provider funding:** only through a supported, legally reviewed provider flow with explicit confirmation; no AI-initiated movement.
+- **W4 — Trading integration:** separate approval for narrowly scoped order permissions; no withdrawal rights, with independent risk gateway and kill switch.
+
+Before any live funding or execution, verify provider legitimacy and permissions, jurisdictional availability, account ownership, data/API terms, legal obligations, security and reconciliation behaviour. In South Africa, obtain qualified advice on the applicable financial-services, exchange, payment, crypto-asset and data-protection requirements before offering custody, payment initiation or third-party services.
