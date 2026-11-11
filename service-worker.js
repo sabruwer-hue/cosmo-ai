@@ -1,9 +1,9 @@
-const CACHE_NAME = "cosmo-shell-v1";
+const CACHE_NAME = "cosmo-shell-v2";
 const SHELL = [
-  "./", "./index.html", "./work.html", "./admin.html",
+  "./", "./index.html", "./work.html", "./admin.html", "./retail.html", "./product.html",
   "./assets/styles.css", "./assets/cosmo-live.js", "./assets/app.js",
-  "./assets/cosmo-icon.svg", "./assets/cosmo-work-icon.svg", "./assets/cosmo-admin-icon.svg",
-  "./manifest.webmanifest", "./work.webmanifest", "./admin.webmanifest"
+  "./assets/cosmo-icon.svg", "./assets/cosmo-work-icon.svg", "./assets/cosmo-admin-icon.svg", "./assets/cosmo-retail-icon.svg",
+  "./manifest.webmanifest", "./work.webmanifest", "./admin.webmanifest", "./retail.webmanifest"
 ];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
