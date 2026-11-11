@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b1220">
   <meta name="description" content="Cosmo AI — an intelligent workspace prototype.">
-  <title>Cosmo AI — Prototype</title>
+  <title>Cosmo AI — Private Intelligence Workspace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -52,6 +52,7 @@
         <a class="nav-item active" href="#overview"><span>◫</span> Overview</a>
         <a class="nav-item" href="#assistant"><span>✳</span> Assistant</a>
         <a class="nav-item" href="#projects"><span>▦</span> Projects</a>
+        <a class="nav-item" href="work.html"><span>✓</span> Work queue & packages</a>
         <a class="nav-item" href="#research"><span>⌕</span> Research</a>
         <a class="nav-item" href="#memory-vault"><span>◉</span> Memory vault</a>
         <a class="nav-item" href="#knowledge"><span>✳</span> Knowledge engine</a>
@@ -71,7 +72,7 @@
         <div>
           <p class="eyebrow">YOUR INTELLIGENCE WORKSPACE</p>
           <h1>Good to see you.<br><em>What shall we build?</em></h1>
-          <p class="subhead">A clearer place to think, research, plan and move ideas forward.</p>
+          <p class="subhead">A private workspace to think, research, plan and move ideas forward. Open the Work Queue to create persistent tasks and manage Cosmo packages.</p>
         </div>
         <div class="orb-wrap" aria-hidden="true"><div class="orb"><div class="orb-core"></div></div><span class="orb-caption">COSMO CORE <b>·</b> CONCEPT</span></div>
       </section>
@@ -81,7 +82,7 @@
         <form id="prompt-form">
           <label class="sr-only" for="prompt">Your message</label>
           <textarea id="prompt" rows="2" placeholder="Ask a question, explore an idea, or describe what you want to work on…"></textarea>
-          <div class="composer-foot"><span>↳ <span>Demo responses only — no live AI is connected.</span></span><button class="send-btn" type="submit">Send <b>↗</b></button></div>
+          <div class="composer-foot"><span>↳ <span>Secure chat gateway · model key setup pending.</span></span><button class="send-btn" type="submit">Send <b>↗</b></button></div>
         </form>
         <div class="response" id="response" aria-live="polite" hidden></div>
       </section>
@@ -104,9 +105,9 @@
         </article>
         <article class="panel" id="memory"><div class="panel-title"><div><p class="eyebrow">SYSTEM STATUS</p><h3>Connected foundations</h3></div><span class="panel-symbol">⌘</span></div>
           <div class="status-row"><span>Web interface</span><b class="status-ready">Ready</b></div>
-          <div class="status-row"><span>AI model connection</span><b class="status-off">Not connected</b></div>
-          <div class="status-row"><span>Secure memory database</span><b class="status-off">Not connected</b></div>
-          <div class="status-row"><span>Authentication</span><b class="status-off">Not connected</b></div>
+          <div class="status-row"><span>AI model connection</span><b class="status-off">Awaiting model API key</b></div>
+          <div class="status-row"><span>Secure memory database</span><b class="status-ready">Connected · awaiting owner data</b></div>
+          <div class="status-row"><span>Authentication</span><b class="status-off">Owner setup pending</b></div>
         </article>
       </section>
       <section class="section knowledge-section" id="knowledge">
