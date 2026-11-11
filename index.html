@@ -21,7 +21,7 @@
         <a class="nav-item" href="#assistant"><span>✳</span> Assistant</a>
         <a class="nav-item" href="#projects"><span>▦</span> Projects</a>
         <a class="nav-item" href="#research"><span>⌕</span> Research</a>
-        <a class="nav-item" href="#memory"><span>◉</span> Memory vault</a>
+        <a class="nav-item" href="#memory-vault"><span>◉</span> Memory vault</a>
         <a class="nav-item" href="#knowledge"><span>✳</span> Knowledge engine</a>
       </nav>
       <div class="sidebar-bottom">
@@ -117,6 +117,34 @@
             <div id="knowledge-list" class="knowledge-list" aria-live="polite"></div>
           </article>
         </div>
+      </section>
+      <section class="section vault-section" id="memory-vault">
+        <div class="section-heading"><div><p class="eyebrow">MEMORY & HISTORY FOUNDATION</p><h2>Main Memories Vault</h2></div><span class="muted">Session-only interface prototype</span></div>
+        <div class="vault-intro"><strong>Two connected shelves, two different jobs.</strong><span>Main Memories is the searchable index of what Cosmo has learned. Master History preserves the original source material behind those memories.</span></div>
+        <div class="vault-toolbar"><label class="sr-only" for="vault-search">Search memory and history drafts</label><input id="vault-search" type="search" placeholder="Search codes, subjects, summaries or source notes…"><button class="export-btn" id="vault-export" type="button" disabled>Export vault JSON ↓</button></div>
+        <div class="vault-grid">
+          <article class="panel vault-panel">
+            <div class="panel-title"><div><p class="eyebrow">INDEX / CANONICAL MEMORY REGISTER</p><h3>Main Memories Vault</h3></div><span class="panel-symbol">◉</span></div>
+            <form id="memory-form" class="vault-form">
+              <label for="memory-title">Memory subject</label><input id="memory-title" maxlength="140" required placeholder="Short subject or title">
+              <label for="memory-summary">Summary</label><textarea id="memory-summary" rows="3" maxlength="1200" required placeholder="Concise summary. Keep source facts and uncertainty clear."></textarea>
+              <div class="vault-fields"><div><label for="memory-category">Category</label><select id="memory-category"><option>Project</option><option>Preference</option><option>Decision</option><option>Research</option><option>Person or organisation</option><option>System requirement</option><option>Other</option></select></div><div><label for="memory-classification">Access class</label><select id="memory-classification"><option value="workspace">Workspace</option><option value="confidential">Confidential</option><option value="restricted">Restricted</option><option value="public">Public</option></select></div></div>
+              <button class="send-btn" type="submit">Add memory draft <b>＋</b></button>
+            </form>
+            <div class="vault-list-head"><strong>Memory index</strong><span class="tag" id="memory-count">0 DRAFTS</span></div><div id="memory-empty" class="knowledge-empty">No memory drafts yet.</div><div id="memory-list" class="vault-list" aria-live="polite"></div>
+          </article>
+          <article class="panel vault-panel">
+            <div class="panel-title"><div><p class="eyebrow">ORIGINAL SOURCES / ARCHIVE</p><h3>Master History Vault</h3></div><span class="panel-symbol">▤</span></div>
+            <form id="history-form" class="vault-form">
+              <label for="history-title">Source record title</label><input id="history-title" maxlength="160" required placeholder="Name of conversation, file, note or source">
+              <label for="history-content">Original excerpt or source note</label><textarea id="history-content" rows="3" maxlength="1800" required placeholder="Preserve the relevant original wording or describe the source location."></textarea>
+              <div class="vault-fields"><div><label for="history-type">Source type</label><select id="history-type"><option value="conversation">Conversation</option><option value="document">Document or file</option><option value="external_source">External source</option><option value="user_note">User note</option><option value="system_record">System record</option></select></div><div><label for="history-memory-link">Link to memory</label><select id="history-memory-link"><option value="">No memory link yet</option></select></div></div>
+              <button class="send-btn" type="submit">Archive source draft <b>＋</b></button>
+            </form>
+            <div class="vault-list-head"><strong>Source archive</strong><span class="tag" id="history-count">0 DRAFTS</span></div><div id="history-empty" class="knowledge-empty">No source drafts yet.</div><div id="history-list" class="vault-list" aria-live="polite"></div>
+          </article>
+        </div>
+        <p class="prototype-note">Prototype only: temporary draft IDs are not permanent Cosmo codes. Nothing here is saved to a database, backed up, access-controlled or retained after the page session ends. Do not enter sensitive or private information.</p>
       </section>
       <footer><span> COSMO AI <b>·</b> PROTOTYPE BUILD</span><span>Ideas deserve evidence. Progress deserves a record.</span></footer>
     </main>
