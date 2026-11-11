@@ -31,6 +31,7 @@ These are design and audit documents, not evidence that the described services h
 - [Prototype Audit — 2026-11-11](docs/PROTOTYPE-AUDIT-2026-11-11.md) — inspected prototype capabilities, deployment finding and owner-side checklist.
 - [Memory & Research Data Model v1.0](docs/MEMORY-RESEARCH-DATA-MODEL-v1.md) — proposed entities, provenance, versioning, privacy and acceptance tests.
 - [Orchestration API Contract v1.0](docs/ORCHESTRATION-API-CONTRACT-v1.md) — proposed routes, task lifecycle, approvals and server-side model boundary.
+- [Knowledge Engine Specification v1.0](docs/KNOWLEDGE-ENGINE-SPEC-v1.md) — source-grounded retrieval, claims, contradictions, research, prediction evaluation and traceability.
 
 ## Status vocabulary
 
