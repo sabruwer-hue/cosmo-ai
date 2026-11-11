@@ -234,3 +234,18 @@ Genesis remains Cosmo's predecessor/origin history. The full historical recovery
 Preserve original names, aliases, source text, timestamps, versions and contradictions. Do not publish private identity mappings, personal training data, unpublished research or IP contribution records in public documentation. Recover original Genesis source, Claude Cosmo v0.2, earlier prototypes and archive media into a permission-controlled source of truth before declaring the historical audit complete.
 
 Keep three governed knowledge domains distinct in the production design: (1) Cosmo's constitution and safety policy, (2) the user's consent-controlled creator context profile, and (3) isolated project/business knowledge. Explicit user instructions outrank inferred preferences; sensitive personal information requires purpose limitation and appropriate consent. Consequential actions remain governed by independent policy enforcement, scoped permissions, human approval, audit and appeal.
+
+
+## 19. Modular subscription products and analytical product governance
+
+Cosmo's commercial product family and build framework are specified in [Cosmo Subscription Product Portfolio & Analytical Build Framework v1.0](COSMO-SUBSCRIPTION-PRODUCT-PORTFOLIO-v1.md).
+
+Cosmo is the shared intelligence, identity, orchestration, security, billing, usage and knowledge platform. Customers must be able to subscribe to standalone products—Cosmo Core, Ad Studio, Team Up AI, Creator Studio and Cosmo Office—and optionally combine them through transparent Cosmo packages. Each product must retain a distinct customer, job-to-be-done, entitlement boundary, roadmap, cost model and measurable value.
+
+Ad Studio preserves the existing advertiser-focused prototype and expands its defined scope to campaign management, distribution, Ad Rooms, AdFind, Video Ad Studio, audience/follower controls, trust, reviews, moderation, commercial measurement and commerce handoffs. Creator Studio owns advanced creative production; its Ad Creator capability can hand approved assets to Ad Studio. Team Up AI is the shared human-and-agent team workspace. Cosmo Office is the AI-assisted document, spreadsheet, presentation and file productivity suite with versioning, inspectable edits, undo and export validation.
+
+Additional products such as Research & Intelligence, Data & Analytics, Automation Studio, Developer Studio, Learning Studio and Customer Service remain candidates—not automatic commitments. They must pass customer discovery, product-boundary, security and unit-economics gates before becoming standalone subscriptions.
+
+All subscriptions use shared identity and billing foundations with explicit product entitlements and metered usage. Subscription fees, usage charges, media generation, paid placements, transaction commissions and third-party fees must remain distinct and transparent. Earlier pricing and commission figures are hypotheses until validated.
+
+Product development follows a continuous evidence-led cycle: discover, define, research, compare, model, decide, design, prototype, test, measure, revise, approve, release and monitor. Every feature records customer evidence, assumptions, architecture, costs, unit economics, security/privacy risks, acceptance tests, rollback and verified status. No simulated prototype capability may be represented as a live or production-ready service.
