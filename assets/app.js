@@ -595,4 +595,226 @@ if (vaultExport) {
   renderTimeline();
   renderContradictionQueue();
   renderRelationships();
+  window.cosmoGetRelationshipDrafts = () => relationships;
+})();
+
+
+/* Memory Intelligence & Retrieval Engine v1.
+   Transparent keyword retrieval across records currently held in this page session.
+   This is not semantic search, persistent indexing, or an AI-generated answer engine. */
+(() => {
+  const searchForm = document.querySelector("#retrieval-form");
+  if (!searchForm) return;
+  const queryInput = document.querySelector("#retrieval-query");
+  const typeFilter = document.querySelector("#retrieval-type");
+  const categoryFilter = document.querySelector("#retrieval-category");
+  const summary = document.querySelector("#retrieval-summary");
+  const resultsNode = document.querySelector("#retrieval-results");
+  const exportButton = document.querySelector("#retrieval-export");
+  let lastTrace = null;
+
+  const relationshipsNow = () => typeof window.cosmoGetRelationshipDrafts === "function"
+    ? window.cosmoGetRelationshipDrafts() : [];
+  const memoryFor = (code) => memoryDrafts.find((item) => item.code === code);
+  const text = (value) => String(value == null ? "" : value);
+  const normal = (value) => text(value).toLocaleLowerCase();
+  const makeResult = (type, code, title, body, meta, searchable, record) => ({
+    type, code, title, body, meta, searchable: normal(searchable), record
+  });
+
+  function collectRecords() {
+    const records = [];
+    memoryDrafts.forEach((memory) => {
+      const sources = historyDrafts.filter((source) => source.memoryCode === memory.code);
+      const links = relationshipsNow().filter((edge) => edge.fromCode === memory.code || edge.toCode === memory.code);
+      const versions = memory.versions || [];
+      records.push(makeResult(
+        "memory", memory.code, memory.title, memory.summary,
+        memory.category + " · " + memory.classification + " · CURRENT MEMORY SUMMARY",
+        [memory.code,memory.title,memory.summary,memory.category,memory.classification,
+          ...versions.map((version) => version.summary),
+          ...sources.flatMap((source) => [source.code,source.title,source.content]),
+          ...links.map((edge) => [edge.type,edge.note,edge.fromCode,edge.toCode].join(" "))].join(" "),
+        { memory, sources, links, versions }
+      ));
+    });
+    historyDrafts.forEach((source) => {
+      const linkedMemory = memoryFor(source.memoryCode);
+      records.push(makeResult(
+        "source", source.code, source.title, source.content,
+        source.sourceType + " · ORIGINAL SOURCE DRAFT" + (linkedMemory ? " · LINKED TO " + linkedMemory.code : " · UNLINKED"),
+        [source.code,source.title,source.content,source.sourceType,source.memoryCode,
+          linkedMemory ? linkedMemory.title + " " + linkedMemory.summary : ""].join(" "),
+        { source, linkedMemory }
+      ));
+    });
+    knowledgeDrafts.forEach((claim) => {
+      records.push(makeResult(
+        "claim", claim.code, recordTypeLabels[claim.kind] + ": " + claim.claim, claim.evidence || "No evidence note supplied.",
+        provenanceLabels[claim.provenance] + " · " + claim.assessment.toUpperCase(),
+        [claim.code,claim.kind,claim.claim,claim.evidence,claim.provenance,claim.sourceUrl].join(" "),
+        { claim }
+      ));
+    });
+    relationshipsNow().forEach((edge) => {
+      const from = memoryFor(edge.fromCode), to = memoryFor(edge.toCode);
+      records.push(makeResult(
+        "relationship", edge.code,
+        (from ? from.title : edge.fromCode) + " → " + (to ? to.title : edge.toCode),
+        edge.note || "No relationship rationale supplied.",
+        edge.type.replaceAll("_", " ") + " · " + (edge.review ? edge.review.status.replaceAll("_", " ") : "unreviewed"),
+        [edge.code,edge.type,edge.note,edge.fromCode,edge.toCode,
+          from ? from.title + " " + from.summary : "",to ? to.title + " " + to.summary : ""].join(" "),
+        { edge, from, to }
+      ));
+    });
+    return records;
+  }
+
+  function scoreRecord(record, terms, phrase) {
+    const haystack = record.searchable;
+    if (!terms.every((term) => haystack.includes(term))) return 0;
+    let score = terms.reduce((sum, term) => sum + (haystack.split(term).length - 1), 0);
+    if (normal(record.code) === phrase) score += 100;
+    if (normal(record.title) === phrase) score += 60;
+    if (normal(record.title).includes(phrase)) score += 25;
+    if (haystack.includes(phrase)) score += 12;
+    if (record.type === "memory") score += 4;
+    return score;
+  }
+
+  function addDetailLine(parent, label, value) {
+    const line = document.createElement("p");
+    line.className = "retrieval-detail-line";
+    const strong = document.createElement("strong"); strong.textContent = label + ": ";
+    line.append(strong, document.createTextNode(text(value) || "Not recorded"));
+    parent.append(line);
+  }
+
+  function buildTraceDetails(result) {
+    const detail = document.createElement("div");
+    detail.className = "retrieval-detail";
+    if (result.type === "memory") {
+      const { memory, sources, links, versions } = result.record;
+      addDetailLine(detail, "Memory code", memory.code);
+      addDetailLine(detail, "Category / access class", memory.category + " / " + memory.classification);
+      addDetailLine(detail, "Created", memory.createdAt);
+      addDetailLine(detail, "Version count", versions.length || 1);
+      addDetailLine(detail, "Current version", versions.length ? versions[versions.length - 1].version : 1);
+      addDetailLine(detail, "Provenance", "Memory draft summary; consult linked original source records before treating as verified.");
+      const sourceHeading = document.createElement("strong"); sourceHeading.textContent = "Linked original sources"; detail.append(sourceHeading);
+      if (!sources.length) addTextElement(detail, "p", "retrieval-detail-line", "No Master History source is linked to this memory yet.");
+      sources.forEach((source) => addTextElement(detail, "p", "retrieval-detail-line", source.code + " · " + source.title + " · " + source.sourceType));
+      const linkHeading = document.createElement("strong"); linkHeading.textContent = "Relationship context"; detail.append(linkHeading);
+      if (!links.length) addTextElement(detail, "p", "retrieval-detail-line", "No relationship edges recorded.");
+      links.forEach((edge) => addTextElement(detail, "p", "retrieval-detail-line", edge.code + " · " + edge.fromCode + " → " + edge.toCode + " · " + edge.type));
+      if (versions.length) {
+        const versionHeading = document.createElement("strong"); versionHeading.textContent = "Version snapshots"; detail.append(versionHeading);
+        versions.forEach((version) => addTextElement(detail, "p", "retrieval-detail-line", "v" + version.version + " · " + version.createdAt + " · " + version.reason));
+      }
+    } else if (result.type === "source") {
+      const { source, linkedMemory } = result.record;
+      addDetailLine(detail, "Source code", source.code);
+      addDetailLine(detail, "Source type", source.sourceType);
+      addDetailLine(detail, "Captured", source.createdAt);
+      addDetailLine(detail, "Original content", source.content);
+      addDetailLine(detail, "Linked memory", linkedMemory ? linkedMemory.code + " · " + linkedMemory.title : "No memory link");
+      addDetailLine(detail, "Provenance", "User-entered source draft; authenticity and completeness are not independently verified.");
+    } else if (result.type === "claim") {
+      const claim = result.record.claim;
+      addDetailLine(detail, "Record type", claim.kind);
+      addDetailLine(detail, "Provenance", provenanceLabels[claim.provenance]);
+      addDetailLine(detail, "Assessment", claim.assessment);
+      addDetailLine(detail, "Captured", claim.createdAt);
+      addDetailLine(detail, "Evidence note", claim.evidence || "None supplied");
+      if (claim.sourceUrl) {
+        const url = safeSourceUrl(claim.sourceUrl);
+        if (url) {
+          const anchor = document.createElement("a"); anchor.className = "knowledge-source-link";
+          anchor.href = url; anchor.target = "_blank"; anchor.rel = "noopener noreferrer";
+          anchor.textContent = "Open recorded source URL ↗"; detail.append(anchor);
+        }
+      }
+      addDetailLine(detail, "Verification", "Unassessed draft; source note is not independent verification.");
+    } else {
+      const edge = result.record.edge;
+      addDetailLine(detail, "Relationship", edge.type);
+      addDetailLine(detail, "From / to", edge.fromCode + " → " + edge.toCode);
+      addDetailLine(detail, "Created", edge.createdAt);
+      addDetailLine(detail, "Review status", edge.review ? edge.review.status : "unreviewed");
+      addDetailLine(detail, "Review rationale", edge.review ? edge.review.rationale : "No review recorded");
+      addDetailLine(detail, "Interpretation", "Relationship is a recorded assertion, not proof that either endpoint is true.");
+    }
+    return detail;
+  }
+
+  function runSearch() {
+    const phrase = normal(queryInput.value.trim());
+    if (!phrase) return;
+    const terms = [...new Set(phrase.split(/\s+/).filter((term) => term.length > 1))];
+    const tokens = terms.length ? terms : [phrase];
+    const all = collectRecords();
+    const selectedType = typeFilter.value;
+    const category = categoryFilter.value;
+    const eligible = all.filter((record) => {
+      if (selectedType !== "all" && record.type !== selectedType) return false;
+      if (category !== "all" && (record.type !== "memory" || record.record.memory.category !== category)) return false;
+      return true;
+    });
+    const matches = eligible.map((record) => ({ record, score: scoreRecord(record, tokens, phrase) }))
+      .filter((item) => item.score > 0)
+      .sort((left, right) => right.score - left.score || left.record.code.localeCompare(right.record.code));
+    lastTrace = {
+      exportType: "cosmo-memory-retrieval-trace",
+      schemaVersion: "1.0",
+      createdAt: new Date().toISOString(),
+      query: queryInput.value.trim(),
+      method: "case-insensitive keyword and phrase matching; all query terms required",
+      filters: { recordType: selectedType, memoryCategory: category },
+      counts: { scanned: eligible.length, matched: matches.length },
+      warning: "Session-only retrieval trace. Keyword relevance is not truth, verification, semantic understanding or a complete archive.",
+      results: matches.map(({ record, score }) => ({
+        code: record.code, type: record.type, title: record.title, score,
+        meta: record.meta, body: record.body
+      }))
+    };
+    summary.textContent = "Search trace · " + eligible.length + " eligible record(s) scanned · " + matches.length +
+      " match(es) · keyword method · all terms required. " +
+      (matches.length ? "Open a trace to inspect sources and relationships." : "No matching records in the current session.");
+    resultsNode.replaceChildren();
+    if (!matches.length) {
+      addTextElement(resultsNode, "div", "knowledge-empty", "No matches found. Try a shorter phrase, a record code, or broaden the record-type filter.");
+    }
+    matches.forEach(({ record, score }) => {
+      const card = document.createElement("article"); card.className = "retrieval-result";
+      const head = document.createElement("div"); head.className = "knowledge-record-top";
+      addTextElement(head, "strong", "", record.code);
+      addTextElement(head, "span", "tag", record.type.toUpperCase() + " · SCORE " + score);
+      const title = addTextElement(card, "h4", "retrieval-result-title", record.title);
+      const body = addTextElement(card, "p", "knowledge-evidence", record.body);
+      const meta = addTextElement(card, "small", "retrieval-meta", record.meta);
+      const toggle = document.createElement("button"); toggle.type = "button"; toggle.className = "export-btn";
+      toggle.textContent = "Show provenance & trace";
+      const detail = buildTraceDetails(record); detail.hidden = true;
+      toggle.addEventListener("click", () => {
+        detail.hidden = !detail.hidden;
+        toggle.textContent = detail.hidden ? "Show provenance & trace" : "Hide provenance & trace";
+      });
+      card.prepend(head); card.append(title, body, meta, toggle, detail);
+      resultsNode.append(card);
+    });
+    exportButton.disabled = false;
+  }
+
+  searchForm.addEventListener("submit", (event) => { event.preventDefault(); runSearch(); });
+  typeFilter.addEventListener("change", () => { if (queryInput.value.trim()) runSearch(); });
+  categoryFilter.addEventListener("change", () => { if (queryInput.value.trim()) runSearch(); });
+  exportButton.addEventListener("click", () => {
+    if (!lastTrace) return;
+    const blob = new Blob([JSON.stringify(lastTrace, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a"); link.href = url;
+    link.download = "cosmo-memory-retrieval-trace.json";
+    document.body.append(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+  });
 })();
