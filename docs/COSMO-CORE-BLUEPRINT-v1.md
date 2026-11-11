@@ -278,3 +278,10 @@ A dedicated analyzer evaluates market-regime suitability, strategy fitness and p
 ## 24. Cosmo Trading Wallet & Capital Management
 
 Cosmo Trading Intelligence includes a dedicated Trading Wallet and capital ledger to separate user-allocated trading capital from personal and other project funds. The initial design is non-custodial: actual funds remain in the user's own authorised bank, broker or exchange account; Cosmo records allocations and reconciles provider-confirmed balances through read-only connections first. Paper balances remain separate. Funding and withdrawals require direct user action and provider authentication. Bots and AI agents have no withdrawal authority and cannot raise budgets, leverage or risk limits. Any future custody, payment initiation or third-party asset handling requires separate legal, regulatory, security and licensing review.
+
+
+## 25. Trading Intelligence Learning & Confidence Framework
+
+Historical trade and scenario evidence is a first-class knowledge domain. Preserve wins, losses, breakeven trades, failed strategies, rejected signals, paper trades and no-trade decisions with decision-time market snapshots, strategy versions, execution costs, outcomes, provenance and immutable history. Use leakage-resistant chronological replay and walk-forward evaluation to learn how strategies behave across instruments, timeframes and market regimes.
+
+A dedicated confidence analyzer evaluates calibration, sample size, regime similarity, independent and contradictory evidence, data quality, model drift and out-of-sample robustness. It reports probability and uncertainty only where supported, otherwise abstaining with insufficient evidence. An expected-outcome analyzer compares net-of-cost gain/loss distributions, downside and tail risk, portfolio impact, alternative strategies and no-trade. Learning follows controlled batch training, isolated candidate evaluation, champion/challenger comparison, shadow/paper testing, approval-bound release and rollback. No live strategy self-trains or self-promotes on each trade.
