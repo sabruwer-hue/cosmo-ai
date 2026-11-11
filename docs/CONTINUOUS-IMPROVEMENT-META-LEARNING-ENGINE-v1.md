@@ -214,6 +214,12 @@ Start with read-only analysis and registry capture. Do not introduce autonomous 
 
 This is an architecture specification only. It does not create a running background observer, scheduler, autonomous agent, persistent improvement registry, experiment runner or self-modifying production system. The Cosmo repository remains a front-end prototype and design-document set. Production work requires backend, identity, permissions, storage, job infrastructure, monitoring and human approval controls.
 
+## 18. Historical intelligence and scenario decision integration
+
+Historical research and scenario analysis are coordinated through [Historical Intelligence, Scenario Analysis & Decision Engine v1.0](HISTORICAL-INTELLIGENCE-SCENARIO-DECISION-ENGINE-v1.md). Improvement reviews should examine whether historical analogues were relevant, whether material differences were missed, whether source assessments were calibrated, whether private/public conflicts were handled fairly, whether scenario branches covered plausible alternatives, and whether real outcomes matched simulated expectations.
+
+Verified outcomes feed source-performance, method-performance and scenario-applicability records. Lessons must preserve where a pattern does and does not transfer. New methods are tested through historical replay and held-out cases before adoption; failed analogies and adverse outcomes remain available as regression evidence. The intelligence engine recommends actions but does not bypass the approval, safety or release controls defined here.
+
 ## 17. Prototype factory and verified accuracy
 
 Continuous improvement opportunities should flow into the [Prototype Factory, Verification & Release Lifecycle v1.0](PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md). The factory builds isolated candidates, runs independent tests, records defects and revisions, freezes a candidate hash and requires approval before release.
