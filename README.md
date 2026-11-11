@@ -22,3 +22,22 @@ Open `index.html` in a modern browser, or serve this folder with any static web 
 
 ## Domain
 The intended custom domain is `cosmo-ai.co.za`. DNS and hosting should only be changed after a deployment target is selected and verified.
+
+## Engineering documents
+
+These are design and audit documents, not evidence that the described services have been deployed.
+
+- [Core Blueprint v1.0](docs/COSMO-CORE-BLUEPRINT-v1.md) — system boundaries, safety principles and phased build plan.
+- [Prototype Audit — 2026-11-11](docs/PROTOTYPE-AUDIT-2026-11-11.md) — inspected prototype capabilities, deployment finding and owner-side checklist.
+- [Memory & Research Data Model v1.0](docs/MEMORY-RESEARCH-DATA-MODEL-v1.md) — proposed entities, provenance, versioning, privacy and acceptance tests.
+- [Orchestration API Contract v1.0](docs/ORCHESTRATION-API-CONTRACT-v1.md) — proposed routes, task lifecycle, approvals and server-side model boundary.
+
+## Status vocabulary
+
+- **Planned:** documented, not built.
+- **Implemented:** code exists.
+- **Deployed:** running in the target environment.
+- **Verified:** acceptance tests passed against that environment.
+- **Production-ready:** operational, privacy, security, monitoring and recovery checks passed.
+
+Do not describe a planned or demo-only capability as live.
