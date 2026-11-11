@@ -1,0 +1,7 @@
+project_id = "yevkzktlzxjrlvsxtnez"
+
+[functions.cosmo-chat]
+verify_jwt = true
+
+[functions.cosmo-admin-gate]
+verify_jwt = true
