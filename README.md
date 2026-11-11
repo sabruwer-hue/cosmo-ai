@@ -2,10 +2,22 @@
 
 A public-safe interface prototype for the Cosmo AI project.
 
-> **Prototype status:** This repository currently contains a front-end demonstration only. The assistant responses and dashboard figures are simulated. No live AI model, persistent memory, user accounts, database, integrations, or production security controls are connected.
+> **Current status (11 November 2026):** The browser workspace now has an email-link authentication client and a Supabase-backed chat gateway. A dedicated private Supabase project is active; its initial private schema has nine tables with Row Level Security, and the `cosmo-chat` Edge Function is deployed with JWT verification and an owner-email allowlist. The system is **not yet operational for the creator**: the owner account, owner-email secret, model-provider API key, Auth redirect allowlist, and successful website deployment still need configuration. Other dashboard modules remain prototype-only until explicitly connected and tested.
 
 ## Run locally
-Open `index.html` in a modern browser, or serve this folder with any static web server.
+Open `index.html` in a modern browser, or serve this folder with any static web server. The private authentication and chat gateway require the deployed Supabase project and an authorised owner account; local file preview alone will not connect to the production service.
+
+## Current private backend
+- Supabase project: `cosmo-core` (São Paulo region).
+- Database foundation: profiles, missions, knowledge records, memory relationships, conversations, messages, training lessons, training evaluations and audit events.
+- Row Level Security is enabled on all nine tables. Knowledge, message, evaluation and audit records are append-only through the normal authenticated client policies.
+- Edge Function: `cosmo-chat` (JWT verification enabled). It retrieves approved training lessons and creator-owned mission/knowledge context, carries forward recent conversation history, and calls an OpenAI-compatible model endpoint server-side.
+- The function requires the server-side secrets `COSMO_OWNER_EMAIL` and `COSMO_MODEL_API_KEY`. Optional configuration: `COSMO_MODEL_NAME` and `COSMO_MODEL_BASE_URL`. Never put these secrets in browser code or Git.
+- The model provider API is separately billed. The current default model is `gpt-6.1-sol`; set a different supported model explicitly if desired.
+- Sign-in uses Supabase email magic links. The owner must exist in Supabase Auth and the deployed site URL must be added to the Auth redirect allowlist.
+
+## Deployment gate
+The GitHub Pages workflow is committed, but GitHub currently rejects the deployment because Pages has not been enabled for this repository. In GitHub, open **Settings → Pages → Build and deployment → Source**, select **GitHub Actions**, then re-run the workflow. Do not configure the custom domain until the Pages deployment URL is confirmed. The current repository is public; keep all creator history, private training content and secrets in the private Supabase project, never in this repository.
 
 ## Project boundaries
 - This public repository contains only non-sensitive presentation-layer prototype code.
