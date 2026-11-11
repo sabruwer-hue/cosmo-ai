@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cosmo — Subscription Portfolio Prototype</title>
+<style>
+:root{--bg:#f4f6fb;--ink:#182033;--muted:#667085;--line:#e4e8f0;--card:#fff;--navy:#111a2d;--blue:#4565f5;--mint:#e9f8f1;--gold:#fff5df}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,Arial}
+header{background:var(--navy);color:#fff;padding:30px max(22px,calc((100% - 1180px)/2))}
+header .eyebrow{color:#aebeff;font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}
+header h1{font-size:clamp(28px,5vw,42px);margin:7px 0;letter-spacing:-1px}
+header p{color:#d2d9e8;max-width:720px;margin:0}
+main{max-width:1180px;margin:auto;padding:28px 22px 60px}
+.notice{padding:14px 16px;border:1px solid #d8e1ff;background:#eef2ff;border-radius:13px;color:#344575;font-size:13px;margin-bottom:24px}
+.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:28px 0 14px}
+.sectionhead h2{margin:0;font-size:22px}.sectionhead p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:19px;display:flex;flex-direction:column;min-width:0}
+.card .tag{font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:800;color:var(--blue)}
+.card h3{font-size:20px;margin:7px 0 4px}.card p{color:var(--muted);font-size:13px;margin:0 0 12px}
+.card ul{padding-left:18px;margin:0 0 17px;font-size:13px;flex:1}.card li{margin:5px 0}
+.meta{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin-top:auto}
+.actions{display:flex;gap:8px;margin-top:14px}
+button{border:0;border-radius:10px;padding:10px 13px;font:inherit;font-size:13px;font-weight:750;cursor:pointer}
+.primary{background:var(--blue);color:#fff}.secondary{background:#edf1ff;color:#314bc5}.plain{background:#f0f2f6;color:#344054}
+button:focus-visible{outline:3px solid #9db0ff;outline-offset:2px}
+.bundle{background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px}
+.bundle h3{margin:0 0 5px}.bundle p{margin:0;color:var(--muted);font-size:13px}
+.bundle .includes{margin-top:11px;font-size:12px;color:#344054}
+.compare{margin-top:24px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.compare h2{margin:0 0 8px}.selected{display:flex;flex-wrap:wrap;gap:8px;min-height:36px}
+.chip{background:#edf1ff;color:#314bc5;padding:6px 9px;border-radius:99px;font-size:12px;font-weight:700}
+.empty{color:var(--muted);font-size:13px}
+.future{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.future .bundle{background:#fafbfe}
+footer{color:var(--muted);font-size:12px;margin-top:25px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.future{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.grid,.future{grid-template-columns:1fr}.sectionhead{display:block}}
+</style>
+</head>
+<body>
+<header>
+ <div class="eyebrow">Cosmo · Product family</div>
+ <h1>One intelligent platform. Your choice of products.</h1>
+ <p>Explore standalone AI subscriptions and optional bundles. Each product is designed to solve a different job, while sharing Cosmo's secure platform foundations.</p>
+</header>
+<main>
+ <div class="notice"><b>Prototype only.</b> This page demonstrates the proposed product catalogue and comparison interaction. Prices, checkout, accounts, entitlements and payments are not connected. No subscription can be purchased here.</div>
+ <div class="sectionhead"><div><h2>Standalone subscriptions</h2><p>Each product must provide real value on its own.</p></div></div>
+ <div class="grid" id="products">
+  <article class="card" data-product="Cosmo Core"><div class="tag">The foundation</div><h3>Cosmo Core</h3><p>Your personal AI workspace for memory, research, projects and governed task orchestration.</p><ul><li>Personal assistant and project space</li><li>Evidence-aware research and memory</li><li>Tasks, planning and approved workflows</li></ul><div class="meta">Standalone subscription · usage limits to be validated</div><div class="actions"><button class="secondary" data-compare="Cosmo Core">Add to comparison</button></div></article>
+  <article class="card" data-product="Ad Studio"><div class="tag">Business growth</div><h3>Ad Studio</h3><p>Create, distribute, manage and measure advertising campaigns and commercial offers.</p><ul><li>Campaigns, placements and analytics</li><li>Ad Rooms, AdFind and Video Ad Studio</li><li>Audience, trust, reviews and commerce handoffs</li></ul><div class="meta">Standalone subscription · advertising spend/fees separate</div><div class="actions"><button class="secondary" data-compare="Ad Studio">Add to comparison</button></div></article>
+  <article class="card" data-product="Team Up AI"><div class="tag">Human + AI collaboration</div><h3>Team Up AI</h3><p>A shared workspace where people and specialist AI teammates coordinate work with clear permissions.</p><ul><li>Teams, projects and shared knowledge</li><li>AI teammates, task handoffs and reviews</li><li>Approvals, audit history and admin controls</li></ul><div class="meta">Standalone subscription · seats and usage to be validated</div><div class="actions"><button class="secondary" data-compare="Team Up AI">Add to comparison</button></div></article>
+  <article class="card" data-product="Creator Studio"><div class="tag">Creative production</div><h3>Creator Studio</h3><p>Plan, produce, edit and organise original content for creators and creative teams.</p><ul><li>Ideas, scripts, graphics, audio and video</li><li>Repurposing, formats, captions and translations</li><li>Brand assets, content calendar and export</li></ul><div class="meta">Standalone subscription · media generation may be metered</div><div class="actions"><button class="secondary" data-compare="Creator Studio">Add to comparison</button></div></article>
+  <article class="card" data-product="Cosmo Office"><div class="tag">AI productivity</div><h3>Cosmo Office</h3><p>Create and edit work documents, spreadsheets, presentations and files with inspectable AI assistance.</p><ul><li>Documents, spreadsheets and presentations</li><li>Formula help, analysis and file summaries</li><li>Diffs, undo, versions and export checks</li></ul><div class="meta">Standalone subscription · file limits to be validated</div><div class="actions"><button class="secondary" data-compare="Cosmo Office">Add to comparison</button></div></article>
+ </div>
+ <div class="compare"><h2>Product comparison shortlist</h2><div class="selected" id="selected"><span class="empty">Add products above to build a shortlist.</span></div><div class="actions"><button class="plain" id="clear">Clear shortlist</button></div></div>
+ <div class="sectionhead"><div><h2>Cosmo packages</h2><p>Optional bundles; standalone subscriptions remain available.</p></div></div>
+ <div class="grid">
+  <div class="bundle"><h3>Cosmo Personal</h3><p>For individual everyday work.</p><div class="includes">Cosmo Core + selected Office capabilities</div></div>
+  <div class="bundle"><h3>Cosmo Professional</h3><p>For independent professionals.</p><div class="includes">Cosmo Core + Cosmo Office + selected Creator Studio tools</div></div>
+  <div class="bundle"><h3>Cosmo Business</h3><p>For growing businesses.</p><div class="includes">Cosmo Core + Team Up AI + Cosmo Office + Ad Studio essentials</div></div>
+  <div class="bundle"><h3>Cosmo Creator</h3><p>For creators and small studios.</p><div class="includes">Cosmo Core + Creator Studio + optional Ad Studio handoff</div></div>
+  <div class="bundle"><h3>Cosmo Agency</h3><p>For multi-client creative and advertising teams.</p><div class="includes">Team Up AI + Creator Studio + Ad Studio</div></div>
+  <div class="bundle"><h3>Cosmo Enterprise</h3><p>For organisations with advanced governance needs.</p><div class="includes">Negotiated product mix, organisation controls and support</div></div>
+ </div>
+ <div class="sectionhead"><div><h2>Future opportunities to validate</h2><p>Not committed products and not yet separate subscriptions.</p></div></div>
+ <div class="future">
+  <div class="bundle"><h3>Research & Intelligence</h3><p>Evidence libraries, historical research, technology discovery and scenario maps.</p></div>
+  <div class="bundle"><h3>Data & Analytics</h3><p>Business dashboards, forecasting, pricing, inventory and decision support.</p></div>
+  <div class="bundle"><h3>Automation Studio</h3><p>Visual workflows, triggers, integrations, approvals and monitoring.</p></div>
+  <div class="bundle"><h3>Developer Studio</h3><p>Code assistance, testing, debugging and controlled deployment workflows.</p></div>
+  <div class="bundle"><h3>Learning Studio</h3><p>Learning plans, practice, tutoring and progress support.</p></div>
+  <div class="bundle"><h3>Customer Service</h3><p>Knowledge-grounded support, routing and human escalation.</p></div>
+ </div>
+ <footer>Analytical rule: no final prices or commission rates until customer research, provider costs, payment fees, support costs, fraud/refund exposure and unit economics are modelled. A proposed feature is not a deployed service.</footer>
+</main>
+<script>
+const chosen=new Set();
+const output=document.getElementById('selected');
+function render(){output.innerHTML='';if(!chosen.size){const s=document.createElement('span');s.className='empty';s.textContent='Add products above to build a shortlist.';output.append(s);return;}for(const name of chosen){const chip=document.createElement('span');chip.className='chip';chip.textContent=name;output.append(chip);}}
+document.querySelectorAll('[data-compare]').forEach(btn=>btn.addEventListener('click',()=>{const name=btn.dataset.compare;if(chosen.has(name)){chosen.delete(name);btn.textContent='Add to comparison';}else{chosen.add(name);btn.textContent='Added ✓';}render();}));
+document.getElementById('clear').addEventListener('click',()=>{chosen.clear();document.querySelectorAll('[data-compare]').forEach(b=>b.textContent='Add to comparison');render();});
+</script>
+</body>
+</html>
