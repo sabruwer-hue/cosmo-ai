@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
-const cors={"Access-Control-Allow-Origin":"https://cosmo-ai.co.za","Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS","Content-Type":"application/json"};
+const cors={"Access-Control-Allow-Origin":"https://cosmo-ai.co.za","Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS","Content-Type":"application/json","Cache-Control":"no-store"};
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:cors});
 Deno.serve(async(req:Request)=>{
  if(req.method==="OPTIONS")return new Response("ok",{headers:cors});
@@ -18,12 +18,19 @@ Deno.serve(async(req:Request)=>{
  const db=createClient(url,service,{auth:{persistSession:false,autoRefreshToken:false}});
  const {data:product,error:productError}=await db.from("cosmo_subscription_products").select("id,product_code,name,base_price_cents,currency,trial_days,free_tier_limits").eq("product_code",productCode).eq("active",true).eq("public_enabled",true).maybeSingle();
  if(productError||!product)return json({allowed:false,error:"Package not found or unavailable"},404);
+
+ const {data:licence,error:licenceError}=await db.from("cosmo_package_entitlements").select("id,entitlement_code,granted_at").eq("owner_id",user.id).eq("product_id",product.id).eq("status","active").maybeSingle();
+ if(licenceError)return json({allowed:false,error:"Lifetime licence status could not be checked"},500);
+ if(licence){
+   const {data:toolRows}=await db.from("cosmo_tool_entitlements").select("status,cosmo_subscription_tools(tool_code,slug,name)").eq("owner_id",user.id).eq("status","active");
+   return json({allowed:true,owner:false,product_code:productCode,entitlement:{type:"lifetime",code:licence.entitlement_code,granted_at:licence.granted_at},tools:(toolRows||[]).map((x:any)=>x.cosmo_subscription_tools).filter(Boolean),reason:"Lifetime package licence verified"});
+ }
+
  const {data:subs,error:subError}=await db.from("cosmo_subscriptions").select("id,status,trial_ends_at,current_period_end,current_period_start,base_amount_cents,metadata").eq("owner_id",user.id).eq("product_id",product.id).in("status",["trialing","active","free"]).order("created_at",{ascending:false}).limit(1);
  if(subError)return json({allowed:false,error:"Subscription status could not be checked"},500);
  const sub=subs?.[0]||null;
- let trialAvailable=false;
  const {data:claim}=await db.from("cosmo_trial_claims").select("product_id").eq("owner_id",user.id).eq("product_id",product.id).maybeSingle();
- trialAvailable=!claim&&Number(product.trial_days)>0;
+ const trialAvailable=!claim&&Number(product.trial_days)>0;
  if(!sub)return json({allowed:false,owner:false,product:{code:product.product_code,name:product.name,base_price_cents:product.base_price_cents,currency:product.currency,trial_days:product.trial_days,free_tier_limits:product.free_tier_limits},trial_available:trialAvailable,free_available:true,reason:"No active package entitlement"});
  if(sub.status==="trialing"&&sub.trial_ends_at&&new Date(sub.trial_ends_at).getTime()<=Date.now()){
    await db.from("cosmo_subscriptions").update({status:"expired"}).eq("id",sub.id).eq("owner_id",user.id);
