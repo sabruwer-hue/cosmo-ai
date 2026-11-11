@@ -255,7 +255,7 @@ Deno.serve(async (req: Request) => {
     });
     if (userSaveError) throw new Error("Could not save your message.");
 
-    const chatMessages = [
+    const chatMessages: any[] = [
       { role: "system", content: systemPrompt + "\n\n" + context },
       ...priorMessages,
       { role: "user", content: message },
