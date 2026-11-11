@@ -234,7 +234,7 @@ Deno.serve(async (req: Request) => {
       if (!activeSubscription) {
         return new Response(JSON.stringify({ error: "Cosmo Core access is not active. Choose the free tier or start a 14-day trial in the subscription portal.", code: "SUBSCRIPTION_REQUIRED" }), { status: 402, headers: corsHeaders });
       }
-      const periodEnd = activeSubscription.trial_ends_at ?? activeSubscription.current_period_end;
+      const periodEnd = activeSubscription.status === "trialing" ? activeSubscription.trial_ends_at : activeSubscription.current_period_end;
       if (periodEnd && new Date(periodEnd).getTime() <= Date.now()) {
         await serviceDb.from("cosmo_subscriptions").update({ status: "expired" })
           .eq("id", activeSubscription.id).eq("owner_id", ownerId);
