@@ -213,3 +213,9 @@ Start with read-only analysis and registry capture. Do not introduce autonomous 
 ## 16. Current status
 
 This is an architecture specification only. It does not create a running background observer, scheduler, autonomous agent, persistent improvement registry, experiment runner or self-modifying production system. The Cosmo repository remains a front-end prototype and design-document set. Production work requires backend, identity, permissions, storage, job infrastructure, monitoring and human approval controls.
+
+## 17. Prototype factory and verified accuracy
+
+Continuous improvement opportunities should flow into the [Prototype Factory, Verification & Release Lifecycle v1.0](PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md). The factory builds isolated candidates, runs independent tests, records defects and revisions, freezes a candidate hash and requires approval before release.
+
+Verified outcomes and recurring errors flow through the [Persistent Accuracy & Outcome Learning Engine v1.0](PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md). Preference feedback is not equivalent to objective correctness. Method selection must be contextual, calibrated and reversible; failure examples remain available for regression testing.
