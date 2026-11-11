@@ -83,6 +83,14 @@
           <article class="panel knowledge-form-panel">
             <div class="panel-title"><div><p class="eyebrow">CAPTURE A CLAIM</p><h3>New knowledge draft</h3></div><span class="panel-symbol">✳</span></div>
             <form id="knowledge-form">
+              <label for="knowledge-kind">Record type</label>
+              <select id="knowledge-kind" required>
+                <option value="claim">Claim to assess</option>
+                <option value="observation">Direct observation</option>
+                <option value="hypothesis">Hypothesis to test</option>
+                <option value="prediction">Prediction to verify later</option>
+                <option value="decision">Decision record</option>
+              </select>
               <label for="knowledge-claim">Claim or observation</label>
               <textarea id="knowledge-claim" rows="3" maxlength="500" required placeholder="Write one clear statement to investigate…"></textarea>
               <label for="knowledge-source">Where did it come from?</label>
@@ -97,12 +105,14 @@
               </select>
               <label for="knowledge-evidence">Evidence or source note</label>
               <textarea id="knowledge-evidence" rows="2" maxlength="500" placeholder="Add a source, reference or explain what still needs checking…"></textarea>
+              <label for="knowledge-url">Source URL (optional)</label>
+              <input id="knowledge-url" type="url" maxlength="1000" placeholder="https://…">
               <button class="send-btn" type="submit">Add draft <b>＋</b></button>
             </form>
             <p class="prototype-note">Prototype only: drafts exist in this page session and are not sent to a secure database.</p>
           </article>
           <article class="panel knowledge-records-panel">
-            <div class="panel-title"><div><p class="eyebrow">RECORD REGISTER</p><h3>Draft knowledge items</h3></div><span class="tag" id="knowledge-count">0 ITEMS</span></div>
+            <div class="panel-title"><div><p class="eyebrow">RECORD REGISTER</p><h3>Draft knowledge items</h3></div><div class="knowledge-tools"><span class="tag" id="knowledge-count">0 ITEMS</span><button class="export-btn" id="knowledge-export" type="button" disabled>Export JSON ↓</button></div></div>
             <div id="knowledge-empty" class="knowledge-empty">No draft records yet. Add a claim to see how Cosmo will classify and track knowledge.</div>
             <div id="knowledge-list" class="knowledge-list" aria-live="polite"></div>
           </article>
