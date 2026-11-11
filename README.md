@@ -38,6 +38,9 @@ These are design and audit documents, not evidence that the described services h
 - [Adaptive Learning & Preference Engine v1.0](docs/ADAPTIVE-LEARNING-PREFERENCE-ENGINE-v1.md) — preference model, learning techniques, feedback lifecycle, agent isolation, safety boundaries and acceptance tests.
 - [Persistent Learning & Preference Data Architecture v1.0](docs/PERSISTENT-LEARNING-PREFERENCE-DATA-ARCHITECTURE-v1.md) — persistent logical records, API contracts, approval lifecycle, security, retention, recovery and production acceptance tests.
 - [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](docs/CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md) — cross-system review loops, decision checks, method portfolio, safe experiments, background monitoring, relationship quality and controlled improvement.
+- [Persistent Accuracy & Outcome Learning Engine v1.0](docs/PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md) — verified outcomes, recurring error taxonomy, method evaluation, calibration, abstention, drift and regression protection.
+- [Prototype Factory, Verification & Release Lifecycle v1.0](docs/PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md) — candidate build/test/revision cycles, independent evaluation, release gates, staged rollout and rollback.
+- [Repository Review & Improvement Update](docs/REPOSITORY-REVIEW-IMPROVEMENT-UPDATE-2026-11-11.md) — source-level findings, current gaps, readiness and recommended build order.
 
 ## Current prototype modules
 
@@ -50,6 +53,8 @@ These are design and audit documents, not evidence that the described services h
 - **Adaptive Learning & Preference Engine:** separate agent preference profiles, feedback/outcome capture, learning-method catalogue, scoped learning candidates and JSON export. Session-only; no model training or persistent adaptation.
 - **Persistent Learning & Preference Data Architecture:** provider-neutral production design for durable user/workspace/agent profiles, immutable preference versions, feedback/outcome ledgers, approval-bound learning proposals, evaluation, rollback, permission isolation, export, deletion and recovery. Design only; no backend has been deployed.
 - **Continuous Improvement & Meta-Learning Orchestration Engine:** provider-neutral design for pre-decision reviews, post-task learning, system-wide diagnostics, a method portfolio, safe experiments, background monitoring, relationship-engine self-review, approval gates and rollback. Design only; no autonomous background service is deployed.
+- **Persistent Accuracy & Outcome Learning Engine:** design for verified outcome events, recurring error analysis, context-aware method evaluation, calibration, abstention, drift and regression/forgetting checks. Design only; no persistent outcome service is deployed.
+- **Prototype Factory & Release Lifecycle:** design for isolated candidate builds, independent testing, iterative revisions, regression gates, candidate-hash approval, staged rollout and rollback. Design only; no autonomous factory is deployed.
 
 ## Status vocabulary
 
