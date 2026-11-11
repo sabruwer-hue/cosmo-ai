@@ -112,3 +112,7 @@ The production sequence is identity/tenancy first, then durable preferences, fee
 ## 12. Continuous improvement and method portfolio
 
 Adaptive preferences operate within the wider [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md). Preference and learning methods are evaluated by context and retained in a method portfolio. The most successful current method may be preferred for a defined context, but alternatives remain discoverable and can be re-evaluated when conditions change. A feedback event or inferred preference does not by itself authorise a production change.
+
+## 13. Accuracy is distinct from preference
+
+User preference feedback must not be treated as a verified correctness label. Objective answer correctness, task success, operational outcome, user satisfaction and safety outcome are separate event types. Persistent accuracy learning is specified in [Persistent Accuracy & Outcome Learning Engine v1.0](PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md). The preference engine contributes scoped user preferences and feedback, while the accuracy engine evaluates methods against independently verified outcomes.
