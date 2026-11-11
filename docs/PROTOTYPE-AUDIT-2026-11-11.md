@@ -75,3 +75,8 @@ Implement rate limits, structured logging, monitoring, backups, restore tests, r
 A release is deployed only when the workflow deploy job succeeds and the deployed site loads. It is AI-connected only after a server-side model request succeeds and is verified. It is memory-connected only after a record survives reload, can be retrieved with correct access controls, and retains provenance. It is production-ready only after authentication, authorization, secrets, audit, privacy, backups/restore, rate limits and security testing pass.
 
 Status vocabulary: Planned is not implemented; implemented is not deployed; deployed is not verified; verified is not automatically production-ready.
+
+
+## Follow-up deployment check
+
+A second workflow run triggered by the audit commit (`ae32a52018156f977df05412cd52babd914ebb0c`) also completed with failure at **Configure Pages**. Checkout succeeded; upload and deploy were skipped. This confirms the blocker is repeatable and not limited to the blueprint commit. Owner-side GitHub Pages configuration is required before further DNS work.
