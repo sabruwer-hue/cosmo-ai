@@ -201,3 +201,7 @@ Provide a concise user-facing explanation. Do not expose hidden internal reasoni
 **KN-5 — Evaluation:** prediction ledger, outcomes, scoring and quality monitoring.
 
 Each stage must pass its acceptance tests before being described as implemented or verified.
+
+## 16. Continuous improvement integration
+
+The Knowledge Engine supplies source-grounded evidence and decision traces to the [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md). It supports post-task reviews, root-cause analysis, method comparison and pre-decision evidence checks. Improvement hypotheses remain distinct from verified claims, and each proposed change retains counter-evidence, uncertainty and source links.
