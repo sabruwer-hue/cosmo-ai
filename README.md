@@ -13,7 +13,7 @@ Open `index.html` in a modern browser, or serve this folder with any static web 
 - Row Level Security is enabled on all nine tables. Knowledge, message, evaluation and audit records are append-only through the normal authenticated client policies.
 - Edge Function: `cosmo-chat` (JWT verification enabled). It retrieves approved training lessons and creator-owned mission/knowledge context, carries forward recent conversation history, and calls an OpenAI-compatible model endpoint server-side.
 - The function requires the server-side secrets `COSMO_OWNER_EMAIL` and `COSMO_MODEL_API_KEY`. Optional configuration: `COSMO_MODEL_NAME` and `COSMO_MODEL_BASE_URL`. Never put these secrets in browser code or Git.
-- The model provider API is separately billed. The current default model is `gpt-6.1-sol`; set a different supported model explicitly if desired.
+- The model provider API is separately billed. The current default model is `gpt-6-luna` for lower-cost initial testing; set `COSMO_MODEL_NAME=gpt-6.1-sol` when you want stronger reasoning and accept the higher API cost.
 - Sign-in uses Supabase email magic links. The owner must exist in Supabase Auth and the deployed site URL must be added to the Auth redirect allowlist.
 
 ## Deployment gate
