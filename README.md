@@ -41,6 +41,7 @@ These are design and audit documents, not evidence that the described services h
 - [Persistent Accuracy & Outcome Learning Engine v1.0](docs/PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md) — verified outcomes, recurring error taxonomy, method evaluation, calibration, abstention, drift and regression protection.
 - [Prototype Factory, Verification & Release Lifecycle v1.0](docs/PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md) — candidate build/test/revision cycles, independent evaluation, release gates, staged rollout and rollback.
 - [Repository Review & Improvement Update](docs/REPOSITORY-REVIEW-IMPROVEMENT-UPDATE-2026-11-11.md) — source-level findings, current gaps, readiness and recommended build order.
+- [Historical Intelligence, Scenario Analysis & Decision Engine v1.0](docs/HISTORICAL-INTELLIGENCE-SCENARIO-DECISION-ENGINE-v1.md) — 5–50 year historical research, source reliability assessment, private/public evidence reconciliation, time-aware comparisons, scenario outcome maps, real-data simulation and decision briefs.
 
 ## Current prototype modules
 
