@@ -130,7 +130,7 @@
     const yes=document.createElement("button");yes.className="btn";yes.textContent="Approve";
     const no=document.createElement("button");no.className="btn secondary";no.textContent="Reject";
     const actions=document.createElement("div");actions.className="task-actions";actions.append(yes,no);card.append(note,actions);
-    const decide=async next=>{const {error}=await db.from("cosmo_agent_approvals").update({status:next,decided_at:new Date().toISOString(),decision_note:note.value.trim()}).eq("id",a.id).eq("owner_id",user.id);if(error){status("approval-status",error.message,"error");return}await eventLog(a.task_id,"approval_"+next,"Approval "+next,{approval_code:a.approval_code,note:note.value.trim()});loadApprovals()};
+    const decide=async next=>{const {error}=await db.from("cosmo_agent_approvals").update({status:next,decided_at:new Date().toISOString(),decision_note:note.value.trim()}).eq("id",a.id).eq("owner_id",user.id);if(error){status("approval-status",error.message,"error");return}const taskStatus=next==="approved"?"in_progress":"blocked";const taskUpdate=await db.from("cosmo_agent_tasks").update({status:taskStatus,updated_at:new Date().toISOString()}).eq("id",a.task_id).eq("owner_id",user.id);if(taskUpdate.error){status("approval-status","Decision saved, but task status update failed: "+taskUpdate.error.message,"error");return}await eventLog(a.task_id,"approval_"+next,"Approval "+next,{approval_code:a.approval_code,note:note.value.trim(),task_status:taskStatus});loadApprovals();loadTasks()};
     yes.addEventListener("click",()=>decide("approved"));no.addEventListener("click",()=>decide("rejected"));
    }
    $("approval-list").append(card);
