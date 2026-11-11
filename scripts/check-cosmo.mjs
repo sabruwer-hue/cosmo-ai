@@ -27,7 +27,7 @@ for (const file of ["index.html", "work.html", "admin.html"]) {
   const blocks = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
   let inlineIndex = 0;
   for (const match of blocks) {
-    if (/\bsrc\s*=/.test(match[1]) || !match[2].trim()) continue;
+    if (/\bsrc\s*=/.test(match[1]) || /application\/ld\+json/i.test(match[1]) || !match[2].trim()) continue;
     const temp = join(tmpdir(), "cosmo-inline-" + process.pid + "-" + inlineIndex++ + ".js");
     writeFileSync(temp, match[2]);
     const result = spawnSync(process.execPath, ["--check", temp], { encoding: "utf8" });
