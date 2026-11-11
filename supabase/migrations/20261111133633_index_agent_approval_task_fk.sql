@@ -1,0 +1,1 @@
+create index if not exists cosmo_agent_approvals_owner_task_idx on public.cosmo_agent_approvals(owner_id, task_id);
