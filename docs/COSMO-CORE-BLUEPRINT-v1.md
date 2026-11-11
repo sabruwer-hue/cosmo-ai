@@ -268,3 +268,8 @@ Indicator definitions, formulas, source provenance, timestamps, versions, calibr
 ## 22. Cosmo Strategy Evolution Engine
 
 Cosmo Trading Intelligence maintains a versioned library of instrument- and regime-specific strategies. The Strategy Evolution Engine may draft new strategies and revisions, score candidates against risk-adjusted and net-of-cost criteria, test them through chronological out-of-sample replay and paper/shadow operation, and compare challengers against an approved champion. Generated changes remain isolated candidates: they cannot directly modify live production logic, grant themselves permissions, raise risk limits or bypass approval. Promotion to real-money use requires independent validation, legal and broker clearance, security review and explicit user approval. No-trade, pause and rollback are valid outcomes. The optimisation target is robust risk-adjusted performance within hard loss and exposure constraints, never hindsight-maximised profit or win rate.
+
+
+## 23. Strategy Analysis & Allocation Engine
+
+A dedicated analyzer evaluates market-regime suitability, strategy fitness and portfolio/execution constraints for each instrument and timeframe. It applies hard eligibility gates before comparing approved strategies on transparent, risk-adjusted, net-of-cost and out-of-sample evidence. It returns a preferred candidate, conditional candidate, monitor, no-suitable-strategy or pause outcome, with reasons, alternatives, uncertainty and reassessment triggers. It continuously re-evaluates material changes while using switching hysteresis to avoid churn. The analyzer recommends; the independent risk engine and execution gateway enforce permissions, limits and approvals.
