@@ -97,7 +97,7 @@ An independently saleable creative production environment for individuals and te
 
 ### 2.5 Cosmo Office
 
-An AI-native productivity suite, not merely a chatbot that generates text:
+An AI-native productivity suite, not merely a chatbot that generates text. **Historical continuity:** older EcoverseHQ/Cosmo planning included **AImpact AI Office & Creator Studio** as a combined AI business/content-tools concept. The current architecture separates the office productivity suite from Creator Studio so each has a clearer customer job and product boundary; retain the older combined name as an alias/source record, not as a second overlapping subscription.
 - **Documents:** create, edit, format, rewrite, compare, comment, summarise and collaboratively review text documents.
 - **Spreadsheets:** create and edit tables, formulas, charts, data validation, pivots/analysis and explainable transformations.
 - **Presentations:** generate slide decks from briefs, documents or data; revise layouts and speaker notes.
