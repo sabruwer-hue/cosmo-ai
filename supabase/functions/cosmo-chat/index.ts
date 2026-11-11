@@ -59,7 +59,7 @@ const agentTools = [
   }, required: ["task_code","action_summary","risk_level"], additionalProperties: false } } }
 ];
 
-async function executeAgentTool(supabase, ownerId, name, args, callId) {
+async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAccess, activeTools) {
   const fail = (message) => ({ ok: false, error: message });
   if (["create_task","list_tasks","request_approval"].includes(name) && !ownerAccess) {
     const { data: workProduct } = await supabase.from("cosmo_subscription_products").select("id").eq("product_code","COSMO-WORK").maybeSingle();
@@ -361,7 +361,7 @@ Deno.serve(async (req: Request) => {
         } else {
           try {
             const args = JSON.parse(call.function.arguments ?? "{}");
-            result = await executeAgentTool(supabase, ownerId, call.function.name, args, call.id);
+            result = await executeAgentTool(supabase, ownerId, call.function.name, args, call.id, ownerAccess, activeTools);
           } catch (toolError) {
             result = { ok: false, error: toolError instanceof Error ? toolError.message : "Internal tool failed." };
           }
