@@ -52,3 +52,7 @@ Each edge requires a unique permanent server-assigned identifier, source memory 
 
 ## Known limitations
 This UI is not a persistent graph database, authenticated system, production audit log or secure archive. It uses temporary in-memory records only. Do not enter sensitive information.
+
+## Continuous improvement integration
+
+The Relationship Engine is itself subject to periodic quality review under the [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md). Automated diagnostics may propose missing, stale, weak or suspicious edges, contradictions, duplicate candidates and integrity issues. They must never silently merge, delete or resolve records. Preserve both endpoints, source provenance, versions and access controls; graph traversal must enforce permissions at every hop.
