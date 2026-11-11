@@ -225,3 +225,10 @@ Verified outcomes feed source-performance, method-performance and scenario-appli
 Continuous improvement opportunities should flow into the [Prototype Factory, Verification & Release Lifecycle v1.0](PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md). The factory builds isolated candidates, runs independent tests, records defects and revisions, freezes a candidate hash and requires approval before release.
 
 Verified outcomes and recurring errors flow through the [Persistent Accuracy & Outcome Learning Engine v1.0](PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md). Preference feedback is not equivalent to objective correctness. Method selection must be contextual, calibrated and reversible; failure examples remain available for regression testing.
+
+
+## 19. Technological intelligence and discovery integration
+
+Continuous improvement must also review the Technological Intelligence & Discovery Map. It should identify recurring bottlenecks, reusable components, failed combinations, outdated assumptions, under-tested dependencies and research clues that merit revisiting. Candidate technology combinations remain hypotheses until supported by test evidence. Improvements to technology maps, feasibility methods, engineering templates and simulation models must pass the same independent evaluation, held-out testing, safety review and approval gates as other Cosmo changes.
+
+The Clue Ledger preserves abandoned approaches and negative results so future discoveries can re-evaluate them without repeating known failures or treating old hypotheses as proven facts.
