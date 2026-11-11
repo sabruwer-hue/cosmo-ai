@@ -1,0 +1,20 @@
+{
+  "id": "./retail.html",
+  "name": "Cosmo QR Retail",
+  "short_name": "QR Retail",
+  "description": "QR product information hubs, store inventory, expiry tracking and restock intelligence.",
+  "start_url": "./retail.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/cosmo-retail-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
