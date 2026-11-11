@@ -175,8 +175,12 @@
  $("signout").addEventListener("click",async()=>{await db.auth.signOut();location.reload()});
  db.auth.onAuthStateChange((_event,session)=>setSession(session));
  async function setSession(session){
-  user=session?.user||null;$("auth").hidden=!!user;$("session-pill").textContent=user?"Signed in · "+(user.email||"Cosmo owner"):"Not signed in";
-  if(user){await loadTasks();await loadApprovals();await loadPackages()}
+  user=session?.user||null;
+  if(!user){$("auth").hidden=false;$("session-pill").textContent="Not signed in";return}
+  const {data:gate,error:gateError}=await db.functions.invoke("cosmo-admin-gate",{body:{}});
+  if(gateError||!gate?.allowed){user=null;$("auth").hidden=false;$("session-pill").textContent="Owner verification required";status("auth-status",gate?.error||gateError?.message||"This account is not authorised for Cosmo Work.","error");return}
+  $("auth").hidden=true;$("session-pill").textContent="Owner verified · "+(user.email||"Cosmo owner");
+  await loadTasks();await loadApprovals();await loadPackages();
  }
  db.auth.getSession().then(({data})=>setSession(data.session));
 })();
