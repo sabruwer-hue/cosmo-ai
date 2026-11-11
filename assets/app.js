@@ -447,9 +447,152 @@ if (vaultExport) {
     URL.revokeObjectURL(url);
   });
 
-  // Refresh endpoint choices whenever a memory is added.
-  const originalUpdateOptions = updateMemoryLinkOptions;
-  window.cosmoRefreshRelationshipChoices = fillMemoryChoices;
-  fillMemoryChoices();
+  // Memory Versioning & Contradiction Review v1 — session-only governance workflow.
+  const versionForm = document.querySelector("#memory-version-form");
+  const versionMemory = document.querySelector("#version-memory");
+  const timelineMemory = document.querySelector("#version-timeline-memory");
+  const timeline = document.querySelector("#version-timeline");
+  const versionCount = document.querySelector("#version-count");
+  const contradictionQueue = document.querySelector("#contradiction-queue");
+  const contradictionCount = document.querySelector("#contradiction-count");
+
+  function ensureVersionHistory(memory) {
+    if (!memory.versions) memory.versions = [{
+      version: 1, summary: memory.summary, reason: "Initial memory draft",
+      basis: "initial_capture", createdAt: memory.createdAt, reviewStatus: "unreviewed"
+    }];
+  }
+  function populateVersionChoices() {
+    const selectedEdit = versionMemory.value;
+    const selectedTimeline = timelineMemory.value;
+    [versionMemory, timelineMemory].forEach((select) => {
+      select.replaceChildren();
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = memoryDrafts.length ? "Choose a memory" : "Create a memory first";
+      select.append(placeholder);
+      memoryDrafts.forEach((memory) => {
+        const option = document.createElement("option");
+        option.value = memory.code;
+        option.textContent = memory.code + " · " + memory.title;
+        select.append(option);
+      });
+    });
+    versionMemory.value = memoryDrafts.some((m) => m.code === selectedEdit) ? selectedEdit : "";
+    timelineMemory.value = memoryDrafts.some((m) => m.code === selectedTimeline) ? selectedTimeline : "";
+    versionForm.querySelector('button[type="submit"]').disabled = memoryDrafts.length === 0;
+  }
+  function renderTimeline() {
+    timeline.replaceChildren();
+    const memory = memoryByCode(timelineMemory.value);
+    if (!memory) {
+      const empty = document.createElement("p"); empty.className = "knowledge-empty";
+      empty.textContent = "Choose a memory to inspect its version history."; timeline.append(empty);
+      versionCount.textContent = "0 VERSIONS"; return;
+    }
+    ensureVersionHistory(memory);
+    versionCount.textContent = memory.versions.length + (memory.versions.length === 1 ? " VERSION" : " VERSIONS");
+    [...memory.versions].reverse().forEach((version) => {
+      const card = document.createElement("article"); card.className = "version-item";
+      const head = document.createElement("div"); head.className = "knowledge-record-top";
+      const label = document.createElement("strong"); label.textContent = "VERSION " + version.version;
+      const status = document.createElement("span"); status.className = "tag"; status.textContent = version.reviewStatus.toUpperCase();
+      head.append(label, status);
+      const summary = document.createElement("p"); summary.className = "knowledge-claim"; summary.textContent = version.summary;
+      const reason = document.createElement("p"); reason.className = "knowledge-evidence"; reason.textContent = "Change reason: " + version.reason + " · Basis: " + version.basis.replaceAll("_", " ");
+      const date = document.createElement("small"); date.textContent = new Date(version.createdAt).toLocaleString();
+      card.append(head, summary, reason, date); timeline.append(card);
+    });
+  }
+  function renderContradictionQueue() {
+    contradictionQueue.replaceChildren();
+    const conflicts = relationships.filter((link) => link.type === "contradicts");
+    const open = conflicts.filter((link) => !link.review || link.review.status === "open");
+    contradictionCount.textContent = open.length + " OPEN";
+    if (!conflicts.length) {
+      const empty = document.createElement("p"); empty.className = "knowledge-empty";
+      empty.textContent = "No contradiction links to review yet."; contradictionQueue.append(empty); return;
+    }
+    conflicts.forEach((link) => {
+      const left = memoryByCode(link.fromCode), right = memoryByCode(link.toCode);
+      const card = document.createElement("article"); card.className = "contradiction-item";
+      const heading = document.createElement("div"); heading.className = "knowledge-record-top";
+      const code = document.createElement("strong"); code.textContent = link.code;
+      const status = document.createElement("span"); status.className = "tag tag-warning";
+      status.textContent = link.review ? link.review.status.replaceAll("_", " ").toUpperCase() : "OPEN";
+      heading.append(code, status);
+      const pair = document.createElement("div"); pair.className = "conflict-pair";
+      [[left, link.fromCode], [right, link.toCode]].forEach(([memory, fallback]) => {
+        const side = document.createElement("div");
+        const title = document.createElement("strong"); title.textContent = memory ? memory.title : "Missing " + fallback;
+        const body = document.createElement("p"); body.textContent = memory ? memory.summary : "Referenced memory is unavailable.";
+        side.append(title, body); pair.append(side);
+      });
+      const note = document.createElement("p"); note.className = "knowledge-evidence";
+      note.textContent = "Original link rationale: " + (link.note || "Not supplied.");
+      const controls = document.createElement("div"); controls.className = "review-controls";
+      const select = document.createElement("select"); select.className = "review-select";
+      [["open","Keep open"],["confirmed_conflict","Confirmed conflict"],["resolved_evidence","Resolved by evidence"],["not_a_conflict","Not a contradiction"],["needs_more_evidence","Needs more evidence"]].forEach(([value,label]) => {
+        const option = document.createElement("option"); option.value = value; option.textContent = label; select.append(option);
+      });
+      select.value = link.review ? link.review.status : "open";
+      const rationale = document.createElement("textarea"); rationale.rows = 2; rationale.maxLength = 700;
+      rationale.placeholder = "Review rationale (required to save an outcome)";
+      rationale.value = link.review ? link.review.rationale : "";
+      const save = document.createElement("button"); save.type = "button"; save.className = "export-btn"; save.textContent = "Save review";
+      save.addEventListener("click", () => {
+        const explanation = rationale.value.trim();
+        if (!explanation) { rationale.setCustomValidity("Add a review rationale before saving."); rationale.reportValidity(); return; }
+        rationale.setCustomValidity("");
+        link.review = { status: select.value, rationale: explanation, reviewedAt: new Date().toISOString() };
+        renderContradictionQueue(); renderRelationships();
+      });
+      controls.append(select, rationale, save);
+      card.append(heading, pair, note, controls);
+      if (link.review) {
+        const prior = document.createElement("small");
+        prior.textContent = "REVIEWED " + new Date(link.review.reviewedAt).toLocaleString() + " · " + link.review.rationale;
+        card.append(prior);
+      }
+      contradictionQueue.append(card);
+    });
+  }
+  versionForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const memory = memoryByCode(versionMemory.value);
+    const summary = document.querySelector("#version-summary").value.trim();
+    const reason = document.querySelector("#version-reason").value.trim();
+    if (!memory || !summary || !reason) return;
+    ensureVersionHistory(memory);
+    const version = {
+      version: memory.versions[memory.versions.length - 1].version + 1,
+      summary, reason, basis: document.querySelector("#version-source").value,
+      createdAt: new Date().toISOString(), reviewStatus: "unreviewed"
+    };
+    memory.versions.push(version);
+    memory.summary = summary;
+    renderVault(); renderTimeline();
+    timelineMemory.value = memory.code;
+    renderTimeline();
+    document.querySelector("#version-summary").value = "";
+    document.querySelector("#version-reason").value = "";
+    versionForm.reset(); versionMemory.value = memory.code;
+  });
+  versionMemory.addEventListener("change", () => {
+    const memory = memoryByCode(versionMemory.value);
+    document.querySelector("#version-summary").value = memory ? memory.summary : "";
+  });
+  timelineMemory.addEventListener("change", renderTimeline);
+
+  const previousRefresh = window.cosmoRefreshRelationshipChoices;
+  window.cosmoRefreshRelationshipChoices = () => {
+    if (previousRefresh) previousRefresh();
+    populateVersionChoices();
+    renderTimeline();
+    renderContradictionQueue();
+  };
+  populateVersionChoices();
+  renderTimeline();
+  renderContradictionQueue();
   renderRelationships();
 })();
