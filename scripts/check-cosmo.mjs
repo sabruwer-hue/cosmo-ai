@@ -7,7 +7,8 @@ const required = [
   "index.html", "work.html", "admin.html", "service-worker.js",
   "manifest.webmanifest", "work.webmanifest", "admin.webmanifest",
   "assets/app.js", "assets/cosmo-live.js",
-  "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts"
+  "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts",
+  "supabase/functions/cosmo-yoco-checkout/index.ts", "supabase/functions/cosmo-yoco-webhook/index.ts"
 ];
 for (const file of required) readFileSync(file, "utf8");
 
@@ -49,4 +50,12 @@ for (const tool of ["create_task", "list_tasks", "search_knowledge", "create_mis
   if (!chat.includes('name: "' + tool + '"')) throw new Error("Cosmo agent tool is missing: " + tool);
 }
 if (!chat.includes("parallel_tool_calls: false")) throw new Error("Cosmo agent must keep tool execution sequential.");
+
+const yocoCheckout = readFileSync("supabase/functions/cosmo-yoco-checkout/index.ts", "utf8");
+const yocoWebhook = readFileSync("supabase/functions/cosmo-yoco-webhook/index.ts", "utf8");
+if (!yocoCheckout.includes("invoiceId:invoice.id")) throw new Error("Yoco checkout must attach the persisted invoice ID as reconciliation metadata.");
+if (!yocoWebhook.includes('eq("invoice_id",invoiceId)')) throw new Error("Yoco webhook must resolve a checkout from the persisted invoice ID when the provider checkout ID is unavailable.");
+if (!yocoWebhook.includes("metadata.ownerId!==checkout.owner_id")) throw new Error("Yoco webhook must verify the metadata owner against the stored checkout.");
+if (!yocoWebhook.includes("metadata.invoiceId!==checkout.invoice_id")) throw new Error("Yoco webhook must verify the metadata invoice against the stored checkout.");
+if (!yocoWebhook.includes("payment_reference:resolvedCheckoutId")) throw new Error("Yoco webhook must retain the resolved provider checkout ID in the payment audit record.");
 console.log("Cosmo checks passed: files, manifests, JavaScript syntax, PWA hooks, workspace controls and agent tool registry.");

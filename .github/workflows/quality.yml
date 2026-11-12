@@ -18,17 +18,40 @@ jobs:
       - uses: denoland/setup-deno@v2
       - name: Validate Cosmo application files
         run: node scripts/check-cosmo.mjs
-      - name: Type-check Cosmo chat (known legacy check warning)
+      - name: Type-check Cosmo chat (non-blocking legacy diagnostic)
+        id: chat_typecheck
         continue-on-error: true
         run: deno check supabase/functions/cosmo-chat/index.ts
       - name: Type-check Cosmo admin gate
         run: deno check supabase/functions/cosmo-admin-gate/index.ts
       - name: Type-check lifetime entitlement gate
         run: deno check supabase/functions/cosmo-access-gate/index.ts
-      - name: Type-check Yoco checkout (temporary type warning)
+      - name: Type-check Yoco checkout (non-blocking legacy diagnostic)
+        id: yoco_checkout_typecheck
         continue-on-error: true
         run: deno check supabase/functions/cosmo-yoco-checkout/index.ts
       - name: Type-check Yoco webhook
         run: deno check supabase/functions/cosmo-yoco-webhook/index.ts
       - name: Type-check retired PayFast stubs
         run: deno check supabase/functions/cosmo-payfast-checkout/index.ts supabase/functions/cosmo-payfast-itn/index.ts
+
+      - name: Publish non-blocking type-check warnings
+        if: always()
+        env:
+          CHAT_CHECK_OUTCOME: ${{ steps.chat_typecheck.outcome }}
+          YOCO_CHECK_OUTCOME: ${{ steps.yoco_checkout_typecheck.outcome }}
+        run: |
+          if [ "$CHAT_CHECK_OUTCOME" = "failure" ] || [ "$YOCO_CHECK_OUTCOME" = "failure" ]; then
+            echo "## Non-blocking legacy type-check warnings" >> "$GITHUB_STEP_SUMMARY"
+            if [ "$CHAT_CHECK_OUTCOME" = "failure" ]; then
+              echo "- cosmo-chat type-check failed. This diagnostic is currently non-blocking; fix it before production release." >> "$GITHUB_STEP_SUMMARY"
+              echo "::warning::cosmo-chat type-check failed; see step log. Release gate remains open."
+            fi
+            if [ "$YOCO_CHECK_OUTCOME" = "failure" ]; then
+              echo "- cosmo-yoco-checkout type-check failed. This diagnostic is currently non-blocking; fix it before accepting payments." >> "$GITHUB_STEP_SUMMARY"
+              echo "::warning::cosmo-yoco-checkout type-check failed; see step log. Payment release gate remains open."
+            fi
+          else
+            echo "## Legacy type-check diagnostics" >> "$GITHUB_STEP_SUMMARY"
+            echo "Both non-blocking legacy type-check diagnostics passed." >> "$GITHUB_STEP_SUMMARY"
+          fi
