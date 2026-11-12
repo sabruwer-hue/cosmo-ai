@@ -126,17 +126,19 @@ document.querySelectorAll(".tab[data-tab]").forEach(b=>b.addEventListener("click
 $("strategy-search").addEventListener("input",renderStrategies);$("library-filter").addEventListener("change",renderStrategies);
 $("auth-form").addEventListener("submit",async e=>{e.preventDefault();say("auth-status","Sending secure sign-in link…");const {error}=await db.auth.signInWithOtp({email:$("email").value.trim(),options:{emailRedirectTo:location.href,shouldCreateUser:false}});say("auth-status",error?error.message:"Check your email and open the link on this device.",error?"error":"ok")});
 $("signout").addEventListener("click",async()=>{await db.auth.signOut();location.reload()});
-let loadedFor=null;
+let loadedFor=null,checkingFor=null;
 async function setSession(session){
  user=session?.user||null;
- if(!user){loadedFor=null;$("auth").hidden=false;$("session-pill").textContent="Sign-in required";return}
- $("session-pill").textContent="Verifying owner access…";
+ if(!user){loadedFor=null;checkingFor=null;$("auth").hidden=false;$("session-pill").textContent="Sign-in required";return}
+ if(loadedFor===user.id||checkingFor===user.id)return;
+ checkingFor=user.id;$("session-pill").textContent="Verifying owner access…";
  const {data,error}=await db.functions.invoke("cosmo-admin-gate",{body:{}});
+ checkingFor=null;
+ if(!user||user.id!==session.user.id)return;
  if(error||!data?.allowed){loadedFor=null;$("auth").hidden=false;$("session-pill").textContent="Owner access required";say("auth-status",data?.error||error?.message||"This workspace is restricted to the verified Cosmo owner.","error");return}
- $("auth").hidden=true;$("session-pill").textContent="Verified owner";
- if(loadedFor!==user.id){loadedFor=user.id;await loadAll()}
+ $("auth").hidden=true;$("session-pill").textContent="Verified owner";loadedFor=user.id;await loadAll();
 }
-db.auth.onAuthStateChange((_event,session)=>{void setSession(session)});
+db.auth.onAuthStateChange((_event,session)=>{Promise.resolve().then(()=>setSession(session))});
 db.auth.getSession().then(({data})=>setSession(data.session));
 })();
 </script>
