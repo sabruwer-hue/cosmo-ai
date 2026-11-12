@@ -74,7 +74,7 @@ Course 2: **Learning Strategies & Adaptive Intelligence** — four modules and e
 All seed strategies have `cosmo_validation_state=unverified`. They are reference methods, not proof that Cosmo has mastered or validated them. Strategy runs, evaluations and learner progress start empty. Integrity checks found no missing version-1 snapshots, broken strategy links or orphan lessons.
 
 ### Application shell
-A Strategy Academy page has been added on this review branch. It provides authenticated access to shared strategy libraries, strategy details, course modules, lessons and owner-scoped progress. It is linked from the Admin portal and added to the service-worker shell. JavaScript syntax was checked; live browser authentication and Data API behaviour still need testing.
+A Strategy Academy page has been added on this review branch. It requires the verified Cosmo owner gate and provides access to shared strategy libraries, strategy details, course modules, lessons and owner-scoped progress. It is linked from the Admin portal and added to the service-worker shell. JavaScript syntax was checked; live browser authentication and Data API behaviour still need testing.
 
 ## 3. What exists but must be refined or verified
 
