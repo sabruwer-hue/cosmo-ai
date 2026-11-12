@@ -2,7 +2,7 @@
 
 **Document ID:** COSMO-STRAT-ACADEMY-001  
 **Date:** 12 November 2026  
-**Status:** Live database foundation deployed; browser interface added in this branch; runtime and owner-session verification pending.
+**Status:** Live database foundation deployed; owner-gated browser interface added in this branch; runtime and owner-session verification pending.
 
 ## 1. Purpose
 
