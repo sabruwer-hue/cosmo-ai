@@ -12,7 +12,7 @@ The webhook now:
 1. Accepts a provider checkout ID when one is present.
 2. Otherwise resolves the pending local checkout using the persisted `invoiceId` metadata.
 3. Verifies the echoed owner and invoice metadata against the stored checkout before continuing.
-4. Keeps the existing signature, timestamp, amount, currency, status and idempotency checks.
+4. Retains the resolved provider checkout ID in payment-event and entitlement audit metadata, and keeps the existing signature, timestamp, amount, currency, status and idempotency checks.
 
 Yoco's Checkout API flow requires server-side checkout creation and webhook confirmation; the customer redirect is not sufficient evidence of payment. See [Yoco Checkout API setup](https://support.yoco.help/en/articles/739322-yoco-checkout-api) and the [Yoco webhook handling implementation notes](https://github.com/sonnenglas/yoco-php-sdk/blob/master/docs/guides/webhook-handling.md).
 
@@ -32,7 +32,7 @@ The application validation script now checks that:
 - Run the branch CI and resolve any Deno/type errors it exposes.
 - Execute Yoco sandbox success, failure, duplicate-delivery, stale-timestamp, wrong-amount, wrong-currency and metadata-mismatch tests.
 - Confirm the live webhook event shape against a real Yoco sandbox delivery before deployment.
-- Verify that each local invoice maps to at most one intended checkout, and add a database uniqueness constraint only after confirming the existing data model and pending-checkout retry behaviour.
+- The live database already has a unique index on `cosmo_yoco_checkouts.invoice_id`; the invoice-based fallback therefore resolves to at most one checkout. No production schema change is needed for this fix.
 - Verify the GitHub Pages publishing source in repository settings; workflow code cannot enable that repository setting by itself.
 - Test owner sign-in, Academy authorization, learner progress and chat/model inference in a real browser.
 
