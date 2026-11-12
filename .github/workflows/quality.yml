@@ -44,11 +44,11 @@ jobs:
           if [ "$CHAT_CHECK_OUTCOME" = "failure" ] || [ "$YOCO_CHECK_OUTCOME" = "failure" ]; then
             echo "## Non-blocking legacy type-check warnings" >> "$GITHUB_STEP_SUMMARY"
             if [ "$CHAT_CHECK_OUTCOME" = "failure" ]; then
-              echo "- `cosmo-chat` type-check failed. This diagnostic is currently non-blocking; fix it before production release." >> "$GITHUB_STEP_SUMMARY"
+              echo "- cosmo-chat type-check failed. This diagnostic is currently non-blocking; fix it before production release." >> "$GITHUB_STEP_SUMMARY"
               echo "::warning::cosmo-chat type-check failed; see step log. Release gate remains open."
             fi
             if [ "$YOCO_CHECK_OUTCOME" = "failure" ]; then
-              echo "- `cosmo-yoco-checkout` type-check failed. This diagnostic is currently non-blocking; fix it before accepting payments." >> "$GITHUB_STEP_SUMMARY"
+              echo "- cosmo-yoco-checkout type-check failed. This diagnostic is currently non-blocking; fix it before accepting payments." >> "$GITHUB_STEP_SUMMARY"
               echo "::warning::cosmo-yoco-checkout type-check failed; see step log. Payment release gate remains open."
             fi
           else
