@@ -37,15 +37,25 @@ Deno.serve(async(req:Request)=>{
   let event:any;try{event=JSON.parse(raw)}catch{return plain("Invalid JSON",400);}
   if(event.type!=="payment.succeeded")return plain("Event received",200);
   const payload=event.payload||{};
-  const checkoutId=payload.metadata?.checkoutId;
+  const metadata=payload.metadata||{};
+  const checkoutId=typeof metadata.checkoutId==="string" ? metadata.checkoutId : "";
+  const invoiceId=typeof metadata.invoiceId==="string" ? metadata.invoiceId : "";
   const amount=Number(payload.amount);
   const currency=payload.currency;
-  if(!checkoutId||!Number.isInteger(amount)||!currency)return plain("Missing payment details",400);
+  if((!checkoutId&&!invoiceId)||!Number.isInteger(amount)||!currency)return plain("Missing payment details",400);
 
   const db=createClient(url,service,{auth:{persistSession:false,autoRefreshToken:false}});
-  const {data:checkout,error:lookupError}=await db.from("cosmo_yoco_checkouts").select("*").eq("checkout_id",checkoutId).maybeSingle();
+  // The checkout-creation request stores invoiceId in metadata, but cannot know
+  // Yoco's checkoutId until the response arrives. Prefer a supplied checkoutId
+  // when present; otherwise resolve the persisted checkout by our invoiceId.
+  let lookup=db.from("cosmo_yoco_checkouts").select("*");
+  if(checkoutId) lookup=lookup.eq("checkout_id",checkoutId);
+  else lookup=lookup.eq("invoice_id",invoiceId).order("created_at",{ascending:false}).limit(1);
+  const {data:checkout,error:lookupError}=await lookup.maybeSingle();
   if(lookupError)return plain("Checkout lookup failed",500);
   if(!checkout)return plain("Checkout not found",404);
+  if(metadata.ownerId && metadata.ownerId!==checkout.owner_id)return plain("Payment owner mismatch",400);
+  if(metadata.invoiceId && metadata.invoiceId!==checkout.invoice_id)return plain("Payment invoice mismatch",400);
   if(checkout.status==="paid")return plain("Already processed",200);
   if(amount!==checkout.amount_cents||currency!==checkout.currency)return plain("Payment amount or currency mismatch",400);
   if(payload.status!=="succeeded")return plain("Payment not successful",200);
