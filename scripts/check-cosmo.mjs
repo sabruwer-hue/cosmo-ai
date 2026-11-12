@@ -57,4 +57,5 @@ if (!yocoCheckout.includes("invoiceId:invoice.id")) throw new Error("Yoco checko
 if (!yocoWebhook.includes('eq("invoice_id",invoiceId)')) throw new Error("Yoco webhook must resolve a checkout from the persisted invoice ID when the provider checkout ID is unavailable.");
 if (!yocoWebhook.includes("metadata.ownerId!==checkout.owner_id")) throw new Error("Yoco webhook must verify the metadata owner against the stored checkout.");
 if (!yocoWebhook.includes("metadata.invoiceId!==checkout.invoice_id")) throw new Error("Yoco webhook must verify the metadata invoice against the stored checkout.");
+if (!yocoWebhook.includes("payment_reference:resolvedCheckoutId")) throw new Error("Yoco webhook must retain the resolved provider checkout ID in the payment audit record.");
 console.log("Cosmo checks passed: files, manifests, JavaScript syntax, PWA hooks, workspace controls and agent tool registry.");
