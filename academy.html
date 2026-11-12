@@ -131,10 +131,10 @@ async function setSession(session){
  user=session?.user||null;
  if(!user){loadedFor=null;checkingFor=null;$("auth").hidden=false;$("session-pill").textContent="Sign-in required";return}
  if(loadedFor===user.id||checkingFor===user.id)return;
- checkingFor=user.id;$("session-pill").textContent="Verifying owner access…";
+ const checkingUserId=user.id;checkingFor=checkingUserId;$("session-pill").textContent="Verifying owner access…";
  const {data,error}=await db.functions.invoke("cosmo-admin-gate",{body:{}});
- checkingFor=null;
- if(!user||user.id!==session.user.id)return;
+ if(checkingFor===checkingUserId)checkingFor=null;
+ if(!user||user.id!==checkingUserId)return;
  if(error||!data?.allowed){loadedFor=null;$("auth").hidden=false;$("session-pill").textContent="Owner access required";say("auth-status",data?.error||error?.message||"This workspace is restricted to the verified Cosmo owner.","error");return}
  $("auth").hidden=true;$("session-pill").textContent="Verified owner";loadedFor=user.id;await loadAll();
 }
