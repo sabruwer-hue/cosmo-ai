@@ -54,6 +54,7 @@ Deno.serve(async(req:Request)=>{
   const {data:checkout,error:lookupError}=await lookup.maybeSingle();
   if(lookupError)return plain("Checkout lookup failed",500);
   if(!checkout)return plain("Checkout not found",404);
+  const resolvedCheckoutId=checkoutId || checkout.checkout_id;
   if(metadata.ownerId && metadata.ownerId!==checkout.owner_id)return plain("Payment owner mismatch",400);
   if(metadata.invoiceId && metadata.invoiceId!==checkout.invoice_id)return plain("Payment invoice mismatch",400);
   if(checkout.status==="paid")return plain("Already processed",200);
@@ -62,7 +63,7 @@ Deno.serve(async(req:Request)=>{
 
   const eventId=String(event.id||id);
   const {error:eventError}=await db.from("cosmo_payment_events").insert({
-    provider:"yoco",provider_event_id:eventId,payment_reference:checkoutId,event_type:"payment.succeeded",
+    provider:"yoco",provider_event_id:eventId,payment_reference:resolvedCheckoutId,event_type:"payment.succeeded",
     amount_cents:amount,currency,signature_valid:true,payload:event
   });
   if(eventError && eventError.code!=="23505")return plain("Could not record payment event",500);
@@ -74,7 +75,7 @@ Deno.serve(async(req:Request)=>{
   const entitlementCode="COSMO-LIC-"+crypto.randomUUID().replaceAll("-","").slice(0,16).toUpperCase();
   const {data:entitlement,error:grantError}=await db.from("cosmo_package_entitlements").upsert({
     owner_id:checkout.owner_id,product_id:checkout.product_id,source_invoice_id:checkout.invoice_id,
-    entitlement_code:entitlementCode,status:"active",metadata:{provider:"yoco",checkout_id:checkoutId}
+    entitlement_code:entitlementCode,status:"active",metadata:{provider:"yoco",checkout_id:resolvedCheckoutId}
   },{onConflict:"owner_id,product_id",ignoreDuplicates:true}).select("id").maybeSingle();
   if(grantError)return plain("Package entitlement grant failed",500);
 
