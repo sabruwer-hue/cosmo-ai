@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<meta name="robots" content="noindex,nofollow">
+<title>Cosmo Strategy Library & Academy</title>
+<link rel="manifest" href="admin.webmanifest">
+<style>
+:root{color-scheme:dark;--bg:#080e19;--panel:#111e31;--panel2:#0d192a;--line:#293b55;--text:#eef3fb;--muted:#9aaac0;--violet:#b9a5ff;--mint:#82d8b5;--amber:#f0c77b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,sans-serif}button,input,select{font:inherit}button{cursor:pointer}.shell{max-width:1320px;margin:auto;padding:22px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.brand{font-size:22px;font-weight:800;text-decoration:none;color:var(--text)}.brand span{color:var(--violet)}.pill,.tag{border:1px solid var(--line);border-radius:30px;padding:6px 10px;color:var(--muted);font-size:10px}.hero{padding:30px 0 22px}.eyebrow{font-size:10px;letter-spacing:1.8px;color:var(--violet);font-weight:700}.hero h1{font-size:clamp(30px,5vw,46px);margin:8px 0}.hero p{max-width:820px;color:var(--muted);line-height:1.7}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:15px 0 22px}.metric,.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px}.metric span{display:block;color:var(--muted);font-size:10px}.metric strong{display:block;font-size:26px;margin-top:5px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab,.btn{background:#172840;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 13px}.tab.active,.btn.primary{background:var(--violet);color:#101629;border-color:var(--violet);font-weight:700}.btn:disabled{opacity:.5;cursor:not-allowed}.section[hidden]{display:none}.layout{display:grid;grid-template-columns:minmax(230px,310px) 1fr;gap:14px}.stack{display:grid;gap:10px}.card h3{margin:0 0 7px;font-size:15px}.card p,.muted{color:var(--muted);font-size:12px;line-height:1.65}.card .meta{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0}.tag{display:inline-block}.searchbar{display:grid;grid-template-columns:1fr 220px;gap:8px;margin-bottom:12px}.searchbar input,.searchbar select{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:11px;width:100%}.strategy{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.strategy button{flex-shrink:0}.detail h2{margin:0 0 7px}.detail h3{margin:18px 0 7px}.detail ol,.detail ul{padding-left:22px;color:#d4deec;line-height:1.7}.detail pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px;color:#d4deec;font-size:11px}.notice{border:1px solid #65502e;background:#282316;color:#f0d9a6;border-radius:10px;padding:12px;font-size:11px;line-height:1.6;margin-bottom:12px}.course{margin-bottom:13px}.course-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.module{border:1px solid var(--line);border-radius:10px;margin-top:9px;padding:11px;background:var(--panel2)}.module summary,.lesson summary{cursor:pointer;font-weight:700}.lesson{border-top:1px solid var(--line);padding:10px 0;margin-top:8px}.lesson p{white-space:pre-wrap;color:#d3deed;line-height:1.7}.lesson pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#080e19;padding:10px;border-radius:8px;color:#cbd7e8;font-size:11px}.lesson-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.progressbar{height:8px;background:#24334b;border-radius:20px;overflow:hidden;margin:9px 0}.progressbar span{display:block;height:100%;background:var(--mint);width:0}.status{font-size:12px;color:var(--muted);padding:10px 0;line-height:1.6}.status.error{color:#f1a6a6}.status.ok{color:var(--mint)}.auth{position:fixed;inset:0;background:#060b14f2;z-index:10;display:grid;place-items:center;padding:18px}.auth[hidden]{display:none}.auth-card{width:min(100%,410px);background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:25px;display:grid;gap:11px}.auth-card h2{margin:0}.auth-card p{color:var(--muted);font-size:12px;line-height:1.6}.auth-card input{background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:12px}.empty{border:1px dashed var(--line);border-radius:10px;padding:18px;color:var(--muted);font-size:12px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.shell{padding:14px}.searchbar{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="auth" class="auth"><form id="auth-form" class="auth-card"><div class="brand">cosmo<span>.ai</span></div><p class="eyebrow">PRIVATE CREATOR ACADEMY</p><h2>Sign in to continue</h2><p>This workspace uses the authorised Cosmo account. A secure sign-in link will be sent to your email. New account creation is disabled here.</p><label for="email">Email address</label><input id="email" type="email" autocomplete="email" required placeholder="you@example.com"><button class="btn primary" type="submit">Send sign-in link</button><div id="auth-status" class="status" aria-live="polite"></div></form></div>
+<div class="shell">
+<header class="top"><a class="brand" href="./">cosmo<span>.ai</span> / STRATEGY ACADEMY</a><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><a class="pill" href="admin.html" style="text-decoration:none">Admin</a><a class="pill" href="work.html" style="text-decoration:none">Work</a><span class="pill" id="session-pill">Checking session…</span><button class="btn" id="signout" type="button">Sign out</button></div></header>
+<section class="hero"><p class="eyebrow">REUSABLE INTELLIGENCE · COURSEWARE · ENGINEERING DISCIPLINE</p><h1>Learn the method. Test the method. Keep what works.</h1><p>Cosmo's strategy libraries hold reusable approaches for learning, research, reasoning, prediction, planning, software engineering, safety and evaluation. The Academy turns selected methods into structured lessons and practical exercises. Seed strategies are reference material, not claims that Cosmo has already mastered or validated them.</p></section>
+<div class="metrics"><div class="metric"><span>STRATEGY LIBRARIES</span><strong id="library-count">—</strong></div><div class="metric"><span>STRATEGIES</span><strong id="strategy-count">—</strong></div><div class="metric"><span>COURSES</span><strong id="course-count">—</strong></div><div class="metric"><span>LESSONS</span><strong id="lesson-count">—</strong></div></div>
+<div class="tabs"><button class="tab active" data-tab="strategies">Strategy libraries</button><button class="tab" data-tab="courses">Courseware</button><button class="tab" data-tab="progress">My learning progress</button></div>
+<section id="strategies" class="section">
+<div class="notice"><strong>Evidence discipline:</strong> “Evidence class” describes the general standing of a method. “Cosmo validation” describes whether this implementation has been tested in Cosmo. Seed entries begin as unverified in Cosmo. A method must earn approval through evaluation before it can become a default operating strategy.</div>
+<div class="layout"><aside class="panel"><h2>Find a strategy</h2><div class="searchbar" style="grid-template-columns:1fr"><input id="strategy-search" type="search" placeholder="Search name, purpose or method…"><select id="library-filter"><option value="">All libraries</option></select></div><div id="strategy-list" class="stack"><p class="muted">Loading strategy library…</p></div></aside><article class="panel detail" id="strategy-detail"><p class="muted">Choose a strategy to inspect its purpose, method, strengths, limitations and selection guidance.</p></article></div>
+</section>
+<section id="courses" class="section" hidden><div class="notice">Lessons are a starting curriculum. Progress is saved to the signed-in account. Completing a lesson records participation; it does not certify professional competence or authorise Cosmo to deploy code.</div><div id="course-list"><p class="muted">Loading courses…</p></div></section>
+<section id="progress" class="section" hidden><div class="panel"><h2>Learning progress</h2><p class="muted">Progress is personal to this account. Review dates and scores can be added as assessment content grows.</p><div id="progress-summary"></div><div id="progress-list" class="stack"></div></div></section>
+<div id="page-status" class="status" role="status" aria-live="polite"></div>
+<footer class="muted" style="padding:20px 0">COSMO STRATEGY & COURSEWARE · Reference material is not automatic authority. Live actions remain subject to permissions and approval.</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(()=>{
+"use strict";
+const URL="https://yevkzktlzxjrlvsxtnez.supabase.co";
+const KEY="sb_publishable_8TCKfyaRJwbvqY8kdn8nTA_KvlslawM";
+const db=window.supabase.createClient(URL,KEY);
+const $=id=>document.getElementById(id);
+let user=null, libraries=[], strategies=[], courses=[], modules=[], lessons=[], progress=[];
+let selectedStrategy=null;
+const say=(id,msg,type="")=>{const el=$(id);el.textContent=msg;el.className="status "+type};
+const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n};
+const progressByLesson=()=>new Map(progress.map(p=>[p.lesson_id,p]));
+function setTab(name){document.querySelectorAll(".tab[data-tab]").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));document.querySelectorAll(".section").forEach(s=>s.hidden=s.id!==name);if(name==="progress")renderProgress()}
+async function loadAll(){
+ say("page-status","Loading secured strategy and courseware records…");
+ const results=await Promise.all([
+  db.from("cosmo_strategy_libraries").select("id,library_code,title,domain,purpose,description,status").eq("status","active").order("title"),
+  db.from("cosmo_strategies").select("id,library_id,strategy_code,title,strategy_type,objective,method,selection_guidance,strengths,limitations,risk_notes,evidence_class,cosmo_validation_state,status,current_version").eq("status","active").order("title"),
+  db.from("cosmo_courses").select("id,course_code,title,domain,description,difficulty,estimated_hours,learning_outcomes,status").eq("status","published").order("title"),
+  db.from("cosmo_course_modules").select("id,course_id,module_code,title,description,sequence_no,learning_objectives,status").eq("status","published").order("sequence_no"),
+  db.from("cosmo_course_lessons").select("id,module_id,lesson_code,title,lesson_type,lesson_content,core_lesson,exercise,assessment,sequence_no,estimated_minutes,status").eq("status","published").order("sequence_no"),
+  db.from("cosmo_course_progress").select("*").eq("owner_id",user.id)
+ ]);
+ const failed=results.find(r=>r.error);
+ if(failed){say("page-status","Could not load the Academy: "+failed.error.message,"error");return}
+ libraries=results[0].data||[];strategies=results[1].data||[];courses=results[2].data||[];modules=results[3].data||[];lessons=results[4].data||[];progress=results[5].data||[];
+ $("library-count").textContent=libraries.length;$("strategy-count").textContent=strategies.length;$("course-count").textContent=courses.length;$("lesson-count").textContent=lessons.length;
+ populateLibraryFilter();renderStrategies();renderCourses();renderProgress();
+ say("page-status","Strategy libraries and courseware loaded from Cosmo's secured database.","ok");
+}
+function populateLibraryFilter(){const s=$("library-filter");s.replaceChildren(el("option","","All libraries"));libraries.forEach(l=>{const o=el("option","",l.title);o.value=l.id;s.append(o)});}
+function renderStrategies(){
+ const q=$("strategy-search").value.trim().toLowerCase(), lib=$("library-filter").value;
+ const list=$("strategy-list");list.replaceChildren();
+ const rows=strategies.filter(s=>(!lib||s.library_id===lib)&&(!q||[s.title,s.strategy_code,s.objective,s.strategy_type,JSON.stringify(s.method)].join(" ").toLowerCase().includes(q)));
+ if(!rows.length){list.append(el("div","empty","No strategies match this search."));return}
+ rows.forEach(s=>{
+  const card=el("article","card");const head=el("div","strategy");const left=el("div");left.append(el("h3","",s.title),el("p","",s.objective));const btn=el("button","btn","Inspect");btn.type="button";btn.addEventListener("click",()=>showStrategy(s));head.append(left,btn);card.append(head);
+  const meta=el("div","meta");const libRow=libraries.find(x=>x.id===s.library_id);meta.append(el("span","tag",libRow?libRow.title:s.strategy_type),el("span","tag",s.evidence_class.replaceAll("_"," ")),el("span","tag","Cosmo: "+s.cosmo_validation_state.replaceAll("_"," ")));card.append(meta);list.append(card);
+ });
+ if(!selectedStrategy||!rows.some(s=>s.id===selectedStrategy.id))showStrategy(rows[0]);
+}
+function showStrategy(s){
+ selectedStrategy=s;const d=$("strategy-detail");d.replaceChildren();
+ const library=libraries.find(x=>x.id===s.library_id);
+ d.append(el("p","eyebrow",s.strategy_code),el("h2","",s.title),el("p","muted",library?library.title+" · "+library.domain:s.strategy_type),el("p","",s.objective));
+ d.append(el("div","notice","Evidence class: "+s.evidence_class.replaceAll("_"," ")+" · Cosmo validation: "+s.cosmo_validation_state.replaceAll("_"," ")+" · Version "+s.current_version+". This entry is reference material until separately evaluated and approved."));
+ d.append(el("h3","","Method"));
+ const method=Array.isArray(s.method)?s.method:[JSON.stringify(s.method)];const ol=el("ol");method.forEach(x=>ol.append(el("li","",String(x))));d.append(ol);
+ d.append(el("h3","","When to select it"));d.append(el("pre","",JSON.stringify(s.selection_guidance,null,2)));
+ [["Strengths",s.strengths],["Limitations",s.limitations],["Risk notes",s.risk_notes]].forEach(([title,items])=>{d.append(el("h3","",title));const ul=el("ul");(items||[]).forEach(x=>ul.append(el("li","",x)));d.append(ul)});
+}
+function renderCourses(){
+ const root=$("course-list");root.replaceChildren();
+ if(!courses.length){root.append(el("div","empty","No published courses are available."));return}
+ const pmap=progressByLesson();
+ courses.forEach(c=>{
+  const card=el("article","card course");const head=el("div","course-head");const info=el("div");info.append(el("p","eyebrow",c.course_code),el("h2","",c.title),el("p","muted",c.description));head.append(info,el("span","tag",c.difficulty+" · "+c.estimated_hours+" hours"));card.append(head);
+  const outcomes=el("p","muted","Learning outcomes: "+(c.learning_outcomes||[]).join(" · "));card.append(outcomes);
+  const cms=modules.filter(m=>m.course_id===c.id);
+  cms.forEach(m=>{
+   const det=el("details","module");const summary=el("summary","",m.sequence_no+". "+m.title);det.append(summary,el("p","muted",m.description));
+   lessons.filter(l=>l.module_id===m.id).forEach(l=>{
+    const ld=el("details","lesson");ld.append(el("summary","",l.sequence_no+". "+l.title+" · "+l.estimated_minutes+" min"),el("p","",l.lesson_content),el("p","muted","Core lesson: "+l.core_lesson));
+    if(l.exercise&&Object.keys(l.exercise).length){ld.append(el("h4","","Practice exercise"));ld.append(el("pre","",JSON.stringify(l.exercise,null,2)))}
+    if(l.assessment&&Object.keys(l.assessment).length){ld.append(el("h4","","Check your understanding"));const qs=l.assessment.questions||[];const ul=el("ul");qs.forEach(q=>ul.append(el("li","",q)));ld.append(ul);if(l.assessment.pass_rule)ld.append(el("p","muted","Completion check: "+l.assessment.pass_rule))}
+    const old=pmap.get(l.id);const actions=el("div","lesson-actions");const status=old?old.status:"not_started";actions.append(el("span","tag",status.replaceAll("_"," ")));
+    const start=el("button","btn",status==="in_progress"?"In progress":status==="completed"?"Review lesson":"Start lesson");start.type="button";start.addEventListener("click",()=>saveProgress(l,"in_progress"));actions.append(start);
+    const done=el("button","btn primary","Mark completed");done.type="button";done.addEventListener("click",()=>saveProgress(l,"completed"));actions.append(done);
+    ld.append(actions);det.append(ld);
+   });
+   card.append(det);
+  });
+  root.append(card);
+ });
+}
+async function saveProgress(lesson,nextStatus){
+ const old=progressByLesson().get(lesson.id),now=new Date().toISOString();
+ const payload={owner_id:user.id,lesson_id:lesson.id,status:nextStatus,attempts:(old?.attempts||0)+(nextStatus==="completed"?1:0),started_at:old?.started_at||now,completed_at:nextStatus==="completed"?now:null,updated_at:now};
+ const {data,error}=await db.from("cosmo_course_progress").upsert(payload,{onConflict:"owner_id,lesson_id"}).select("*").single();
+ if(error){say("page-status","Progress could not be saved: "+error.message,"error");return}
+ const index=progress.findIndex(x=>x.lesson_id===lesson.id);if(index>=0)progress[index]=data;else progress.push(data);
+ say("page-status",lesson.title+" progress saved.","ok");renderCourses();renderProgress();
+}
+function renderProgress(){
+ const total=lessons.length,done=progress.filter(p=>p.status==="completed").length,inflight=progress.filter(p=>p.status==="in_progress").length;
+ const root=$("progress-summary");root.replaceChildren();root.append(el("h3","",done+" of "+total+" lessons completed · "+inflight+" in progress"));
+ const bar=el("div","progressbar"),fill=el("span");fill.style.width=(total?Math.round(done/total*100):0)+"%";bar.append(fill);root.append(bar);
+ const list=$("progress-list");list.replaceChildren();
+ const pmap=progressByLesson();lessons.forEach(l=>{const p=pmap.get(l.id);if(!p)return;const mod=modules.find(m=>m.id===l.module_id),course=courses.find(c=>c.id===mod?.course_id);const card=el("article","card");card.append(el("h3","",l.title),el("p","muted",(course?.title||"Course")+" · "+(mod?.title||"Module")),el("span","tag",p.status.replaceAll("_"," ")+" · attempts "+p.attempts));if(p.completed_at)card.append(el("p","muted","Completed: "+new Date(p.completed_at).toLocaleString()));list.append(card)});
+ if(!progress.length)list.append(el("div","empty","No lesson progress recorded yet. Start a lesson in Courseware to begin."));
+}
+document.querySelectorAll(".tab[data-tab]").forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+$("strategy-search").addEventListener("input",renderStrategies);$("library-filter").addEventListener("change",renderStrategies);
+$("auth-form").addEventListener("submit",async e=>{e.preventDefault();say("auth-status","Sending secure sign-in link…");const {error}=await db.auth.signInWithOtp({email:$("email").value.trim(),options:{emailRedirectTo:location.href,shouldCreateUser:false}});say("auth-status",error?error.message:"Check your email and open the link on this device.",error?"error":"ok")});
+$("signout").addEventListener("click",async()=>{await db.auth.signOut();location.reload()});
+let loadedFor=null,checkingFor=null;
+async function setSession(session){
+ user=session?.user||null;
+ if(!user){loadedFor=null;checkingFor=null;$("auth").hidden=false;$("session-pill").textContent="Sign-in required";return}
+ if(loadedFor===user.id||checkingFor===user.id)return;
+ const checkingUserId=user.id;checkingFor=checkingUserId;$("session-pill").textContent="Verifying owner access…";
+ const {data,error}=await db.functions.invoke("cosmo-admin-gate",{body:{}});
+ if(checkingFor===checkingUserId)checkingFor=null;
+ if(!user||user.id!==checkingUserId)return;
+ if(error||!data?.allowed){loadedFor=null;$("auth").hidden=false;$("session-pill").textContent="Owner access required";say("auth-status",data?.error||error?.message||"This workspace is restricted to the verified Cosmo owner.","error");return}
+ $("auth").hidden=true;$("session-pill").textContent="Verified owner";loadedFor=user.id;await loadAll();
+}
+db.auth.onAuthStateChange((_event,session)=>{Promise.resolve().then(()=>setSession(session))});
+db.auth.getSession().then(({data})=>setSession(data.session));
+})();
+</script>
+<script>if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));</script>
+</body>
+</html>

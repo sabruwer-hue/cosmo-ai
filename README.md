@@ -2,25 +2,25 @@
 
 A public-safe interface prototype for the Cosmo AI project.
 
-> **Current status (11 November 2026):** The browser workspace now has an email-link authentication client and a Supabase-backed chat gateway. A dedicated private Supabase project is active; its initial private schema has nine tables with Row Level Security, and the `cosmo-chat` Edge Function is deployed with JWT verification and an owner-email allowlist. The system is **not yet operational for the creator**: the owner account, owner-email secret, model-provider API key, Auth redirect allowlist, and successful website deployment still need configuration. The new `work.html` page provides persistent task/step tracking, an approval queue and a package registry; `admin.html` provides an owner-verified mission, knowledge and training studio. The main knowledge/memory/retrieval/adaptive-learning panels remain session-only prototypes until connected and tested.
+> **Current status (12 November 2026):** the live `cosmo-core` Supabase project is active in São Paulo and has 47 public-schema tables, all with Row Level Security enabled, 14 recorded migrations and nine active Edge Functions. It includes persistent conversations/messages, missions, knowledge and memory links, training, task workflows, package/entitlement foundations, Yoco checkout foundations, QR Retail data and a strategy/courseware foundation. The latter currently contains ten libraries, 26 strategies, two courses, ten modules and 20 lessons; all starter strategies are unverified in Cosmo. The chat gateway is deployed with JWT verification and a server-side owner-email check. End-to-end model calls, owner sign-in, browser workflows, payment flows, backups and production deployment still require verification. The Strategy Academy interface is on the current review branch and is not live until merged and deployed.
 
 ## Run locally
 Open `index.html` in a modern browser, or serve this folder with any static web server. The private authentication and chat gateway require the deployed Supabase project and an authorised owner account; local file preview alone will not connect to the production service.
 
 ## Current private backend
-- Supabase project: `cosmo-core` (São Paulo region).
-- Database foundation: profiles, missions, knowledge records, memory relationships, conversations, messages, training lessons, training evaluations and audit events, plus packages, package releases, agent tasks, task steps, append-only task events and agent approvals.
-- Row Level Security is enabled on all nine tables. Knowledge, message, evaluation and audit records are append-only through the normal authenticated client policies.
-- Edge Functions: `cosmo-chat` (JWT verification enabled) and `cosmo-admin-gate` (JWT verification plus server-side owner-email verification). Chat retrieves approved training lessons and creator-owned mission/knowledge context, carries forward recent conversation history, and calls an OpenAI-compatible model endpoint server-side.
-- Agent tools in `cosmo-chat`: create/list private tasks, search creator-owned knowledge records, create/list missions, and create pending approval requests. These tools are allowlisted, owner-scoped, sequential, and cannot execute external actions. Private database search is implemented; external web research, broad connector integrations and autonomous multi-step external execution are not yet connected. The chat model key is still required before runtime testing.
-- Operational workspace: `work.html` supports persistent task creation, task status updates, ordered task steps, append-only task events, an approval queue and package registry. `admin.html` supports owner-verified mission management, permanent knowledge capture and draft/approved training lessons. These interfaces require an authenticated account and the Data API grants/RLS in the deployed project.
-- Installable web foundations: separate manifests and icons for Cosmo, Cosmo Work and Cosmo Admin, plus a service worker that caches only the application shell and deliberately bypasses Auth, Data API and Edge Function requests. These are PWA foundations, **not APK files**.
-- The function requires the server-side secrets `COSMO_OWNER_EMAIL` and `COSMO_MODEL_API_KEY`. Optional configuration: `COSMO_MODEL_NAME` and `COSMO_MODEL_BASE_URL`. Never put these secrets in browser code or Git.
-- The model provider API is separately billed. The current default model is `gpt-6-luna` for lower-cost initial testing; set `COSMO_MODEL_NAME=gpt-6.1-sol` when you want stronger reasoning and accept the higher API cost.
-- Sign-in uses Supabase email magic links. The owner must exist in Supabase Auth and the deployed site URL must be added to the Auth redirect allowlist.
+- Supabase project: `cosmo-core` (São Paulo region, `sa-east-1`).
+- Database: 47 tables with RLS enabled; 14 recorded migrations. Persistent domains include profiles, missions, knowledge, memory links, conversations/messages, training, audit events, tasks/steps/events/approvals, packages/releases, subscription catalogue, billing, entitlements, invoices, usage, Yoco checkout and QR Retail.
+- Strategy/courseware: ten libraries, 26 strategies, 26 immutable version-1 snapshots, two strategy relationships, two courses, ten modules and 20 lessons. Seed strategies are marked unverified in Cosmo. Strategy run/evaluation and learner progress records start empty.
+- Active Edge Functions: `cosmo-chat`, `cosmo-admin-gate`, `cosmo-product-hub`, `cosmo-start-plan`, `cosmo-access-gate`, `cosmo-payfast-checkout`, `cosmo-payfast-itn`, `cosmo-yoco-checkout`, and `cosmo-yoco-webhook`.
+- `cosmo-chat` has JWT verification, a server-side owner-email check and a small allowlist for task, knowledge, mission and approval-record operations. These internal tools do not execute external actions. Successful live model inference still needs an end-to-end test.
+- `work.html` supports database-backed tasks, ordered steps, task events, approvals and package/release records. `admin.html` supports owner-verified mission management, knowledge capture and training lessons. The Strategy Academy page is being added on a review branch.
+- Anonymous Data API grants are limited to SELECT on the three public subscription catalogue tables. Private billing, entitlement, checkout and retail tables have no anonymous table grants. The current security advisor returns no findings; the performance advisor has only informational unused-index notices.
+- Required server-side secrets include `COSMO_OWNER_EMAIL`, `COSMO_MODEL_API_KEY`, and payment-specific keys/secrets when those features are activated. Their presence must be checked in Supabase; never put secret values in browser code or Git.
+- Sign-in uses Supabase email magic links. The owner account and deployed origins must be configured in Supabase Auth. Successful owner sign-in and redirect behaviour have not yet been verified.
+
 
 ## Deployment gate
-The GitHub Pages workflow is committed, but GitHub currently rejects the deployment because Pages has not been enabled for this repository. In GitHub, open **Settings → Pages → Build and deployment → Source**, select **GitHub Actions**, then re-run the workflow. Do not configure the custom domain until the Pages deployment URL is confirmed. The current repository is public; keep all creator history, private training content and secrets in the private Supabase project, never in this repository.
+The last recorded GitHub Pages workflow failed at the Configure Pages step. Re-check **Settings → Pages → Build and deployment → Source**, select **GitHub Actions** if it is not already selected, and rerun the workflow. Deployment has not been re-verified in this audit; do not treat DNS or a configured domain as proof that the site is live. The current repository is public; keep all creator history, private training content and secrets in the private Supabase project, never in this repository.
 
 ## Project boundaries
 - This public repository contains only non-sensitive presentation-layer prototype code.
@@ -42,6 +42,7 @@ The intended primary domain is `cosmo-ai.co.za`. The preferred app routes are `a
 
 These are design and audit documents, not evidence that the described services have been deployed.
 
+- [Master Audit & Build Status — 12 November 2026](docs/COSMO-MASTER-AUDIT-AND-BUILD-STATUS-2026-11-12.md) — verified backend inventory, implemented work, remaining gaps and build order.
 - [Core Blueprint v1.0](docs/COSMO-CORE-BLUEPRINT-v1.md) — system boundaries, safety principles and phased build plan.
 - [Prototype Audit — 2026-11-11](docs/PROTOTYPE-AUDIT-2026-11-11.md) — inspected prototype capabilities, deployment finding and owner-side checklist.
 - [Memory & Research Data Model v1.0](docs/MEMORY-RESEARCH-DATA-MODEL-v1.md) — proposed entities, provenance, versioning, privacy and acceptance tests.
@@ -51,6 +52,7 @@ These are design and audit documents, not evidence that the described services h
 - [Memory Versioning & Contradiction Review v1.0](docs/MEMORY-VERSIONING-CONTRADICTION-REVIEW-v1.md) — immutable version snapshots, review outcomes, evidence discipline and production acceptance tests.
 - [Memory Intelligence & Retrieval Engine v1.0](docs/MEMORY-INTELLIGENCE-RETRIEVAL-ENGINE-v1.md) — retrieval pipeline, traceability, provenance, ranking and production acceptance tests.
 - [Adaptive Learning & Preference Engine v1.0](docs/ADAPTIVE-LEARNING-PREFERENCE-ENGINE-v1.md) — preference model, learning techniques, feedback lifecycle, agent isolation, safety boundaries and acceptance tests.
+- [Strategy Libraries & Software Engineering Academy v1.0](docs/COSMO-STRATEGY-LIBRARIES-AND-ENGINEERING-ACADEMY-v1.md) — deployed strategy/courseware schema, seeded learning methods, coding curriculum, validation rules and next implementation stages.
 - [Persistent Learning & Preference Data Architecture v1.0](docs/PERSISTENT-LEARNING-PREFERENCE-DATA-ARCHITECTURE-v1.md) — persistent logical records, API contracts, approval lifecycle, security, retention, recovery and production acceptance tests.
 - [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](docs/CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md) — cross-system review loops, decision checks, method portfolio, safe experiments, background monitoring, relationship quality and controlled improvement.
 - [Persistent Accuracy & Outcome Learning Engine v1.0](docs/PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md) — verified outcomes, recurring error taxonomy, method evaluation, calibration, abstention, drift and regression protection.
@@ -61,7 +63,14 @@ These are design and audit documents, not evidence that the described services h
 - [Cosmo Subscription Product Portfolio v1.0](docs/COSMO-SUBSCRIPTION-PRODUCT-PORTFOLIO-v1.md) — standalone products, bundles, Ad Studio, Team Up AI, Creator Studio, Cosmo Office and the continuous analytical build framework.
 - [Business, Social, Advertising & Trading Intelligence Extensions v1.0](docs/COSMO-BUSINESS-SOCIAL-ADS-TRADING-INTELLIGENCE-v1.md) — AccountIT AI, Social Hub, Ad Page and staged trading research/controls.
 
-- [Lifetime Package Licence & Tool Membership Model](docs/COSMO-LIFETIME-PACKAGE-LICENCE-AND-TOOL-MEMBERSHIPS-v1.md) — one-off package ownership, restorable entitlements, optional tool memberships, usage billing and payment controls.\n- [QR Retail Intelligence](docs/COSMO-QR-RETAIL-INTELLIGENCE-v1.md) — product information hubs, QR shelf labels, expiry batches, low-stock and replenishment workflows.\n\n## Subscription portfolio demo
+- [Lifetime Package Licence & Tool Membership Model](docs/COSMO-LIFETIME-PACKAGE-LICENCE-AND-TOOL-MEMBERSHIPS-v1.md) — one-off package ownership, restorable entitlements, optional tool memberships, usage billing and payment controls.
+- [QR Retail Intelligence](docs/COSMO-QR-RETAIL-INTELLIGENCE-v1.md) — product information hubs, QR shelf labels, expiry batches, low-stock and replenishment workflows.
+
+## Strategy Academy
+
+- [Open the Strategy Library & Academy](academy.html) — authenticated workspace for reusable strategies, engineering methods, course modules, lessons and personal progress. This page is on the current review branch and is not live until the branch is merged and GitHub Pages is deployed.
+
+## Subscription portfolio demo
 
 - [Open the interactive subscription portfolio prototype](prototypes/cosmo-subscription-portfolio-demo.html) — demo-only product catalogue and bundle shortlist. It does not process subscriptions or payments.
 
@@ -74,7 +83,7 @@ These are design and audit documents, not evidence that the described services h
 - **Memory Versioning & Contradiction Review:** creates immutable-in-session memory snapshots with change reasons and basis, displays version timelines, and records a reasoned review outcome for contradiction links without deleting either side. All data remains session-only.
 - **Memory Intelligence & Retrieval Engine:** searches session-only memory, history, knowledge and relationship drafts using transparent keyword matching; supports filters, relevance ordering, provenance/relationship/version inspection and JSON retrieval-trace export. This is not semantic AI search and cannot retrieve records absent from the current page session.
 - **Adaptive Learning & Preference Engine:** separate agent preference profiles, feedback/outcome capture, learning-method catalogue, scoped learning candidates and JSON export. Session-only; no model training or persistent adaptation.
-- **Persistent Learning & Preference Data Architecture:** provider-neutral production design for durable user/workspace/agent profiles, immutable preference versions, feedback/outcome ledgers, approval-bound learning proposals, evaluation, rollback, permission isolation, export, deletion and recovery. Design only; no backend has been deployed.
+- **Persistent Learning & Preference Data Architecture:** provider-neutral design for durable user/workspace/agent profiles, immutable preference versions, feedback/outcome ledgers, approval-bound learning proposals, evaluation, rollback, permission isolation, export, deletion and recovery. Strategy/courseware records are now deployed, but preference profiles and the complete adaptive-learning lifecycle remain unimplemented.
 - **Continuous Improvement & Meta-Learning Orchestration Engine:** provider-neutral design for pre-decision reviews, post-task learning, system-wide diagnostics, a method portfolio, safe experiments, background monitoring, relationship-engine self-review, approval gates and rollback. Design only; no autonomous background service is deployed.
 - **Persistent Accuracy & Outcome Learning Engine:** design for verified outcome events, recurring error analysis, context-aware method evaluation, calibration, abstention, drift and regression/forgetting checks. Design only; no persistent outcome service is deployed.
 - **Prototype Factory & Release Lifecycle:** design for isolated candidate builds, independent testing, iterative revisions, regression gates, candidate-hash approval, staged rollout and rollback. Design only; no autonomous factory is deployed.
