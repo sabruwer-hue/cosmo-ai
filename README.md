@@ -20,7 +20,7 @@ Open `index.html` in a modern browser, or serve this folder with any static web 
 
 
 ## Deployment gate
-The GitHub Pages workflow is committed, but GitHub currently rejects the deployment because Pages has not been enabled for this repository. In GitHub, open **Settings → Pages → Build and deployment → Source**, select **GitHub Actions**, then re-run the workflow. Do not configure the custom domain until the Pages deployment URL is confirmed. The current repository is public; keep all creator history, private training content and secrets in the private Supabase project, never in this repository.
+The last recorded GitHub Pages workflow failed at the Configure Pages step. Re-check **Settings → Pages → Build and deployment → Source**, select **GitHub Actions** if it is not already selected, and rerun the workflow. Deployment has not been re-verified in this audit; do not treat DNS or a configured domain as proof that the site is live. The current repository is public; keep all creator history, private training content and secrets in the private Supabase project, never in this repository.
 
 ## Project boundaries
 - This public repository contains only non-sensitive presentation-layer prototype code.
@@ -42,7 +42,8 @@ The intended primary domain is `cosmo-ai.co.za`. The preferred app routes are `a
 
 These are design and audit documents, not evidence that the described services have been deployed.
 
-- [Master Audit & Build Status — 12 November 2026](docs/COSMO-MASTER-AUDIT-AND-BUILD-STATUS-2026-11-12.md) — verified backend inventory, implemented work, remaining gaps and build order.\n- [Core Blueprint v1.0](docs/COSMO-CORE-BLUEPRINT-v1.md) — system boundaries, safety principles and phased build plan.
+- [Master Audit & Build Status — 12 November 2026](docs/COSMO-MASTER-AUDIT-AND-BUILD-STATUS-2026-11-12.md) — verified backend inventory, implemented work, remaining gaps and build order.
+- [Core Blueprint v1.0](docs/COSMO-CORE-BLUEPRINT-v1.md) — system boundaries, safety principles and phased build plan.
 - [Prototype Audit — 2026-11-11](docs/PROTOTYPE-AUDIT-2026-11-11.md) — inspected prototype capabilities, deployment finding and owner-side checklist.
 - [Memory & Research Data Model v1.0](docs/MEMORY-RESEARCH-DATA-MODEL-v1.md) — proposed entities, provenance, versioning, privacy and acceptance tests.
 - [Orchestration API Contract v1.0](docs/ORCHESTRATION-API-CONTRACT-v1.md) — proposed routes, task lifecycle, approvals and server-side model boundary.
@@ -51,7 +52,8 @@ These are design and audit documents, not evidence that the described services h
 - [Memory Versioning & Contradiction Review v1.0](docs/MEMORY-VERSIONING-CONTRADICTION-REVIEW-v1.md) — immutable version snapshots, review outcomes, evidence discipline and production acceptance tests.
 - [Memory Intelligence & Retrieval Engine v1.0](docs/MEMORY-INTELLIGENCE-RETRIEVAL-ENGINE-v1.md) — retrieval pipeline, traceability, provenance, ranking and production acceptance tests.
 - [Adaptive Learning & Preference Engine v1.0](docs/ADAPTIVE-LEARNING-PREFERENCE-ENGINE-v1.md) — preference model, learning techniques, feedback lifecycle, agent isolation, safety boundaries and acceptance tests.
-- [Strategy Libraries & Software Engineering Academy v1.0](docs/COSMO-STRATEGY-LIBRARIES-AND-ENGINEERING-ACADEMY-v1.md) — deployed strategy/courseware schema, seeded learning methods, coding curriculum, validation rules and next implementation stages.\n- [Persistent Learning & Preference Data Architecture v1.0](docs/PERSISTENT-LEARNING-PREFERENCE-DATA-ARCHITECTURE-v1.md) — persistent logical records, API contracts, approval lifecycle, security, retention, recovery and production acceptance tests.
+- [Strategy Libraries & Software Engineering Academy v1.0](docs/COSMO-STRATEGY-LIBRARIES-AND-ENGINEERING-ACADEMY-v1.md) — deployed strategy/courseware schema, seeded learning methods, coding curriculum, validation rules and next implementation stages.
+- [Persistent Learning & Preference Data Architecture v1.0](docs/PERSISTENT-LEARNING-PREFERENCE-DATA-ARCHITECTURE-v1.md) — persistent logical records, API contracts, approval lifecycle, security, retention, recovery and production acceptance tests.
 - [Continuous Improvement & Meta-Learning Orchestration Engine v1.0](docs/CONTINUOUS-IMPROVEMENT-META-LEARNING-ENGINE-v1.md) — cross-system review loops, decision checks, method portfolio, safe experiments, background monitoring, relationship quality and controlled improvement.
 - [Persistent Accuracy & Outcome Learning Engine v1.0](docs/PERSISTENT-ACCURACY-OUTCOME-LEARNING-ENGINE-v1.md) — verified outcomes, recurring error taxonomy, method evaluation, calibration, abstention, drift and regression protection.
 - [Prototype Factory, Verification & Release Lifecycle v1.0](docs/PROTOTYPE-FACTORY-VERIFICATION-RELEASE-v1.md) — candidate build/test/revision cycles, independent evaluation, release gates, staged rollout and rollback.
@@ -61,7 +63,14 @@ These are design and audit documents, not evidence that the described services h
 - [Cosmo Subscription Product Portfolio v1.0](docs/COSMO-SUBSCRIPTION-PRODUCT-PORTFOLIO-v1.md) — standalone products, bundles, Ad Studio, Team Up AI, Creator Studio, Cosmo Office and the continuous analytical build framework.
 - [Business, Social, Advertising & Trading Intelligence Extensions v1.0](docs/COSMO-BUSINESS-SOCIAL-ADS-TRADING-INTELLIGENCE-v1.md) — AccountIT AI, Social Hub, Ad Page and staged trading research/controls.
 
-- [Lifetime Package Licence & Tool Membership Model](docs/COSMO-LIFETIME-PACKAGE-LICENCE-AND-TOOL-MEMBERSHIPS-v1.md) — one-off package ownership, restorable entitlements, optional tool memberships, usage billing and payment controls.\n- [QR Retail Intelligence](docs/COSMO-QR-RETAIL-INTELLIGENCE-v1.md) — product information hubs, QR shelf labels, expiry batches, low-stock and replenishment workflows.\n\n## Strategy Academy\n\n- [Open the Strategy Library & Academy](academy.html) — authenticated workspace for reusable strategies, engineering methods, course modules, lessons and personal progress. This page is on the current review branch and is not live until the branch is merged and GitHub Pages is deployed.\n\n## Subscription portfolio demo
+- [Lifetime Package Licence & Tool Membership Model](docs/COSMO-LIFETIME-PACKAGE-LICENCE-AND-TOOL-MEMBERSHIPS-v1.md) — one-off package ownership, restorable entitlements, optional tool memberships, usage billing and payment controls.
+- [QR Retail Intelligence](docs/COSMO-QR-RETAIL-INTELLIGENCE-v1.md) — product information hubs, QR shelf labels, expiry batches, low-stock and replenishment workflows.
+
+## Strategy Academy
+
+- [Open the Strategy Library & Academy](academy.html) — authenticated workspace for reusable strategies, engineering methods, course modules, lessons and personal progress. This page is on the current review branch and is not live until the branch is merged and GitHub Pages is deployed.
+
+## Subscription portfolio demo
 
 - [Open the interactive subscription portfolio prototype](prototypes/cosmo-subscription-portfolio-demo.html) — demo-only product catalogue and bundle shortlist. It does not process subscriptions or payments.
 
