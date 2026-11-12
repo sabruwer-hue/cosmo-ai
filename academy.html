@@ -126,8 +126,18 @@ document.querySelectorAll(".tab[data-tab]").forEach(b=>b.addEventListener("click
 $("strategy-search").addEventListener("input",renderStrategies);$("library-filter").addEventListener("change",renderStrategies);
 $("auth-form").addEventListener("submit",async e=>{e.preventDefault();say("auth-status","Sending secure sign-in link…");const {error}=await db.auth.signInWithOtp({email:$("email").value.trim(),options:{emailRedirectTo:location.href,shouldCreateUser:false}});say("auth-status",error?error.message:"Check your email and open the link on this device.",error?"error":"ok")});
 $("signout").addEventListener("click",async()=>{await db.auth.signOut();location.reload()});
-db.auth.onAuthStateChange((_event,session)=>{user=session?.user||null;if(!user){$("auth").hidden=false;$("session-pill").textContent="Sign-in required";return}$("auth").hidden=true;$("session-pill").textContent="Authenticated workspace";loadAll()});
-db.auth.getSession().then(({data})=>{if(data.session){user=data.session.user;$("auth").hidden=true;$("session-pill").textContent="Authenticated workspace";loadAll()}else{$("auth").hidden=false;$("session-pill").textContent="Sign-in required"}});
+let loadedFor=null;
+async function setSession(session){
+ user=session?.user||null;
+ if(!user){loadedFor=null;$("auth").hidden=false;$("session-pill").textContent="Sign-in required";return}
+ $("session-pill").textContent="Verifying owner access…";
+ const {data,error}=await db.functions.invoke("cosmo-admin-gate",{body:{}});
+ if(error||!data?.allowed){loadedFor=null;$("auth").hidden=false;$("session-pill").textContent="Owner access required";say("auth-status",data?.error||error?.message||"This workspace is restricted to the verified Cosmo owner.","error");return}
+ $("auth").hidden=true;$("session-pill").textContent="Verified owner";
+ if(loadedFor!==user.id){loadedFor=user.id;await loadAll()}
+}
+db.auth.onAuthStateChange((_event,session)=>{void setSession(session)});
+db.auth.getSession().then(({data})=>setSession(data.session));
 })();
 </script>
 <script>if("serviceWorker"in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(()=>{}));</script>
