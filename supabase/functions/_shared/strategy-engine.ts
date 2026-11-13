@@ -72,7 +72,7 @@ export function rankStrategies(
   const safeLimit = Math.max(1, Math.min(5, Math.floor(limit) || 5));
 
   const ranked = candidates
-    .filter((strategy) => strategy && strategy.id && strategy.status !== "retired")
+    .filter((strategy) => strategy && strategy.id && strategy.status !== "retired" && strategy.cosmo_validation_state !== "retired")
     .map((strategy) => {
       let score = 0;
       const reasons: string[] = [];
