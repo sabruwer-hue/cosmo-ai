@@ -71,12 +71,13 @@ for (const guard of ["cc_sim", "tiva", "ready_for_human_review", "reviewer_indep
   if (!review.includes(guard)) throw new Error("Independent intelligence review is missing governance guard: " + guard);
 }
 const vaultMigration = readFileSync("supabase/migrations/20261113090000_cosmo_dual_memory_history_v1.sql", "utf8");
-for (const guard of ["cosmo_history_records", "cosmo_memory_index", "cosmo_memory_source_links", "enable row level security", "force row level security", "auth.uid()", "extensions.digest", "sha256", "before update", "grant select, insert"]) {
+for (const guard of ["cosmo_history_records", "cosmo_memory_index", "cosmo_memory_source_links", "enable row level security", "force row level security", "auth.uid()", "extensions.digest", "sha256", "cosmo_history_code_seq", "cosmo_memory_code_seq", "cosmo_set_memory_index_hash", "memory_hash", "before update", "grant select, insert"]) {
   if (!vaultMigration.toLowerCase().includes(guard.toLowerCase())) throw new Error("Dual-vault migration is missing required database safeguard: " + guard);
 }
+if ((vaultMigration.match(/\\bcommit;/gi) || []).length !== 1) throw new Error("Dual-vault migration must be a single complete transaction.");
 if (/grant[^;]*(update|delete)[^;]*to authenticated/i.test(vaultMigration)) throw new Error("Vault migration must not grant UPDATE or DELETE to authenticated users.");
 const memoryVault = readFileSync("supabase/functions/_shared/memory-vault-contract.ts", "utf8");
-for (const guard of ["auditMemoryHistoryVault", "source_record_codes", "source_hash", "verification_status", "supersedes_source_code"]) {
+for (const guard of ["auditMemoryHistoryVault", "source_record_codes", "source_hash", "memory_hash", "verification_status", "supersedes_source_code"]) {
   if (!memoryVault.includes(guard)) throw new Error("Memory/history vault contract is missing: " + guard);
 }
 const strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
