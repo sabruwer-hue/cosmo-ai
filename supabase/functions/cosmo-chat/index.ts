@@ -85,6 +85,120 @@ const agentTools = [
 ];
 
 async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAccess, activeTools) {
+  if (["recommend_strategies","begin_strategy_run","complete_strategy_run","evaluate_strategy_run"].includes(name) && !ownerAccess) {
+    return { ok: false, error: "Strategy execution and evaluation are currently restricted to the creator owner account." };
+  }
+
+  if (name === "recommend_strategies") {
+    const domain = typeof args.task_domain === "string" ? args.task_domain.trim().slice(0,80) : "";
+    const summary = typeof args.task_summary === "string" ? args.task_summary.trim().slice(0,1200) : "";
+    const constraints = Array.isArray(args.constraints) ? args.constraints.filter((x: unknown) => typeof x === "string").slice(0,12).map((x: string) => x.slice(0,300)) : [];
+    if (!domain || summary.length < 10) return { ok: false, error: "A task domain and meaningful task summary are required." };
+    const { data: rows, error } = await supabase.from("cosmo_strategies")
+      .select("id,strategy_code,title,strategy_type,objective,method,selection_guidance,strengths,limitations,risk_notes,evidence_class,cosmo_validation_state,current_version,status,library_id")
+      .eq("status","active").order("strategy_code",{ascending:true}).limit(100);
+    if (error) return { ok:false,error:"Strategy catalogue could not be retrieved: "+error.message };
+    if (!rows?.length) return { ok:true,domain,recommendations:[],message:"No active strategies are available." };
+    const ids=[...new Set(rows.map((x:any)=>x.library_id).filter(Boolean))];
+    const [{data:libraries,error:libError},{data:evaluations,error:evalError}]=await Promise.all([
+      supabase.from("cosmo_strategy_libraries").select("id,library_code,title,domain").in("id",ids),
+      supabase.from("cosmo_strategy_evaluations").select("strategy_id,outcome,measured_score,evaluation_type").eq("owner_id",ownerId).order("evaluated_at",{ascending:false}).limit(200),
+    ]);
+    if(libError)return {ok:false,error:"Strategy library metadata could not be retrieved: "+libError.message};
+    if(evalError)return {ok:false,error:"Strategy evaluation history could not be retrieved: "+evalError.message};
+    const libraryMap=new Map((libraries??[]).map((x:any)=>[x.id,x]));
+    const candidates=rows.map((x:any)=>({...x,library_domain:libraryMap.get(x.library_id)?.domain??"",library_title:libraryMap.get(x.library_id)?.title??"",library_code:libraryMap.get(x.library_id)?.library_code??""}));
+    const ranked=rankStrategies(candidates,domain,summary,constraints,evaluations??[],[3,5].includes(args.limit)?args.limit:5);
+    return {
+      ok:true,domain,task_summary:summary,
+      ranking_method:"Deterministic domain, keyword, selection-guidance and bounded owner-evaluation scoring. A shortlist is not proof of suitability.",
+      recommendations:ranked.map((item:any)=>({
+        strategy_id:item.strategy.id,strategy_code:item.strategy.strategy_code,title:item.strategy.title,
+        library:item.strategy.library_title,library_domain:item.strategy.library_domain,
+        objective:item.strategy.objective,method:item.strategy.method,selection_reason:item.reasons,
+        cautions:[...item.cautions,...(item.strategy.limitations??[]).slice(0,3)],
+        strengths:item.strategy.strengths,evidence_class:item.strategy.evidence_class,
+        validation_state:item.strategy.cosmo_validation_state,version:item.strategy.current_version,
+        score:item.score,evaluation_history:item.evaluation_history,
+      })),
+    };
+  }
+
+  if (name === "begin_strategy_run") {
+    const code=typeof args.strategy_code==="string"?args.strategy_code.trim():"";
+    const domain=typeof args.task_domain==="string"?args.task_domain.trim().slice(0,80):"";
+    const summary=typeof args.task_summary==="string"?args.task_summary.trim().slice(0,1200):"";
+    const reason=typeof args.selection_reason==="string"?args.selection_reason.trim().slice(0,1200):"";
+    const constraints=Array.isArray(args.constraints)?args.constraints.filter((x:unknown)=>typeof x==="string").slice(0,12).map((x:string)=>x.slice(0,300)):[];
+    const alternatives=Array.isArray(args.alternatives_considered)?args.alternatives_considered.slice(0,5).map((x:any)=>({strategy_code:String(x?.strategy_code??"").slice(0,100),reason:String(x?.reason??"").slice(0,400)})).filter((x:any)=>x.strategy_code&&x.reason):[];
+    if(!code||!domain||summary.length<10||reason.length<20)return {ok:false,error:"Strategy code, domain, meaningful task summary and selection reason are required."};
+    const {data:strategy,error:lookupError}=await supabase.from("cosmo_strategies").select("id,strategy_code,title,cosmo_validation_state,evidence_class,current_version,status").eq("strategy_code",code).eq("status","active").maybeSingle();
+    if(lookupError||!strategy)return {ok:false,error:"The requested active strategy was not found."};
+    const traceCode="COSMO-STRAT-"+crypto.randomUUID().replaceAll("-","").slice(0,16).toUpperCase();
+    const {data:run,error}=await supabase.from("cosmo_strategy_runs").insert({
+      owner_id:ownerId,strategy_id:strategy.id,task_domain:domain,
+      task_context:{task_summary:summary,constraints,strategy_version:strategy.current_version,validation_state_at_selection:strategy.cosmo_validation_state,evidence_class_at_selection:strategy.evidence_class},
+      selection_reason:reason,alternatives_considered:alternatives,status:"running",trace_code:traceCode,
+    }).select("id,trace_code,status,started_at").single();
+    if(error||!run)return {ok:false,error:"Strategy run could not be recorded: "+(error?.message??"unknown database error")};
+    const {error:auditError}=await supabase.from("cosmo_audit_events").insert({
+      owner_id:ownerId,event_code:"COSMO-AUD-"+crypto.randomUUID().replaceAll("-","").slice(0,12).toUpperCase(),
+      event_type:"strategy_run_started",entity_type:"strategy_run",entity_id:run.id,
+      summary:"Cosmo started strategy "+strategy.strategy_code,
+      details:{trace_code:traceCode,strategy_code:strategy.strategy_code,validation_state:strategy.cosmo_validation_state,call_id:callId},
+    });
+    return {ok:true,run,strategy:{strategy_code:strategy.strategy_code,title:strategy.title,validation_state:strategy.cosmo_validation_state,evidence_class:strategy.evidence_class},audit_recorded:!auditError,boundary:"This trace records internal reasoning/work only. It does not authorize or perform external actions."};
+  }
+
+  if (name === "complete_strategy_run") {
+    const traceCode=typeof args.trace_code==="string"?args.trace_code.trim():"";
+    const status=["completed","failed","abandoned","needs_review"].includes(args.status)?args.status:"needs_review";
+    const summary=typeof args.output_summary==="string"?args.output_summary.trim().slice(0,4000):"";
+    if(!traceCode||summary.length<10)return {ok:false,error:"A trace code and meaningful outcome summary are required."};
+    const {data,error}=await supabase.from("cosmo_strategy_runs").update({status,output_summary:summary,completed_at:new Date().toISOString()})
+      .eq("owner_id",ownerId).eq("trace_code",traceCode).eq("status","running")
+      .select("trace_code,status,output_summary,completed_at").maybeSingle();
+    if(error||!data)return {ok:false,error:"No open strategy run was found for that trace code, or it could not be closed."};
+    await supabase.from("cosmo_audit_events").insert({
+      owner_id:ownerId,event_code:"COSMO-AUD-"+crypto.randomUUID().replaceAll("-","").slice(0,12).toUpperCase(),
+      event_type:"strategy_run_completed",entity_type:"strategy_run",summary:"Cosmo closed strategy run "+traceCode,details:{status,call_id:callId},
+    });
+    return {ok:true,run:data,note:"Closing a run does not validate or promote the underlying strategy."};
+  }
+
+  if (name === "evaluate_strategy_run") {
+    const traceCode=typeof args.trace_code==="string"?args.trace_code.trim():"";
+    const source=["creator_feedback","automated_test","independent_review","external_outcome","model_self_assessment"].includes(args.evaluation_source)?args.evaluation_source:"model_self_assessment";
+    const allowed=["success","partial","failure","inconclusive","unsafe","not_applicable"];
+    let outcome=allowed.includes(args.outcome)?args.outcome:"inconclusive";
+    let confidence=Number(args.confidence);if(!Number.isFinite(confidence))confidence=0;
+    confidence=Math.max(0,Math.min(1,confidence));
+    let score=args.measured_score===null?null:Number(args.measured_score);
+    if(score!==null&&(!Number.isFinite(score)||score<0||score>100))return {ok:false,error:"Measured score must be between 0 and 100 or null."};
+    const sample=args.sample_size===null?null:Number(args.sample_size);
+    if(sample!==null&&(!Number.isInteger(sample)||sample<0))return {ok:false,error:"Sample size must be a non-negative integer or null."};
+    const evidenceSummary=typeof args.evidence_summary==="string"?args.evidence_summary.trim().slice(0,1600):"";
+    const notes=typeof args.reviewer_notes==="string"?args.reviewer_notes.trim().slice(0,1200):"";
+    if(!traceCode||evidenceSummary.length<10)return {ok:false,error:"A trace code and evidence summary are required."};
+    if(source==="model_self_assessment"){outcome="inconclusive";confidence=Math.min(confidence,0.4);score=null;}
+    const {data:run,error:runError}=await supabase.from("cosmo_strategy_runs").select("id,strategy_id").eq("owner_id",ownerId).eq("trace_code",traceCode).maybeSingle();
+    if(runError||!run)return {ok:false,error:"The strategy run was not found in the creator's private trace register."};
+    const {data:evaluation,error}=await supabase.from("cosmo_strategy_evaluations").insert({
+      owner_id:ownerId,strategy_run_id:run.id,strategy_id:run.strategy_id,
+      evaluation_type:args.evaluation_type,outcome,confidence,measured_score:score,sample_size:sample,
+      evidence:{source,summary:evidenceSummary,recorded_by:"cosmo_agent",self_assessment_only:source==="model_self_assessment",tool_call_id:callId},
+      reviewer_notes:notes,
+    }).select("id,evaluation_type,outcome,confidence,measured_score,sample_size,evaluated_at").single();
+    if(error||!evaluation)return {ok:false,error:"Evaluation could not be recorded: "+(error?.message??"unknown database error")};
+    if(outcome==="unsafe")await supabase.from("cosmo_strategy_runs").update({status:"needs_review"}).eq("id",run.id).eq("owner_id",ownerId);
+    const {error:auditError}=await supabase.from("cosmo_audit_events").insert({
+      owner_id:ownerId,event_code:"COSMO-AUD-"+crypto.randomUUID().replaceAll("-","").slice(0,12).toUpperCase(),
+      event_type:"strategy_evaluation_recorded",entity_type:"strategy_run",entity_id:run.id,
+      summary:"Cosmo recorded a "+outcome+" strategy evaluation",details:{evaluation_id:evaluation.id,evaluation_source:source,call_id:callId},
+    });
+    return {ok:true,evaluation,audit_recorded:!auditError,strategy_validation_changed:false,note:source==="model_self_assessment"?"This low-confidence self-review is forced to inconclusive and cannot count as proof of success.":"Evaluation is evidence, but does not automatically change strategy validation state."};
+  }
+
   const fail = (message) => ({ ok: false, error: message });
   if (["create_task","list_tasks","request_approval"].includes(name) && !ownerAccess) {
     const { data: workProduct } = await supabase.from("cosmo_subscription_products").select("id").eq("product_code","COSMO-WORK").maybeSingle();
