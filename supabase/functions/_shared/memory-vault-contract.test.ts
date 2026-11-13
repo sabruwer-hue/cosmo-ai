@@ -9,7 +9,7 @@ const source: HistorySourceRecord = {
 const memory: MemoryIndexEntry = {
   memory_code: "MEM-COSMO-000001", title: "Cosmo requirement", summary: "A searchable summary",
   source_record_codes: [source.source_code], project_codes: ["COSMO"], created_at: "2026-11-13T12:00:00Z",
-  version: 1, retention: "permanent", access: "private", status: "active",
+  version: 1, memory_hash: "b".repeat(64), retention: "permanent", access: "private", status: "active",
 };
 
 Deno.test("valid index links to preserved source record", () => {
@@ -56,4 +56,9 @@ Deno.test("memory code can have multiple distinct append-only versions", () => {
 Deno.test("same memory code cannot reuse the same version number", () => {
   const duplicateVersion = { ...memory };
   assertEquals(auditMemoryHistoryVault([memory, duplicateVersion], [source]).valid, false);
+});
+
+Deno.test("malformed memory index hash fails integrity audit", () => {
+  const malformed = { ...memory, memory_hash: "bad" };
+  assertEquals(auditMemoryHistoryVault([malformed], [source]).valid, false);
 });
