@@ -7,7 +7,8 @@ const required = [
   "index.html", "work.html", "admin.html", "service-worker.js",
   "manifest.webmanifest", "work.webmanifest", "admin.webmanifest",
   "assets/app.js", "assets/cosmo-live.js",
-  "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts"
+  "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts",
+  "supabase/functions/_shared/strategy-engine.ts", "supabase/functions/_shared/strategy-engine.test.ts"
 ];
 for (const file of required) readFileSync(file, "utf8");
 
@@ -49,4 +50,13 @@ for (const tool of ["create_task", "list_tasks", "search_knowledge", "create_mis
   if (!chat.includes('name: "' + tool + '"')) throw new Error("Cosmo agent tool is missing: " + tool);
 }
 if (!chat.includes("parallel_tool_calls: false")) throw new Error("Cosmo agent must keep tool execution sequential.");
+for (const tool of ["recommend_strategies","begin_strategy_run","complete_strategy_run","evaluate_strategy_run"]) {
+  if (!chat.includes('name: "' + tool + '"')) throw new Error("Cosmo strategy engine tool is missing: " + tool);
+}
+if (!chat.includes('from "../_shared/strategy-engine.ts"')) throw new Error("Cosmo chat is missing the strategy engine import.");
+const strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
+for (const guard of ["avoid_when","cosmo_validation_state","history.length >= 3","unsafe"]) {
+  if (!strategyEngine.includes(guard)) throw new Error("Strategy engine is missing required safety/ranking guard: " + guard);
+}
+
 console.log("Cosmo checks passed: files, manifests, JavaScript syntax, PWA hooks, workspace controls and agent tool registry.");
