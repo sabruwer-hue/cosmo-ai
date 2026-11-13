@@ -7,7 +7,7 @@ Establish the first executable governance gate for the three review roles in the
 - A deterministic, pure review-gate function accepting a claim packet and three separately identified reviewer submissions.
 - Required role checks, packet binding, duplicate/self-review identity checks, evidence provenance/source-reference checks, safety flags, benchmark gate, disagreement preservation, and unresolved-question reporting.
 - Fail-closed outcomes: `blocked`, `needs_revision`, or `ready_for_human_review`.
-- Tests for missing reviewers, duplicate identities, uncertain evidence, safety/benchmark failure, disagreement, and missing source references.
+- Ten regression tests covering missing reviewers, duplicate identities, uncertain/empty/duplicated evidence, safety/benchmark failure, disagreement, reviewer challenges and missing source references.
 
 ## What it does not do
 - It does not call three AI models or prove that reviewers are genuinely independent.
