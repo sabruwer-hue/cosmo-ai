@@ -8,7 +8,7 @@ const required = [
   "manifest.webmanifest", "work.webmanifest", "admin.webmanifest",
   "assets/app.js", "assets/cosmo-live.js",
   "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts",
-  "supabase/functions/_shared/strategy-engine.ts", "supabase/functions/_shared/strategy-engine.test.ts"
+  "supabase/functions/_shared/strategy-engine.ts", "supabase/functions/_shared/strategy-engine.test.ts", "supabase/functions/_shared/strategy-benchmark.ts", "supabase/functions/_shared/strategy-benchmark.test.ts"
 ];
 for (const file of required) readFileSync(file, "utf8");
 
@@ -63,7 +63,7 @@ for (const tool of ["recommend_strategies","begin_strategy_run","complete_strate
 }
 if (!chat.includes('from "../_shared/strategy-engine.ts"')) throw new Error("Cosmo chat is missing the strategy engine import.");
 if (!chat.includes("source_verified===true")) throw new Error("Strategy ranking must ignore unverified evaluation claims.");
-const strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
+const benchmark = readFileSync("supabase/functions/_shared/strategy-benchmark.ts", "utf8");\nif (!benchmark.includes("runStrategyBenchmark")) throw new Error("Strategy benchmark runner is missing.");\nif (!benchmark.includes("deterministic-order")) throw new Error("Benchmark harness is missing deterministic regression checks.");\nconst strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
 for (const guard of ["avoid_when","cosmo_validation_state","history.length >= 3","unsafe"]) {
   if (!strategyEngine.includes(guard)) throw new Error("Strategy engine is missing required safety/ranking guard: " + guard);
 }
