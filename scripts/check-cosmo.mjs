@@ -18,7 +18,8 @@ for (const file of ["manifest.webmanifest", "work.webmanifest", "admin.webmanife
 
 for (const file of ["assets/app.js", "assets/cosmo-live.js", "service-worker.js"]) {
   const result = spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });
-  if (result.status !== 0) throw new Error(file + " syntax check failed:\n" + result.stderr);
+  if (result.status !== 0) throw new Error(file + " syntax check failed:
+" + result.stderr);
 }
 
 for (const file of ["index.html", "work.html", "admin.html", "strategy-academy.html"]) {
@@ -33,7 +34,8 @@ for (const file of ["index.html", "work.html", "admin.html", "strategy-academy.h
     writeFileSync(temp, match[2]);
     const result = spawnSync(process.execPath, ["--check", temp], { encoding: "utf8" });
     unlinkSync(temp);
-    if (result.status !== 0) throw new Error(file + " inline script syntax check failed:\n" + result.stderr);
+    if (result.status !== 0) throw new Error(file + " inline script syntax check failed:
+" + result.stderr);
   }
 }
 
@@ -63,7 +65,10 @@ for (const tool of ["recommend_strategies","begin_strategy_run","complete_strate
 }
 if (!chat.includes('from "../_shared/strategy-engine.ts"')) throw new Error("Cosmo chat is missing the strategy engine import.");
 if (!chat.includes("source_verified===true")) throw new Error("Strategy ranking must ignore unverified evaluation claims.");
-const benchmark = readFileSync("supabase/functions/_shared/strategy-benchmark.ts", "utf8");\nif (!benchmark.includes("runStrategyBenchmark")) throw new Error("Strategy benchmark runner is missing.");\nif (!benchmark.includes("deterministic-order")) throw new Error("Benchmark harness is missing deterministic regression checks.");\nconst strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
+const benchmark = readFileSync("supabase/functions/_shared/strategy-benchmark.ts", "utf8");
+if (!benchmark.includes("runStrategyBenchmark")) throw new Error("Strategy benchmark runner is missing.");
+if (!benchmark.includes("deterministic-order")) throw new Error("Benchmark harness is missing deterministic regression checks.");
+const strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
 for (const guard of ["avoid_when","cosmo_validation_state","history.length >= 3","unsafe"]) {
   if (!strategyEngine.includes(guard)) throw new Error("Strategy engine is missing required safety/ranking guard: " + guard);
 }
