@@ -76,11 +76,16 @@ export function evaluateIntelligenceReview(
   );
   if (!validRoles || !validAssessments) blockers.push("A reviewer submission contains an unsupported role or assessment.");
 
-  const evidenceIntegrity = packet.evidence.every((item) =>
-    item.evidence_id.trim().length > 0 &&
-    (item.provenance !== "external_source" || Boolean(item.source_ref?.trim()))
-  );
-  if (!evidenceIntegrity) blockers.push("Evidence record is incomplete: external sources require a source reference and every item needs an ID.");
+  const evidenceIds = packet.evidence.map((item) => item.evidence_id.trim());
+  const evidenceIntegrity = packet.evidence.length > 0 &&
+    evidenceIds.every((id) => id.length > 0) &&
+    new Set(evidenceIds).size === evidenceIds.length &&
+    packet.evidence.every((item) =>
+      ["user_provided", "external_source", "inference", "speculation"].includes(item.provenance) &&
+      ["verified", "unverified", "disputed"].includes(item.verification) &&
+      (item.provenance !== "external_source" || Boolean(item.source_ref?.trim()))
+    );
+  if (!evidenceIntegrity) blockers.push("Evidence is missing, duplicated or incomplete: each item needs a unique ID, valid labels and external sources need a source reference.");
 
   const unverified = packet.evidence.filter((item) => item.verification !== "verified");
   if (unverified.length) unresolved.push(unverified.length + " evidence item(s) remain unverified or disputed.");
@@ -93,6 +98,7 @@ export function evaluateIntelligenceReview(
   for (const item of submissions) {
     if (item.assessment === "block") blockers.push(item.role + " submitted a blocking assessment.");
     if (item.assessment === "inconclusive") unresolved.push(item.role + " review is inconclusive.");
+    if (item.assessment === "challenge") unresolved.push(item.role + " challenged the claim; resolve the challenge before proceeding.");
     for (const gap of item.evidence_gaps) unresolved.push(item.role + " evidence gap: " + gap);
     for (const assumption of item.assumptions_challenged) unresolved.push(item.role + " challenged assumption: " + assumption);
   }
