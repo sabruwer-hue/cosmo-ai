@@ -34,6 +34,7 @@ Deno.test("avoid-when overlap creates a caution and reduces rank", () => {
   const suitable = makeStrategy({ id: "strategy-2", selection_guidance: { best_for: ["complex project launch"], avoid_when: [] } });
   const result = rankStrategies([avoided, suitable], "planning", "Plan a trivial routine task", [], [], 2);
   assert(result.find((item) => item.strategy.id === "strategy-1")!.cautions.some((item) => item.includes("avoid-when")));
+  assert(result.findIndex((item) => item.strategy.id === "strategy-2") < result.findIndex((item) => item.strategy.id === "strategy-1"));
 });
 
 Deno.test("small evaluation samples do not influence ranking", () => {
