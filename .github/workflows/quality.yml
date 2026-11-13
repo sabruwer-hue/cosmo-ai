@@ -18,6 +18,8 @@ jobs:
       - uses: denoland/setup-deno@v2
       - name: Validate Cosmo application files
         run: node scripts/check-cosmo.mjs
+      - name: Test strategy selection engine
+        run: deno test supabase/functions/_shared/strategy-engine.test.ts
       - name: Type-check Cosmo chat (known legacy check warning)
         continue-on-error: true
         run: deno check supabase/functions/cosmo-chat/index.ts
