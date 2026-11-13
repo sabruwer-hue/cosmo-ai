@@ -18,6 +18,7 @@ The additive migration defines:
 - No UPDATE or DELETE grants to authenticated users; update triggers reject mutation even if a grant is accidentally added later.
 - Account deletion cascades to that account's vault data as the privacy-erasure path.
 - Private trigger-function schema, not intended for Data API exposure.
+- Explicit authenticated table grants are separate from Data API schema exposure; current Supabase projects may require the public schema/table exposure setting to be checked before REST access is available.
 
 ## Important boundaries
 - This migration is committed to the development branch only. It has **not** been applied to the live Supabase project.
