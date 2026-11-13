@@ -9,10 +9,15 @@ create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
 grant usage on schema private to authenticated;
 
+create sequence private.cosmo_history_code_seq as bigint start with 1 increment by 1 no cycle;
+create sequence private.cosmo_memory_code_seq as bigint start with 1 increment by 1 no cycle;
+revoke all on sequence private.cosmo_history_code_seq, private.cosmo_memory_code_seq from public, anon, authenticated;
+grant usage on sequence private.cosmo_history_code_seq, private.cosmo_memory_code_seq to authenticated;
+
 create table public.cosmo_history_records (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references auth.users(id) on delete cascade,
-  source_code text not null check (length(btrim(source_code)) > 0),
+  source_code text not null default '' check (length(btrim(source_code)) > 0),
   source_type text not null check (source_type in (
     'conversation', 'document', 'voice_note', 'file', 'external_source',
     'system_event', 'model_output', 'research_note'
@@ -31,7 +36,7 @@ create table public.cosmo_history_records (
   source_hash text not null default '',
   metadata jsonb not null default '{}'::jsonb,
   created_by uuid default auth.uid(),
-  constraint cosmo_history_records_owner_code_unique unique (owner_id, source_code),
+  constraint cosmo_history_records_source_code_unique unique (source_code),
   constraint cosmo_history_records_owner_id_unique unique (owner_id, id),
   constraint cosmo_history_records_hash_format check (source_hash ~ '^[0-9a-f]{64}
   constraint cosmo_history_records_created_by_owner check (created_by is null or created_by = owner_id),
@@ -45,8 +50,8 @@ create table public.cosmo_history_records (
 create table public.cosmo_memory_index (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references auth.users(id) on delete cascade,
-  memory_code text not null check (length(btrim(memory_code)) > 0),
-  version integer not null check (version > 0),
+  memory_code text not null default '' check (length(btrim(memory_code)) > 0),
+  version integer not null default 1 check (version > 0),
   title text not null check (length(btrim(title)) > 0),
   summary text not null check (length(btrim(summary)) > 0),
   project_codes text[] not null default '{}'::text[],
@@ -59,7 +64,7 @@ create table public.cosmo_memory_index (
   supersedes_memory_id uuid,
   created_at timestamptz not null default clock_timestamp(),
   created_by uuid default auth.uid(),
-  constraint cosmo_memory_index_owner_code_version_unique unique (owner_id, memory_code, version),
+  constraint cosmo_memory_index_code_version_unique unique (memory_code, version),
   constraint cosmo_memory_index_owner_id_unique unique (owner_id, id),
   constraint cosmo_memory_index_created_by_owner check (created_by is null or created_by = owner_id),
   constraint cosmo_memory_index_not_self_supersede check (supersedes_memory_id is null or supersedes_memory_id <> id),
@@ -100,6 +105,43 @@ create index cosmo_memory_source_links_owner_memory_idx
   on public.cosmo_memory_source_links(owner_id, memory_index_id);
 create index cosmo_memory_source_links_owner_history_idx
   on public.cosmo_memory_source_links(owner_id, history_record_id);
+
+create or replace function private.cosmo_assign_history_code()
+returns trigger
+language plpgsql
+set search_path = pg_catalog
+as $
+begin
+  new.source_code := 'COSMO-HST-' || lpad(nextval('private.cosmo_history_code_seq')::text, 12, '0');
+  return new;
+end;
+$;
+
+create or replace function private.cosmo_prepare_memory_index()
+returns trigger
+language plpgsql
+set search_path = pg_catalog
+as $
+declare
+  prior_memory record;
+begin
+  if new.supersedes_memory_id is null then
+    new.memory_code := 'COSMO-MEM-' || lpad(nextval('private.cosmo_memory_code_seq')::text, 12, '0');
+    new.version := 1;
+  else
+    select memory_code, version
+      into prior_memory
+      from public.cosmo_memory_index
+      where owner_id = new.owner_id and id = new.supersedes_memory_id;
+    if not found then
+      raise exception 'Superseded memory version was not found for this owner.';
+    end if;
+    new.memory_code := prior_memory.memory_code;
+    new.version := prior_memory.version + 1;
+  end if;
+  return new;
+end;
+$;
 
 create or replace function private.cosmo_set_history_record_hash()
 returns trigger
@@ -145,8 +187,18 @@ begin
 end;
 $$;
 
+revoke all on function private.cosmo_assign_history_code() from public, anon, authenticated;
+revoke all on function private.cosmo_prepare_memory_index() from public, anon, authenticated;
 revoke all on function private.cosmo_set_history_record_hash() from public, anon, authenticated;
 revoke all on function private.cosmo_reject_vault_update() from public, anon, authenticated;
+
+create trigger cosmo_history_records_code_before_insert
+before insert on public.cosmo_history_records
+for each row execute function private.cosmo_assign_history_code();
+
+create trigger cosmo_memory_index_code_before_insert
+before insert on public.cosmo_memory_index
+for each row execute function private.cosmo_prepare_memory_index();
 
 create trigger cosmo_history_records_hash_before_insert
 before insert on public.cosmo_history_records
