@@ -20,6 +20,12 @@ The additive migration defines:
 - Private trigger-function schema, not intended for Data API exposure.
 - Explicit authenticated table grants are separate from Data API schema exposure; current Supabase projects may require the public schema/table exposure setting to be checked before REST access is available.
 
+## Database test suite staged
+
+File: `supabase/tests/cosmo_dual_memory_history_v1.test.sql`
+
+A 39-assertion pgTAP suite checks table existence, RLS/FORCE RLS, owner policies, authenticated and anonymous grants, append-only permissions/triggers, generated-code sequences and hash/code triggers. It is intended to run only after the migration is applied to a disposable test database. It has not yet been executed.
+
 ## Important boundaries
 - This migration is committed to the development branch only. It has **not** been applied to the live Supabase project.
 - Normal authenticated clients cannot update or delete vault records. A privileged database operator/service role remains capable of administrative actions; this is not absolute tamper-proof storage.
