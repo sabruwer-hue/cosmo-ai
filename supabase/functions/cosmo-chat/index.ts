@@ -27,7 +27,7 @@ Foundational approach:
 - If evidence is insufficient, say so and propose a safe next investigation.
 - Strategy libraries are candidate methods, not authority or proof. For substantive planning, research, engineering, evaluation or risk decisions, use recommend_strategies when it materially improves the work. Explain why a method fits and disclose validation state, limitations and risk notes. Never present unverified strategies as proven.
 - When the creator asks you to apply a strategy to a concrete task, use begin_strategy_run before applying it, then complete_strategy_run with an honest concise result. A strategy run records reasoning and work; it does not authorize external actions, deployments, payments, data changes or other consequential operations.
-- Record an evaluation only when the creator supplies feedback or there is identifiable test, independent-review or external-outcome evidence. A model self-assessment must be recorded as inconclusive, never as a success. Evaluation records do not automatically upgrade a strategy's validation state; validation requires a separate governed review.
+- Record an evaluation only when the creator supplies explicit feedback or verifiable test, independent-review or external-outcome evidence is available. The current chat tool can verify explicit feedback in the current user message; other source claims are retained as unverified and forced to inconclusive until a separate evidence-ingestion path verifies them. A model self-assessment must never be recorded as success. Evaluation records do not automatically upgrade a strategy's validation state; validation requires a separate governed review.
 - If a strategy is unverified, sandbox-tested, experimental or has relevant cautions, state that explicitly and adapt the method to the task's risk. Prefer a safe no-action or needs-review state when authority or evidence is missing.
 
 The owner-specific identity, mission catalogue and project history must be retrieved from authenticated private database records. Do not invent missing creator details or assume that a project exists because it is mentioned in a hypothesis. Mission intentions and architecture are not proof of implementation.
@@ -84,7 +84,7 @@ const agentTools = [
   }, required: ["trace_code","evaluation_type","outcome","evaluation_source","confidence","measured_score","sample_size","evidence_summary","reviewer_notes"], additionalProperties: false } } }
 ];
 
-async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAccess, activeTools) {
+async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAccess, activeTools, userMessage) {
   if (["recommend_strategies","begin_strategy_run","complete_strategy_run","evaluate_strategy_run"].includes(name) && !ownerAccess) {
     return { ok: false, error: "Strategy execution and evaluation are currently restricted to the creator owner account." };
   }
@@ -102,13 +102,14 @@ async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAcce
     const ids=[...new Set(rows.map((x:any)=>x.library_id).filter(Boolean))];
     const [{data:libraries,error:libError},{data:evaluations,error:evalError}]=await Promise.all([
       supabase.from("cosmo_strategy_libraries").select("id,library_code,title,domain").in("id",ids),
-      supabase.from("cosmo_strategy_evaluations").select("strategy_id,outcome,measured_score,evaluation_type").eq("owner_id",ownerId).order("evaluated_at",{ascending:false}).limit(200),
+      supabase.from("cosmo_strategy_evaluations").select("strategy_id,outcome,measured_score,evaluation_type,evidence").eq("owner_id",ownerId).order("evaluated_at",{ascending:false}).limit(200),
     ]);
     if(libError)return {ok:false,error:"Strategy library metadata could not be retrieved: "+libError.message};
     if(evalError)return {ok:false,error:"Strategy evaluation history could not be retrieved: "+evalError.message};
     const libraryMap=new Map((libraries??[]).map((x:any)=>[x.id,x]));
     const candidates=rows.map((x:any)=>({...x,library_domain:libraryMap.get(x.library_id)?.domain??"",library_title:libraryMap.get(x.library_id)?.title??"",library_code:libraryMap.get(x.library_id)?.library_code??""}));
-    const ranked=rankStrategies(candidates,domain,summary,constraints,evaluations??[],[3,5].includes(args.limit)?args.limit:5);
+    const verifiedEvaluations=(evaluations??[]).filter((item:any)=>item.evidence?.source_verified===true);
+    const ranked=rankStrategies(candidates,domain,summary,constraints,verifiedEvaluations,[3,5].includes(args.limit)?args.limit:5);
     return {
       ok:true,domain,task_summary:summary,
       ranking_method:"Deterministic domain, keyword, selection-guidance and bounded owner-evaluation scoring. A shortlist is not proof of suitability.",
@@ -180,13 +181,15 @@ async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAcce
     const evidenceSummary=typeof args.evidence_summary==="string"?args.evidence_summary.trim().slice(0,1600):"";
     const notes=typeof args.reviewer_notes==="string"?args.reviewer_notes.trim().slice(0,1200):"";
     if(!traceCode||evidenceSummary.length<10)return {ok:false,error:"A trace code and evidence summary are required."};
-    if(source==="model_self_assessment"){outcome="inconclusive";confidence=Math.min(confidence,0.4);score=null;}
+    const explicitFeedback=typeof userMessage==="string" && /(worked|did not work|didn't work|successful|unsuccessful|failed|helpful|not helpful|good result|bad result|correct result|incorrect result|i agree|i disagree|i approve this result|i reject this result)/i.test(userMessage);
+    const sourceVerified=source==="creator_feedback" && explicitFeedback;
+    if(!sourceVerified){outcome="inconclusive";confidence=Math.min(confidence,0.4);score=null;}
     const {data:run,error:runError}=await supabase.from("cosmo_strategy_runs").select("id,strategy_id").eq("owner_id",ownerId).eq("trace_code",traceCode).maybeSingle();
     if(runError||!run)return {ok:false,error:"The strategy run was not found in the creator's private trace register."};
     const {data:evaluation,error}=await supabase.from("cosmo_strategy_evaluations").insert({
       owner_id:ownerId,strategy_run_id:run.id,strategy_id:run.strategy_id,
       evaluation_type:args.evaluation_type,outcome,confidence,measured_score:score,sample_size:sample,
-      evidence:{source,summary:evidenceSummary,recorded_by:"cosmo_agent",self_assessment_only:source==="model_self_assessment",tool_call_id:callId},
+      evidence:{source_claimed:source,source_verified:sourceVerified,summary:evidenceSummary,recorded_by:"cosmo_agent",self_assessment_only:!sourceVerified,tool_call_id:callId},
       reviewer_notes:notes,
     }).select("id,evaluation_type,outcome,confidence,measured_score,sample_size,evaluated_at").single();
     if(error||!evaluation)return {ok:false,error:"Evaluation could not be recorded: "+(error?.message??"unknown database error")};
@@ -196,7 +199,7 @@ async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAcce
       event_type:"strategy_evaluation_recorded",entity_type:"strategy_run",entity_id:run.id,
       summary:"Cosmo recorded a "+outcome+" strategy evaluation",details:{evaluation_id:evaluation.id,evaluation_source:source,call_id:callId},
     });
-    return {ok:true,evaluation,audit_recorded:!auditError,strategy_validation_changed:false,note:source==="model_self_assessment"?"This low-confidence self-review is forced to inconclusive and cannot count as proof of success.":"Evaluation is evidence, but does not automatically change strategy validation state."};
+    return {ok:true,evaluation,audit_recorded:!auditError,strategy_validation_changed:false,note:sourceVerified?"Creator feedback was detected in the current user message. It is recorded as owner feedback but does not automatically change strategy validation state.":"This source could not be independently verified in the current turn. The record is forced to inconclusive and cannot influence strategy ranking."};
   }
 
   const fail = (message) => ({ ok: false, error: message });
@@ -500,7 +503,7 @@ Deno.serve(async (req: Request) => {
         } else {
           try {
             const args = JSON.parse(call.function.arguments ?? "{}");
-            result = await executeAgentTool(supabase, ownerId, call.function.name, args, call.id, ownerAccess, activeTools);
+            result = await executeAgentTool(supabase, ownerId, call.function.name, args, call.id, ownerAccess, activeTools, message);
           } catch (toolError) {
             result = { ok: false, error: toolError instanceof Error ? toolError.message : "Internal tool failed." };
           }
