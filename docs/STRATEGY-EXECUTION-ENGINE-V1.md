@@ -14,7 +14,7 @@ Connect the existing shared Strategy Libraries to the authenticated Cosmo chat r
 
 ## Ranking safeguards
 
-- Shared strategies must be active; retired strategies are excluded.
+- Shared strategies must be active and not carry the retired validation state; retired strategies are excluded.
 - Domain match and keyword relevance are deterministic and explainable.
 - `avoid_when` overlap creates an explicit caution and reduces rank.
 - Verified owner feedback influences rank only after at least three records, and the signal is bounded. Unverified source claims are excluded.
