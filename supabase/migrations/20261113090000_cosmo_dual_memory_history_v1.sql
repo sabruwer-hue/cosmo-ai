@@ -34,6 +34,7 @@ create table public.cosmo_history_records (
   constraint cosmo_history_records_owner_code_unique unique (owner_id, source_code),
   constraint cosmo_history_records_owner_id_unique unique (owner_id, id),
   constraint cosmo_history_records_hash_format check (source_hash ~ '^[0-9a-f]{64}
+  constraint cosmo_history_records_created_by_owner check (created_by is null or created_by = owner_id),
   constraint cosmo_history_records_not_self_supersede check (supersedes_record_id is null or supersedes_record_id <> id),
   constraint cosmo_history_records_supersedes_fk
     foreign key (owner_id, supersedes_record_id)
@@ -60,6 +61,7 @@ create table public.cosmo_memory_index (
   created_by uuid default auth.uid(),
   constraint cosmo_memory_index_owner_code_version_unique unique (owner_id, memory_code, version),
   constraint cosmo_memory_index_owner_id_unique unique (owner_id, id),
+  constraint cosmo_memory_index_created_by_owner check (created_by is null or created_by = owner_id),
   constraint cosmo_memory_index_not_self_supersede check (supersedes_memory_id is null or supersedes_memory_id <> id),
   constraint cosmo_memory_index_supersedes_fk
     foreign key (owner_id, supersedes_memory_id)
@@ -111,6 +113,7 @@ begin
         jsonb_build_object(
           'id', new.id,
           'owner_id', new.owner_id,
+          'created_by', new.created_by,
           'source_code', new.source_code,
           'source_type', new.source_type,
           'original_content', new.original_content,
