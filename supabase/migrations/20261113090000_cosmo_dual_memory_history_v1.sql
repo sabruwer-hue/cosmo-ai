@@ -233,6 +233,11 @@ revoke all on function private.cosmo_prepare_memory_index() from public, anon, a
 revoke all on function private.cosmo_set_history_record_hash() from public, anon, authenticated;
 revoke all on function private.cosmo_set_memory_index_hash() from public, anon, authenticated;
 revoke all on function private.cosmo_reject_vault_update() from public, anon, authenticated;
+grant execute on function private.cosmo_assign_history_code() to authenticated;
+grant execute on function private.cosmo_prepare_memory_index() to authenticated;
+grant execute on function private.cosmo_set_history_record_hash() to authenticated;
+grant execute on function private.cosmo_set_memory_index_hash() to authenticated;
+grant execute on function private.cosmo_reject_vault_update() to authenticated;
 
 create trigger cosmo_history_records_code_before_insert
 before insert on public.cosmo_history_records
