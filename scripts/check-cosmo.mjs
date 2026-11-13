@@ -8,7 +8,7 @@ const required = [
   "manifest.webmanifest", "work.webmanifest", "admin.webmanifest",
   "assets/app.js", "assets/cosmo-live.js",
   "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts",
-  "supabase/functions/_shared/strategy-engine.ts", "supabase/functions/_shared/strategy-engine.test.ts", "supabase/functions/_shared/strategy-benchmark.ts", "supabase/functions/_shared/strategy-benchmark.test.ts", "supabase/functions/_shared/intelligence-review.ts", "supabase/functions/_shared/intelligence-review.test.ts", "supabase/functions/_shared/memory-vault-contract.ts", "supabase/functions/_shared/memory-vault-contract.test.ts", "supabase/migrations/20261113090000_cosmo_dual_memory_history_v1.sql"
+  "supabase/functions/_shared/strategy-engine.ts", "supabase/functions/_shared/strategy-engine.test.ts", "supabase/functions/_shared/strategy-benchmark.ts", "supabase/functions/_shared/strategy-benchmark.test.ts", "supabase/functions/_shared/intelligence-review.ts", "supabase/functions/_shared/intelligence-review.test.ts", "supabase/functions/_shared/memory-vault-contract.ts", "supabase/functions/_shared/memory-vault-contract.test.ts", "supabase/migrations/20261113090000_cosmo_dual_memory_history_v1.sql", "supabase/tests/cosmo_dual_memory_history_v1.test.sql"
 ];
 for (const file of required) readFileSync(file, "utf8");
 
@@ -76,6 +76,8 @@ for (const guard of ["cosmo_history_records", "cosmo_memory_index", "cosmo_memor
 }
 if ((vaultMigration.match(/\bcommit;/gi) || []).length !== 1) throw new Error("Dual-vault migration must be a single complete transaction.");
 if (/grant[^;]*(update|delete)[^;]*to authenticated/i.test(vaultMigration)) throw new Error("Vault migration must not grant UPDATE or DELETE to authenticated users.");
+const vaultDbTests = readFileSync("supabase/tests/cosmo_dual_memory_history_v1.test.sql", "utf8");
+if (!vaultDbTests.includes("plan(39)") || !vaultDbTests.includes("select * from finish()")) throw new Error("Dual-vault pgTAP database test suite is incomplete.");
 const memoryVault = readFileSync("supabase/functions/_shared/memory-vault-contract.ts", "utf8");
 for (const guard of ["auditMemoryHistoryVault", "source_record_codes", "source_hash", "memory_hash", "verification_status", "supersedes_source_code"]) {
   if (!memoryVault.includes(guard)) throw new Error("Memory/history vault contract is missing: " + guard);
