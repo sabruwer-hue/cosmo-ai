@@ -7,11 +7,12 @@ begin;
 
 create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
+grant usage on schema private to authenticated;
 
 create table public.cosmo_history_records (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references auth.users(id) on delete cascade,
-  source_code text not null,
+  source_code text not null check (length(btrim(source_code)) > 0),
   source_type text not null check (source_type in (
     'conversation', 'document', 'voice_note', 'file', 'external_source',
     'system_event', 'model_output', 'research_note'
@@ -43,7 +44,7 @@ create table public.cosmo_history_records (
 create table public.cosmo_memory_index (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references auth.users(id) on delete cascade,
-  memory_code text not null,
+  memory_code text not null check (length(btrim(memory_code)) > 0),
   version integer not null check (version > 0),
   title text not null check (length(btrim(title)) > 0),
   summary text not null check (length(btrim(summary)) > 0),
@@ -71,7 +72,7 @@ create table public.cosmo_memory_source_links (
   owner_id uuid not null references auth.users(id) on delete cascade,
   memory_index_id uuid not null,
   history_record_id uuid not null,
-  relationship text not null default 'supported_by',
+  relationship text not null default 'supported_by' check (length(btrim(relationship)) > 0),
   rationale text,
   created_at timestamptz not null default clock_timestamp(),
   constraint cosmo_memory_source_links_unique unique (owner_id, memory_index_id, history_record_id, relationship),
