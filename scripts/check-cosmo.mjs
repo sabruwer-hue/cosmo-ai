@@ -76,7 +76,7 @@ for (const guard of ["cosmo_history_records", "cosmo_memory_index", "cosmo_memor
 }
 if (/grant[^;]*(update|delete)[^;]*to authenticated/i.test(vaultMigration)) throw new Error("Vault migration must not grant UPDATE or DELETE to authenticated users.");
 const memoryVault = readFileSync("supabase/functions/_shared/memory-vault-contract.ts", "utf8");
-for (const guard of ["auditMemoryHistoryVault", "source_record_codes", "content_hash", "supersedes_source_code"]) {
+for (const guard of ["auditMemoryHistoryVault", "source_record_codes", "source_hash", "verification_status", "supersedes_source_code"]) {
   if (!memoryVault.includes(guard)) throw new Error("Memory/history vault contract is missing: " + guard);
 }
 const strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
