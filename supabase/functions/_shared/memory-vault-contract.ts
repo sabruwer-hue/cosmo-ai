@@ -9,7 +9,6 @@ export type MemoryIndexEntry = {
   source_record_codes: string[];
   project_codes: string[];
   created_at: string;
-  updated_at: string;
   version: number;
   retention: MemoryRetention;
   access: VaultAccess;
@@ -24,7 +23,8 @@ export type HistorySourceRecord = {
   original_timestamp: string | null;
   provenance: string;
   source_hash: string;
-  integrity: HistoryIntegrity;
+  verification_status: HistoryIntegrity;
+  source_reference?: string;
   access: VaultAccess;
   supersedes_source_code?: string;
 };
@@ -59,33 +59,38 @@ export function auditMemoryHistoryVault(
 ): VaultAuditReport {
   const findings: VaultFinding[] = [];
   const historyByCode = new Map<string, HistorySourceRecord>();
-  const indexCodes = new Set<string>();
+  const indexVersions = new Set<string>();
 
   for (const record of historyRecords) {
+    if (!record.source_code.trim()) findings.push({ code: "empty-history-code", severity: "error", record_code: record.source_code, detail: "History source code is required." });
     if (historyByCode.has(record.source_code)) {
       findings.push({ code: "duplicate-history-code", severity: "error", record_code: record.source_code, detail: "History source codes must never be reused." });
     } else historyByCode.set(record.source_code, record);
     if (!record.original_content.trim()) findings.push({ code: "empty-original", severity: "error", record_code: record.source_code, detail: "Original source content is required; a summary cannot replace the source." });
-    if (!record.source_hash.trim()) findings.push({ code: "missing-integrity-hash", severity: "error", record_code: record.source_code, detail: "A source integrity hash is required, but must be computed by a trusted storage service." });
+    if (!/^[0-9a-f]{64}$/.test(record.source_hash)) findings.push({ code: "invalid-integrity-hash", severity: "error", record_code: record.source_code, detail: "A lowercase 64-character SHA-256 hash is required." });
+    if (record.source_type === "external_source" && !record.source_reference?.trim()) findings.push({ code: "missing-source-reference", severity: "error", record_code: record.source_code, detail: "External source records require a source reference." });
     if (!record.provenance.trim()) findings.push({ code: "missing-provenance", severity: "error", record_code: record.source_code, detail: "Source provenance is required." });
     if (!validTimestamp(record.captured_at)) findings.push({ code: "invalid-capture-time", severity: "error", record_code: record.source_code, detail: "Captured-at timestamp is invalid." });
     if (record.original_timestamp && !validTimestamp(record.original_timestamp)) findings.push({ code: "invalid-original-time", severity: "warning", record_code: record.source_code, detail: "Original source timestamp is invalid or needs normalization." });
     if (record.supersedes_source_code && !historyRecords.some((item) => item.source_code === record.supersedes_source_code)) {
       findings.push({ code: "broken-supersedes-link", severity: "error", record_code: record.source_code, detail: "Correction references a missing prior source record." });
     }
-    if (record.integrity !== "verified") findings.push({ code: "source-not-verified", severity: "warning", record_code: record.source_code, detail: "Source is not independently verified; preserve its original content and uncertainty label." });
+    if (record.verification_status !== "verified") findings.push({ code: "source-not-verified", severity: "warning", record_code: record.source_code, detail: "Source is not independently verified; preserve its original content and uncertainty label." });
   }
 
   for (const entry of indexEntries) {
-    if (indexCodes.has(entry.memory_code)) findings.push({ code: "duplicate-memory-code", severity: "error", record_code: entry.memory_code, detail: "Memory codes must be unique and never reused." });
-    indexCodes.add(entry.memory_code);
+    const versionKey = entry.memory_code + ":" + entry.version;
+    if (indexVersions.has(versionKey)) findings.push({ code: "duplicate-memory-version", severity: "error", record_code: entry.memory_code, detail: "A memory code cannot reuse an existing version number." });
+    indexVersions.add(versionKey);
+    if (!entry.memory_code.trim()) findings.push({ code: "empty-memory-code", severity: "error", record_code: entry.memory_code, detail: "Memory code is required." });
     if (!entry.title.trim() || !entry.summary.trim()) findings.push({ code: "empty-memory-summary", severity: "error", record_code: entry.memory_code, detail: "Index title and summary are required." });
-    if (!validTimestamp(entry.created_at) || !validTimestamp(entry.updated_at)) findings.push({ code: "invalid-memory-time", severity: "error", record_code: entry.memory_code, detail: "Memory timestamps must be valid." });
+    if (!validTimestamp(entry.created_at)) findings.push({ code: "invalid-memory-time", severity: "error", record_code: entry.memory_code, detail: "Memory creation timestamp must be valid." });
     if (!Number.isInteger(entry.version) || entry.version < 1) findings.push({ code: "invalid-memory-version", severity: "error", record_code: entry.memory_code, detail: "Memory version must be a positive integer." });
     if (!entry.source_record_codes.length) findings.push({ code: "memory-without-source", severity: "error", record_code: entry.memory_code, detail: "A memory summary must link to at least one original history record." });
     for (const sourceCode of entry.source_record_codes) {
       if (!historyByCode.has(sourceCode)) findings.push({ code: "broken-history-link", severity: "error", record_code: entry.memory_code, detail: "Missing history source record: " + sourceCode });
     }
+    if (new Set(entry.source_record_codes).size !== entry.source_record_codes.length) findings.push({ code: "duplicate-memory-source-link", severity: "error", record_code: entry.memory_code, detail: "A source record must not be linked twice to the same memory version." });
     if (entry.status === "superseded" && entry.retention !== "permanent") {
       findings.push({ code: "superseded-retention-warning", severity: "warning", record_code: entry.memory_code, detail: "Superseded memory should normally remain retained for historical traceability." });
     }
