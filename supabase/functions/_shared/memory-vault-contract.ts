@@ -10,6 +10,7 @@ export type MemoryIndexEntry = {
   project_codes: string[];
   created_at: string;
   version: number;
+  memory_hash: string;
   retention: MemoryRetention;
   access: VaultAccess;
   status: "active" | "superseded" | "disputed" | "withdrawn";
@@ -84,6 +85,7 @@ export function auditMemoryHistoryVault(
     indexVersions.add(versionKey);
     if (!entry.memory_code.trim()) findings.push({ code: "empty-memory-code", severity: "error", record_code: entry.memory_code, detail: "Memory code is required." });
     if (!entry.title.trim() || !entry.summary.trim()) findings.push({ code: "empty-memory-summary", severity: "error", record_code: entry.memory_code, detail: "Index title and summary are required." });
+    if (!/^[0-9a-f]{64}$/.test(entry.memory_hash)) findings.push({ code: "invalid-memory-hash", severity: "error", record_code: entry.memory_code, detail: "A lowercase 64-character SHA-256 memory hash is required." });
     if (!validTimestamp(entry.created_at)) findings.push({ code: "invalid-memory-time", severity: "error", record_code: entry.memory_code, detail: "Memory creation timestamp must be valid." });
     if (!Number.isInteger(entry.version) || entry.version < 1) findings.push({ code: "invalid-memory-version", severity: "error", record_code: entry.memory_code, detail: "Memory version must be a positive integer." });
     if (!entry.source_record_codes.length) findings.push({ code: "memory-without-source", severity: "error", record_code: entry.memory_code, detail: "A memory summary must link to at least one original history record." });
