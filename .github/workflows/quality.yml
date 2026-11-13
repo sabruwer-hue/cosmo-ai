@@ -20,7 +20,9 @@ jobs:
         run: node scripts/check-cosmo.mjs
       - name: Test strategy selection engine
         run: deno test supabase/functions/_shared/strategy-engine.test.ts
-      - name: Test strategy benchmark harness\n        run: deno test supabase/functions/_shared/strategy-benchmark.test.ts\n      - name: Type-check Cosmo chat (known legacy check warning)
+      - name: Test strategy benchmark harness
+        run: deno test supabase/functions/_shared/strategy-benchmark.test.ts
+      - name: Type-check Cosmo chat (known legacy check warning)
         continue-on-error: true
         run: deno check supabase/functions/cosmo-chat/index.ts
       - name: Type-check Cosmo admin gate
