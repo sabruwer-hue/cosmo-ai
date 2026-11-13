@@ -22,6 +22,8 @@ jobs:
         run: deno test supabase/functions/_shared/strategy-engine.test.ts
       - name: Test strategy benchmark harness
         run: deno test supabase/functions/_shared/strategy-benchmark.test.ts
+      - name: Test independent intelligence review gates
+        run: deno test supabase/functions/_shared/intelligence-review.test.ts
       - name: Type-check Cosmo chat (known legacy check warning)
         continue-on-error: true
         run: deno check supabase/functions/cosmo-chat/index.ts
