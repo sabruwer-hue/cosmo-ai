@@ -12,6 +12,7 @@ export type StrategyCandidate = {
   evidence_class: string;
   cosmo_validation_state: string;
   current_version: number;
+  status?: string;
   library_id: string;
   library_domain?: string;
 };
