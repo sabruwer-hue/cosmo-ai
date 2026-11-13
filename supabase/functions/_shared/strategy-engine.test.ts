@@ -64,3 +64,10 @@ Deno.test("ordering is deterministic for equal scores", () => {
   ], "unmatched", "no overlapping terms", [], [], 2);
   assertEquals(result.map((item) => item.strategy.strategy_code), ["A-STRATEGY", "Z-STRATEGY"]);
 });
+
+Deno.test("retired validation-state strategies are excluded", () => {
+  const result = rankStrategies([
+    makeStrategy({ cosmo_validation_state: "retired" }),
+  ], "planning", "Plan project", [], [], 3);
+  assertEquals(result.length, 0);
+});
