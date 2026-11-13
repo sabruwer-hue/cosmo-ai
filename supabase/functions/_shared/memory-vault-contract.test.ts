@@ -4,7 +4,7 @@ import { auditMemoryHistoryVault, type HistorySourceRecord, type MemoryIndexEntr
 const source: HistorySourceRecord = {
   source_code: "HST-CHAT-000001", source_type: "conversation", original_content: "Original user statement",
   captured_at: "2026-11-13T12:00:00Z", original_timestamp: "2026-11-13T11:59:00Z",
-  provenance: "user-provided conversation", content_hash: "sha256:example", integrity: "verified", access: "private",
+  provenance: "user-provided conversation", source_hash: "a".repeat(64), integrity: "verified", access: "private",
 };
 const memory: MemoryIndexEntry = {
   memory_code: "MEM-COSMO-000001", title: "Cosmo requirement", summary: "A searchable summary",
@@ -37,6 +37,6 @@ Deno.test("correction cannot point to missing history record", () => {
   assertEquals(auditMemoryHistoryVault([memory], [source, correction]).valid, false);
 });
 Deno.test("missing source hash fails integrity audit", () => {
-  const noHash = { ...source, content_hash: "" };
+  const noHash = { ...source, source_hash: "" };
   assertEquals(auditMemoryHistoryVault([memory], [noHash]).valid, false);
 });
