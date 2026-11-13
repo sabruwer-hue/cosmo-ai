@@ -4,12 +4,12 @@ import { auditMemoryHistoryVault, type HistorySourceRecord, type MemoryIndexEntr
 const source: HistorySourceRecord = {
   source_code: "HST-CHAT-000001", source_type: "conversation", original_content: "Original user statement",
   captured_at: "2026-11-13T12:00:00Z", original_timestamp: "2026-11-13T11:59:00Z",
-  provenance: "user-provided conversation", source_hash: "a".repeat(64), integrity: "verified", access: "private",
+  provenance: "user-provided conversation", source_hash: "a".repeat(64), verification_status: "verified", access: "private",
 };
 const memory: MemoryIndexEntry = {
   memory_code: "MEM-COSMO-000001", title: "Cosmo requirement", summary: "A searchable summary",
   source_record_codes: [source.source_code], project_codes: ["COSMO"], created_at: "2026-11-13T12:00:00Z",
-  updated_at: "2026-11-13T12:00:00Z", version: 1, retention: "permanent", access: "private", status: "active",
+  version: 1, retention: "permanent", access: "private", status: "active",
 };
 
 Deno.test("valid index links to preserved source record", () => {
@@ -27,7 +27,7 @@ Deno.test("duplicate history codes are rejected", () => {
   assertEquals(auditMemoryHistoryVault([memory], [source, source]).valid, false);
 });
 Deno.test("unverified source remains visible as a warning", () => {
-  const uncertain = { ...source, integrity: "unverified" as const };
+  const uncertain = { ...source, verification_status: "unverified" as const };
   const report = auditMemoryHistoryVault([memory], [uncertain]);
   assertEquals(report.valid, true);
   assertEquals(report.findings.some((item) => item.code === "source-not-verified"), true);
@@ -39,4 +39,21 @@ Deno.test("correction cannot point to missing history record", () => {
 Deno.test("missing source hash fails integrity audit", () => {
   const noHash = { ...source, source_hash: "" };
   assertEquals(auditMemoryHistoryVault([memory], [noHash]).valid, false);
+});
+
+Deno.test("malformed SHA-256 hash fails integrity audit", () => {
+  const malformed = { ...source, source_hash: "not-a-hash" };
+  assertEquals(auditMemoryHistoryVault([memory], [malformed]).valid, false);
+});
+Deno.test("external source requires a source reference", () => {
+  const external = { ...source, source_type: "external_source" as const, source_reference: undefined };
+  assertEquals(auditMemoryHistoryVault([memory], [external]).valid, false);
+});
+Deno.test("memory code can have multiple distinct append-only versions", () => {
+  const nextVersion = { ...memory, version: 2, created_at: "2026-11-13T13:00:00Z" };
+  assertEquals(auditMemoryHistoryVault([memory, nextVersion], [source]).valid, true);
+});
+Deno.test("same memory code cannot reuse the same version number", () => {
+  const duplicateVersion = { ...memory };
+  assertEquals(auditMemoryHistoryVault([memory, duplicateVersion], [source]).valid, false);
 });
