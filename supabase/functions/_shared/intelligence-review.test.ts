@@ -44,3 +44,18 @@ Deno.test("external evidence without source reference fails integrity", () => {
   assertEquals(evaluateIntelligenceReview(incomplete, submissions).evidence_integrity_passed, false);
   assertEquals(evaluateIntelligenceReview(incomplete, submissions).status, "blocked");
 });
+
+Deno.test("empty evidence cannot pass review", () => {
+  const empty = { ...packet, evidence: [] };
+  const report = evaluateIntelligenceReview(empty, submissions);
+  assertEquals(report.status, "blocked");
+  assertEquals(report.evidence_integrity_passed, false);
+});
+Deno.test("unanimous reviewer challenge requires revision", () => {
+  const challenged = submissions.map((item) => ({ ...item, assessment: "challenge" as const }));
+  assertEquals(evaluateIntelligenceReview(packet, challenged).status, "needs_revision");
+});
+Deno.test("duplicate evidence IDs fail integrity", () => {
+  const duplicated = { ...packet, evidence: [packet.evidence[0], { ...packet.evidence[0] }] };
+  assertEquals(evaluateIntelligenceReview(duplicated, submissions).evidence_integrity_passed, false);
+});
