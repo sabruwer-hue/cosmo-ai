@@ -1,5 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { rankStrategies } from "../_shared/strategy-engine.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,6 +25,10 @@ Foundational approach:
 - Internal task and mission tools do not execute external actions. A request_approval call only records a pending approval; it does not perform the proposed action.
 - Search_knowledge searches only the creator's saved Cosmo knowledge records, not the public internet. Be clear about that distinction. External web search is not yet connected inside this app; never claim that you searched the internet.
 - If evidence is insufficient, say so and propose a safe next investigation.
+- Strategy libraries are candidate methods, not authority or proof. For substantive planning, research, engineering, evaluation or risk decisions, use recommend_strategies when it materially improves the work. Explain why a method fits and disclose validation state, limitations and risk notes. Never present unverified strategies as proven.
+- When the creator asks you to apply a strategy to a concrete task, use begin_strategy_run before applying it, then complete_strategy_run with an honest concise result. A strategy run records reasoning and work; it does not authorize external actions, deployments, payments, data changes or other consequential operations.
+- Record an evaluation only when the creator supplies feedback or there is identifiable test, independent-review or external-outcome evidence. A model self-assessment must be recorded as inconclusive, never as a success. Evaluation records do not automatically upgrade a strategy's validation state; validation requires a separate governed review.
+- If a strategy is unverified, sandbox-tested, experimental or has relevant cautions, state that explicitly and adapt the method to the task's risk. Prefer a safe no-action or needs-review state when authority or evidence is missing.
 
 The owner-specific identity, mission catalogue and project history must be retrieved from authenticated private database records. Do not invent missing creator details or assume that a project exists because it is mentioned in a hypothesis. Mission intentions and architecture are not proof of implementation.
 
@@ -57,7 +62,26 @@ const agentTools = [
     task_code: { type: "string", description: "Exact COSMO-TASK code from the creator's task list." },
     action_summary: { type: "string", description: "Clear description of the action requiring approval, maximum 1200 characters." },
     risk_level: { type: "string", enum: ["low","medium","high","critical"] }
-  }, required: ["task_code","action_summary","risk_level"], additionalProperties: false } } }
+  }, required: ["task_code","action_summary","risk_level"], additionalProperties: false } } },
+  { type: "function", function: { name: "recommend_strategies", description: "Find and rank active strategies from Cosmo libraries. Returns an explainable shortlist and cautions; does not execute anything.", strict: true, parameters: { type: "object", properties: {
+    task_domain: { type: "string" }, task_summary: { type: "string" },
+    constraints: { type: "array", items: { type: "string" } }, limit: { type: "integer", enum: [3,5] }
+  }, required: ["task_domain","task_summary","constraints","limit"], additionalProperties: false } } },
+  { type: "function", function: { name: "begin_strategy_run", description: "Record an owner-scoped strategy execution trace when the creator asks Cosmo to apply a strategy. This does not perform external actions.", strict: true, parameters: { type: "object", properties: {
+    strategy_code: { type: "string" }, task_domain: { type: "string" }, task_summary: { type: "string" },
+    constraints: { type: "array", items: { type: "string" } }, selection_reason: { type: "string" },
+    alternatives_considered: { type: "array", items: { type: "object", properties: { strategy_code: { type: "string" }, reason: { type: "string" } }, required: ["strategy_code","reason"], additionalProperties: false } }
+  }, required: ["strategy_code","task_domain","task_summary","constraints","selection_reason","alternatives_considered"], additionalProperties: false } } },
+  { type: "function", function: { name: "complete_strategy_run", description: "Close an open strategy trace with an honest result summary; does not validate the strategy.", strict: true, parameters: { type: "object", properties: {
+    trace_code: { type: "string" }, status: { type: "string", enum: ["completed","failed","abandoned","needs_review"] }, output_summary: { type: "string" }
+  }, required: ["trace_code","status","output_summary"], additionalProperties: false } } },
+  { type: "function", function: { name: "evaluate_strategy_run", description: "Append an evidence-labelled evaluation. Model self-assessments are forced to inconclusive.", strict: true, parameters: { type: "object", properties: {
+    trace_code: { type: "string" }, evaluation_type: { type: "string", enum: ["quality","accuracy","safety","efficiency","user_feedback","operational_outcome","comparative"] },
+    outcome: { type: "string", enum: ["success","partial","failure","inconclusive","unsafe","not_applicable"] },
+    evaluation_source: { type: "string", enum: ["creator_feedback","automated_test","independent_review","external_outcome","model_self_assessment"] },
+    confidence: { type: "number", minimum: 0, maximum: 1 }, measured_score: { type: ["number","null"], minimum: 0, maximum: 100 },
+    sample_size: { type: ["integer","null"], minimum: 0 }, evidence_summary: { type: "string" }, reviewer_notes: { type: "string" }
+  }, required: ["trace_code","evaluation_type","outcome","evaluation_source","confidence","measured_score","sample_size","evidence_summary","reviewer_notes"], additionalProperties: false } } }
 ];
 
 async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAccess, activeTools) {
