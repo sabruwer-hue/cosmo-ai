@@ -8,7 +8,7 @@ const required = [
   "manifest.webmanifest", "work.webmanifest", "admin.webmanifest",
   "assets/app.js", "assets/cosmo-live.js",
   "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts",
-  "supabase/functions/_shared/strategy-engine.ts", "supabase/functions/_shared/strategy-engine.test.ts", "supabase/functions/_shared/strategy-benchmark.ts", "supabase/functions/_shared/strategy-benchmark.test.ts"
+  "supabase/functions/_shared/strategy-engine.ts", "supabase/functions/_shared/strategy-engine.test.ts", "supabase/functions/_shared/strategy-benchmark.ts", "supabase/functions/_shared/strategy-benchmark.test.ts", "supabase/functions/_shared/intelligence-review.ts", "supabase/functions/_shared/intelligence-review.test.ts"
 ];
 for (const file of required) readFileSync(file, "utf8");
 
@@ -18,8 +18,7 @@ for (const file of ["manifest.webmanifest", "work.webmanifest", "admin.webmanife
 
 for (const file of ["assets/app.js", "assets/cosmo-live.js", "service-worker.js"]) {
   const result = spawnSync(process.execPath, ["--check", file], { encoding: "utf8" });
-  if (result.status !== 0) throw new Error(file + " syntax check failed:
-" + result.stderr);
+  if (result.status !== 0) throw new Error(file + " syntax check failed:\\n" + result.stderr);
 }
 
 for (const file of ["index.html", "work.html", "admin.html", "strategy-academy.html"]) {
@@ -34,8 +33,7 @@ for (const file of ["index.html", "work.html", "admin.html", "strategy-academy.h
     writeFileSync(temp, match[2]);
     const result = spawnSync(process.execPath, ["--check", temp], { encoding: "utf8" });
     unlinkSync(temp);
-    if (result.status !== 0) throw new Error(file + " inline script syntax check failed:
-" + result.stderr);
+    if (result.status !== 0) throw new Error(file + " inline script syntax check failed:\\n" + result.stderr);
   }
 }
 
@@ -68,6 +66,10 @@ if (!chat.includes("source_verified===true")) throw new Error("Strategy ranking 
 const benchmark = readFileSync("supabase/functions/_shared/strategy-benchmark.ts", "utf8");
 if (!benchmark.includes("runStrategyBenchmark")) throw new Error("Strategy benchmark runner is missing.");
 if (!benchmark.includes("deterministic-order")) throw new Error("Benchmark harness is missing deterministic regression checks.");
+const review = readFileSync("supabase/functions/_shared/intelligence-review.ts", "utf8");
+for (const guard of ["cc_sim", "tiva", "ready_for_human_review", "reviewer_independence_passed", "benchmark_passed"]) {
+  if (!review.includes(guard)) throw new Error("Independent intelligence review is missing governance guard: " + guard);
+}
 const strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
 for (const guard of ["avoid_when","cosmo_validation_state","history.length >= 3","unsafe"]) {
   if (!strategyEngine.includes(guard)) throw new Error("Strategy engine is missing required safety/ranking guard: " + guard);
