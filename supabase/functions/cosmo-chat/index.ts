@@ -181,7 +181,7 @@ async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAcce
     const evidenceSummary=typeof args.evidence_summary==="string"?args.evidence_summary.trim().slice(0,1600):"";
     const notes=typeof args.reviewer_notes==="string"?args.reviewer_notes.trim().slice(0,1200):"";
     if(!traceCode||evidenceSummary.length<10)return {ok:false,error:"A trace code and evidence summary are required."};
-    const explicitFeedback=typeof userMessage==="string" && /(worked|did not work|didn't work|successful|unsuccessful|failed|helpful|not helpful|good result|bad result|correct result|incorrect result|i agree|i disagree|i approve this result|i reject this result)/i.test(userMessage);
+    const explicitFeedback=typeof userMessage==="string" && /(it worked|that worked|worked well|did not work|didn't work|it was successful|it was unsuccessful|it failed|was helpful|was not helpful|wasn't helpful|good result|bad result|was correct|was incorrect|was unsafe|unsafe|not safe|i found it helpful|i found it unhelpful)/i.test(userMessage);
     const sourceVerified=source==="creator_feedback" && explicitFeedback;
     if(!sourceVerified){outcome="inconclusive";confidence=Math.min(confidence,0.4);score=null;}
     const {data:run,error:runError}=await supabase.from("cosmo_strategy_runs").select("id,strategy_id").eq("owner_id",ownerId).eq("trace_code",traceCode).maybeSingle();
