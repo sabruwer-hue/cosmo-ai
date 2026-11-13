@@ -17,7 +17,7 @@ Connect the existing shared Strategy Libraries to the authenticated Cosmo chat r
 - Shared strategies must be active; retired strategies are excluded.
 - Domain match and keyword relevance are deterministic and explainable.
 - `avoid_when` overlap creates an explicit caution and reduces rank.
-- Owner evaluation history influences rank only after at least three records, and the signal is bounded.
+- Verified owner feedback influences rank only after at least three records, and the signal is bounded. Unverified source claims are excluded.
 - An unsafe historical outcome has a strong negative effect.
 - `unverified`, `tested_in_sandbox`, experimental and other non-approved states remain visible; a high rank does not make a strategy proven.
 - Equal scores are ordered by strategy code for reproducibility.
@@ -26,7 +26,7 @@ Connect the existing shared Strategy Libraries to the authenticated Cosmo chat r
 
 Accepted evidence sources are creator feedback, automated tests, independent review, external outcomes and model self-assessment.
 
-A model self-assessment is forcibly recorded as `inconclusive`, confidence is capped at 0.4 and the measured score is cleared. It cannot count as proof of success. An unsafe evaluation moves the related run to `needs_review`. Evaluation records are append-only through the existing RLS policy and do not change the strategy's validation state.
+Only explicit creator feedback detected in the current user message is currently treated as verified feedback. Claims of automated tests, independent reviews, external outcomes and model self-assessments are stored as unverified and forced to `inconclusive`, confidence is capped at 0.4 and the measured score is cleared until a separate evidence-ingestion path can verify them. Unverified evaluations are excluded from ranking. Verified creator feedback still does not automatically change strategy validation state. An `unsafe` evaluation moves the related run to `needs_review`. Evaluation records are append-only through the existing RLS policy.
 
 ## Access and data boundaries
 
