@@ -1,4 +1,4 @@
-export type VaultAccess = "private" | "shared" | "public";
+export type VaultAccess = "private";
 export type MemoryRetention = "permanent" | "review_required" | "time_limited";
 export type HistoryIntegrity = "unverified" | "verified" | "disputed";
 
@@ -13,17 +13,17 @@ export type MemoryIndexEntry = {
   version: number;
   retention: MemoryRetention;
   access: VaultAccess;
-  status: "active" | "superseded" | "under_review";
+  status: "active" | "superseded" | "disputed" | "withdrawn";
 };
 
 export type HistorySourceRecord = {
   source_code: string;
-  source_type: "conversation" | "document" | "voice_note" | "file" | "external_source" | "system_event";
+  source_type: "conversation" | "document" | "voice_note" | "file" | "external_source" | "system_event" | "model_output" | "research_note";
   original_content: string;
   captured_at: string;
   original_timestamp: string | null;
   provenance: string;
-  content_hash: string;
+  source_hash: string;
   integrity: HistoryIntegrity;
   access: VaultAccess;
   supersedes_source_code?: string;
@@ -66,7 +66,7 @@ export function auditMemoryHistoryVault(
       findings.push({ code: "duplicate-history-code", severity: "error", record_code: record.source_code, detail: "History source codes must never be reused." });
     } else historyByCode.set(record.source_code, record);
     if (!record.original_content.trim()) findings.push({ code: "empty-original", severity: "error", record_code: record.source_code, detail: "Original source content is required; a summary cannot replace the source." });
-    if (!record.content_hash.trim()) findings.push({ code: "missing-integrity-hash", severity: "error", record_code: record.source_code, detail: "A source integrity hash is required, but must be computed by a trusted storage service." });
+    if (!record.source_hash.trim()) findings.push({ code: "missing-integrity-hash", severity: "error", record_code: record.source_code, detail: "A source integrity hash is required, but must be computed by a trusted storage service." });
     if (!record.provenance.trim()) findings.push({ code: "missing-provenance", severity: "error", record_code: record.source_code, detail: "Source provenance is required." });
     if (!validTimestamp(record.captured_at)) findings.push({ code: "invalid-capture-time", severity: "error", record_code: record.source_code, detail: "Captured-at timestamp is invalid." });
     if (record.original_timestamp && !validTimestamp(record.original_timestamp)) findings.push({ code: "invalid-original-time", severity: "warning", record_code: record.source_code, detail: "Original source timestamp is invalid or needs normalization." });
