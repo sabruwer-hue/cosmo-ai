@@ -47,4 +47,5 @@ The branch adds Deno unit tests for domain matching, avoid-when cautions, minimu
 - Evaluation history is owner-scoped and small samples are deliberately ignored.
 - Strategy validation promotion remains a separate, human-governed process.
 - No calibration, benchmark harness or independent CC/CC-SIM/TIVA evaluation is connected yet.
-- Browser UI for strategy runs and evaluation history is not included in this backend integration.
+- The new Strategy Academy browser page is a read-only owner dashboard for runs, outcomes and evidence provenance. It reads the existing tables under authenticated owner RLS and does not create, edit, delete, evaluate or promote records.
+- Dashboard visibility is not deployment proof. The page must be included in the next verified site release and tested using the invited owner account.
