@@ -12,7 +12,8 @@ File: `supabase/migrations/20261113090000_cosmo_dual_memory_history_v1.sql`
 The additive migration defines:
 - Unique owner-scoped source codes and memory-code/version pairs.
 - Owner-matched composite foreign keys, including supersedes/correction links.
-- Server-side SHA-256 hashing on history insertion using the already-installed `pgcrypto` extension.
+- Server-side SHA-256 hashing on history insertion using the already-installed pgcrypto extension, with timestamps normalized to epoch values in the digest payload.
+- External-source records require a source reference; codes and version numbers are validated.
 - RLS and FORCE RLS on all three tables, with authenticated owner-only SELECT/INSERT policies.
 - No UPDATE or DELETE grants to authenticated users; update triggers reject mutation even if a grant is accidentally added later.
 - Account deletion cascades to that account's vault data as the privacy-erasure path.
