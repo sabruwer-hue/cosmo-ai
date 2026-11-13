@@ -8,7 +8,7 @@ const required = [
   "manifest.webmanifest", "work.webmanifest", "admin.webmanifest",
   "assets/app.js", "assets/cosmo-live.js",
   "supabase/functions/cosmo-chat/index.ts", "supabase/functions/cosmo-admin-gate/index.ts",
-  "supabase/functions/_shared/strategy-engine.ts", "supabase/functions/_shared/strategy-engine.test.ts", "supabase/functions/_shared/strategy-benchmark.ts", "supabase/functions/_shared/strategy-benchmark.test.ts", "supabase/functions/_shared/intelligence-review.ts", "supabase/functions/_shared/intelligence-review.test.ts"
+  "supabase/functions/_shared/strategy-engine.ts", "supabase/functions/_shared/strategy-engine.test.ts", "supabase/functions/_shared/strategy-benchmark.ts", "supabase/functions/_shared/strategy-benchmark.test.ts", "supabase/functions/_shared/intelligence-review.ts", "supabase/functions/_shared/intelligence-review.test.ts", "supabase/functions/_shared/memory-vault-contract.ts", "supabase/functions/_shared/memory-vault-contract.test.ts"
 ];
 for (const file of required) readFileSync(file, "utf8");
 
@@ -69,6 +69,10 @@ if (!benchmark.includes("deterministic-order")) throw new Error("Benchmark harne
 const review = readFileSync("supabase/functions/_shared/intelligence-review.ts", "utf8");
 for (const guard of ["cc_sim", "tiva", "ready_for_human_review", "reviewer_independence_passed", "benchmark_passed"]) {
   if (!review.includes(guard)) throw new Error("Independent intelligence review is missing governance guard: " + guard);
+}
+const memoryVault = readFileSync("supabase/functions/_shared/memory-vault-contract.ts", "utf8");
+for (const guard of ["auditMemoryHistoryVault", "source_record_codes", "content_hash", "supersedes_source_code"]) {
+  if (!memoryVault.includes(guard)) throw new Error("Memory/history vault contract is missing: " + guard);
 }
 const strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
 for (const guard of ["avoid_when","cosmo_validation_state","history.length >= 3","unsafe"]) {
