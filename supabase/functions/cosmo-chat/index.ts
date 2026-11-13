@@ -108,7 +108,7 @@ async function executeAgentTool(supabase, ownerId, name, args, callId, ownerAcce
     if(evalError)return {ok:false,error:"Strategy evaluation history could not be retrieved: "+evalError.message};
     const libraryMap=new Map((libraries??[]).map((x:any)=>[x.id,x]));
     const candidates=rows.map((x:any)=>({...x,library_domain:libraryMap.get(x.library_id)?.domain??"",library_title:libraryMap.get(x.library_id)?.title??"",library_code:libraryMap.get(x.library_id)?.library_code??""}));
-    const verifiedEvaluations=(evaluations??[]).filter((item:any)=>item.evidence?.source_verified===true);
+    const verifiedEvaluations=(evaluations??[]).filter((item:any)=>item.evidence?.source_verified===true && ["success","partial","failure","unsafe"].includes(item.outcome));
     const ranked=rankStrategies(candidates,domain,summary,constraints,verifiedEvaluations,[3,5].includes(args.limit)?args.limit:5);
     return {
       ok:true,domain,task_summary:summary,
