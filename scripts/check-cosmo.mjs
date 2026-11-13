@@ -54,6 +54,7 @@ for (const tool of ["recommend_strategies","begin_strategy_run","complete_strate
   if (!chat.includes('name: "' + tool + '"')) throw new Error("Cosmo strategy engine tool is missing: " + tool);
 }
 if (!chat.includes('from "../_shared/strategy-engine.ts"')) throw new Error("Cosmo chat is missing the strategy engine import.");
+if (!chat.includes("source_verified===true")) throw new Error("Strategy ranking must ignore unverified evaluation claims.");
 const strategyEngine = readFileSync("supabase/functions/_shared/strategy-engine.ts", "utf8");
 for (const guard of ["avoid_when","cosmo_validation_state","history.length >= 3","unsafe"]) {
   if (!strategyEngine.includes(guard)) throw new Error("Strategy engine is missing required safety/ranking guard: " + guard);
