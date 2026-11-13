@@ -75,7 +75,10 @@ for (const guard of ["cosmo_history_records", "cosmo_memory_index", "cosmo_memor
   if (!vaultMigration.toLowerCase().includes(guard.toLowerCase())) throw new Error("Dual-vault migration is missing required database safeguard: " + guard);
 }
 if ((vaultMigration.match(/\bcommit;/gi) || []).length !== 1) throw new Error("Dual-vault migration must be a single complete transaction.");
-if (/grant[^;]*(update|delete)[^;]*to authenticated/i.test(vaultMigration)) throw new Error("Vault migration must not grant UPDATE or DELETE to authenticated users.");
+const authenticatedTableGrants = [...vaultMigration.matchAll(/grant\s+([^;]+?)\s+on\s+table\s+([^;]+)/gi)];
+if (authenticatedTableGrants.some((grant) => /\b(update|delete|truncate|all)\b/i.test(grant[1]) && /\bto\s+authenticated\b/i.test(grant[2]))) {
+  throw new Error("Vault migration must not grant UPDATE, DELETE, TRUNCATE or ALL on vault tables to authenticated users.");
+}
 const vaultDbTests = readFileSync("supabase/tests/cosmo_dual_memory_history_v1.test.sql", "utf8");
 if (!vaultDbTests.includes("plan(39)") || !vaultDbTests.includes("select * from finish()")) throw new Error("Dual-vault pgTAP database test suite is incomplete.");
 const memoryVault = readFileSync("supabase/functions/_shared/memory-vault-contract.ts", "utf8");
