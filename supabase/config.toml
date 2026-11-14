@@ -5,3 +5,6 @@ verify_jwt = true
 
 [functions.cosmo-admin-gate]
 verify_jwt = true
+
+[functions.cosmo-checkpoint-export]
+verify_jwt = true
