@@ -61,7 +61,10 @@ Deno.test("HMAC signing is deterministic and rejects weak secrets", async () => 
   await assertRejects(() => signCheckpointBody(body, "short"));
 });
 
-Deno.test("receipt verifier accepts only a correctly signed receipt bound to this delivery, owner and digest", async () => {
+Deno.test("receipt verifier accepts only a valid receiver Ed25519 signature bound to this delivery", async () => {
+  const pair = await crypto.subtle.generateKey({ name: "Ed25519" }, true, ["sign", "verify"]);
+  const publicKey = new Uint8Array(await crypto.subtle.exportKey("raw", pair.publicKey));
+  const publicKeyBase64 = btoa(String.fromCharCode(...publicKey));
   const receipt = {
     schema: "cosmo-checkpoint-receipt-v1",
     delivery_id: deliveryId,
@@ -71,19 +74,20 @@ Deno.test("receipt verifier accepts only a correctly signed receipt bound to thi
     stored_at: "2026-11-14T10:05:00.000Z",
   };
   const body = JSON.stringify(receipt);
-  const signature = await signCheckpointBody(body, secret);
+  const signatureBytes = new Uint8Array(await crypto.subtle.sign({ name: "Ed25519" }, pair.privateKey, new TextEncoder().encode(body)));
+  const signature = `ed25519=${btoa(String.fromCharCode(...signatureBytes))}`;
   const expected = { delivery_id: deliveryId, owner_id: ownerId, checkpoint_sha256: digest };
 
-  assertEquals(
-    await verifyCheckpointReceipt(body, `sha256=${signature}`, secret, expected),
-    receipt,
-  );
-  assertEquals(await verifyCheckpointReceipt(body, null, secret, expected), null);
-  assertEquals(await verifyCheckpointReceipt(body, "sha256=" + "0".repeat(64), secret, expected), null);
-  assertEquals(await verifyCheckpointReceipt(body, `sha256=${signature}`, "wrong-secret-that-is-also-long-enough", expected), null);
+  assertEquals(await verifyCheckpointReceipt(body, signature, publicKeyBase64, expected), receipt);
+  assertEquals(await verifyCheckpointReceipt(body, null, publicKeyBase64, expected), null);
+  assertEquals(await verifyCheckpointReceipt(body, signature, btoa("wrong-key"), expected), null);
+  assertEquals(await verifyCheckpointReceipt(body + " ", signature, publicKeyBase64, expected), null);
 });
 
-Deno.test("receipt verifier rejects a signed receipt for another owner, delivery or digest", async () => {
+Deno.test("receipt verifier rejects signed receipts for another owner, delivery or digest", async () => {
+  const pair = await crypto.subtle.generateKey({ name: "Ed25519" }, true, ["sign", "verify"]);
+  const publicKey = new Uint8Array(await crypto.subtle.exportKey("raw", pair.publicKey));
+  const publicKeyBase64 = btoa(String.fromCharCode(...publicKey));
   const receipt = {
     schema: "cosmo-checkpoint-receipt-v1",
     delivery_id: deliveryId,
@@ -93,19 +97,20 @@ Deno.test("receipt verifier rejects a signed receipt for another owner, delivery
     stored_at: "2026-11-14T10:05:00.000Z",
   };
   const body = JSON.stringify(receipt);
-  const signature = `sha256=${await signCheckpointBody(body, secret)}`;
+  const signatureBytes = new Uint8Array(await crypto.subtle.sign({ name: "Ed25519" }, pair.privateKey, new TextEncoder().encode(body)));
+  const signature = `ed25519=${btoa(String.fromCharCode(...signatureBytes))}`;
 
-  assertEquals(await verifyCheckpointReceipt(body, signature, secret, {
+  assertEquals(await verifyCheckpointReceipt(body, signature, publicKeyBase64, {
     delivery_id: deliveryId,
     owner_id: "22222222-2222-4222-8222-222222222222",
     checkpoint_sha256: digest,
   }), null);
-  assertEquals(await verifyCheckpointReceipt(body, signature, secret, {
+  assertEquals(await verifyCheckpointReceipt(body, signature, publicKeyBase64, {
     delivery_id: "44444444-4444-4444-8444-444444444444",
     owner_id: ownerId,
     checkpoint_sha256: digest,
   }), null);
-  assertEquals(await verifyCheckpointReceipt(body, signature, secret, {
+  assertEquals(await verifyCheckpointReceipt(body, signature, publicKeyBase64, {
     delivery_id: deliveryId,
     owner_id: ownerId,
     checkpoint_sha256: "b".repeat(64),
@@ -114,6 +119,6 @@ Deno.test("receipt verifier rejects a signed receipt for another owner, delivery
 
 Deno.test("receipt verifier rejects malformed and unsigned success bodies", async () => {
   const expected = { delivery_id: deliveryId, owner_id: ownerId, checkpoint_sha256: digest };
-  assertEquals(await verifyCheckpointReceipt("not-json", "sha256=" + "a".repeat(64), secret, expected), null);
-  assertEquals(await verifyCheckpointReceipt('{"stored":true}', "sha256=" + "a".repeat(64), secret, expected), null);
+  assertEquals(await verifyCheckpointReceipt("not-json", "ed25519=AAAA", "AAAA", expected), null);
+  assertEquals(await verifyCheckpointReceipt('{"stored":true}', "ed25519=AAAA", "AAAA", expected), null);
 });
