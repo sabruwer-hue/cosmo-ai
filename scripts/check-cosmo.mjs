@@ -80,8 +80,8 @@ if (authenticatedTableGrants.some((grant) => /\b(update|delete|truncate|all)\b/i
   throw new Error("Vault migration must not grant UPDATE, DELETE, TRUNCATE or ALL on vault tables to authenticated users.");
 }
 const vaultDbTests = readFileSync("supabase/tests/cosmo_dual_memory_history_v1.test.sql", "utf8");
-const vaultTestPlan = vaultDbTests.match(/\bselect\s+plan\s*\(\s*(\\d+)\s*\)/i);\nif (!vaultTestPlan || Number(vaultTestPlan[1]) < 1 || !/select\s+\*\s+from\s+finish\s*\(\s*\)/i.test(vaultDbTests)) throw new Error("Dual-vault pgTAP database test suite is incomplete or has an invalid assertion plan.");
-const memoryVault = readFileSync("supabase/functions/_shared/memory-vault-contract.ts", "utf8");
+const vaultTestPlan = vaultDbTests.match(/\bselect\s+plan\s*\(\s*(\d+)\s*\)/i);
+if (!vaultTestPlan || Number(vaultTestPlan[1]) < 1 || !/select\s+\*\s+from\s+finish\s*\(\s*\)/i.test(vaultDbTests)) throw new Error("Dual-vault pgTAP database test suite is incomplete or has an invalid assertion plan.");
 for (const guard of ["auditMemoryHistoryVault", "source_record_codes", "source_hash", "memory_hash", "verification_status", "supersedes_source_code"]) {
   if (!memoryVault.includes(guard)) throw new Error("Memory/history vault contract is missing: " + guard);
 }
