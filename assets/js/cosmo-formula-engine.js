@@ -9,6 +9,8 @@
     m: { scale: 1, dims: [0,1,0,0,0,0,0] },
     cm: { scale: .01, dims: [0,1,0,0,0,0,0] },
     km: { scale: 1000, dims: [0,1,0,0,0,0,0] },
+    "m/s": { scale: 1, dims: [0,1,-1,0,0,0,0] },
+    "km/h": { scale: 1000/3600, dims: [0,1,-1,0,0,0,0] },
     mm: { scale: .001, dims: [0,1,0,0,0,0,0] },
     s: { scale: 1, dims: [0,0,1,0,0,0,0] },
     min: { scale: 60, dims: [0,0,1,0,0,0,0] },
@@ -108,7 +110,7 @@
     if(node.kind==="unary") return infer(node.value,vars);
     if(node.kind==="call") {
       const a=infer(node.args[0],vars);
-      if(node.name==="sqrt") { if(a.dims.some(x=>x%2!==0)) fail("sqrt requires even powers in the input dimensions."); return {dims:a.dims.map(x=>x/2),value:Math.sqrt(a.value)}; }
+      if(node.name==="sqrt") { if(a.value<0) fail("sqrt requires a non-negative input."); if(a.dims.some(x=>x%2!==0)) fail("sqrt requires even powers in the input dimensions."); return {dims:a.dims.map(x=>x/2),value:Math.sqrt(a.value)}; }
       if(!same(a.dims,ZERO)) fail(node.name+" requires a dimensionless input (use radians for angles).");
       if((node.name==="ln"||node.name==="log")&&a.value<=0) fail(node.name+" requires a positive input.");
       if(node.name==="sqrt"&&a.value<0) fail("sqrt requires a non-negative input.");
