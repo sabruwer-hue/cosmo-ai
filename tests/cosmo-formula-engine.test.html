@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Cosmo Formula Engine tests</title><body><pre id="out">Running…</pre><script src="../assets/js/cosmo-formula-engine.js"></script><script>
+const E=CosmoFormulaEngine, passed=[], failed=[];
+function test(name,fn){try{fn();passed.push(name)}catch(e){failed.push(name+": "+e.message)}}
+function throws(fn){let ok=false;try{fn()}catch(_){ok=true}if(!ok)throw Error("Expected rejection")}
+test("kinetic energy evaluates with SI units",()=>{const r=E.evaluate("0.5*m*v^2",{m:{value:2,unit:"kg"},v:{value:3,unit:"m/s"}},"J");if(Math.abs(r.value-9)>1e-10)throw Error("expected 9 J")});
+test("compatible addition succeeds",()=>{if(E.evaluate("a+b",{a:{value:1,unit:"m"},b:{value:20,unit:"cm"}},"m").value!==1.2)throw Error("expected 1.2 m")});
+test("incompatible addition rejected",()=>throws(()=>E.evaluate("a+b",{a:{value:1,unit:"m"},b:{value:1,unit:"s"}},"m")));
+test("division by zero rejected",()=>throws(()=>E.evaluate("a/0",{a:{value:2,unit:"1"}},"1")));
+test("unknown functions rejected",()=>throws(()=>E.parse("fetch(1)")));
+test("unknown characters rejected",()=>throws(()=>E.parse("1;alert(1)")));
+test("unit mismatch rejected",()=>throws(()=>E.evaluate("a",{a:{value:2,unit:"m"}},"s")));
+test("temperature conversion handles affine units",()=>{if(Math.abs(E.convert(0,"degC","K")-273.15)>1e-9)throw Error("0 C conversion failed")});
+test("missing variables rejected",()=>throws(()=>E.evaluate("x+1",{},"1")));
+test("non-finite results rejected",()=>throws(()=>E.evaluate("exp(1000)",{},"1")));
+document.getElementById("out").textContent="Passed: "+passed.length+"\\n"+passed.map(x=>"✓ "+x).join("\\n")+"\\nFailed: "+failed.length+"\\n"+failed.map(x=>"✗ "+x).join("\\n");if(failed.length)throw Error("Formula engine tests failed");
+</script></body></html>
