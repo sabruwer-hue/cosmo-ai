@@ -4,7 +4,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = extensions, public, pg_catalog;
 
-select plan(39);
+select plan(41);
 
 select has_table('public', 'cosmo_history_records', 'history archive table exists');
 select has_table('public', 'cosmo_memory_index', 'memory index table exists');
@@ -56,6 +56,9 @@ select ok(exists (select 1 from pg_policies where schemaname = 'public' and tabl
 select ok(exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'cosmo_memory_index' and policyname = 'creator inserts own memory index'), 'memory owner insert policy exists');
 select ok(exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'cosmo_memory_source_links' and policyname = 'creator reads own memory source links'), 'source-link owner read policy exists');
 select ok(exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'cosmo_memory_source_links' and policyname = 'creator inserts own memory source links'), 'source-link owner insert policy exists');
+
+select ok(to_regprocedure('public.cosmo_audit_vault_integrity()') is not null, 'retrieval-time vault integrity audit function exists');
+select ok(has_function_privilege('authenticated', 'public.cosmo_audit_vault_integrity()', 'EXECUTE'), 'authenticated users can run the RLS-scoped integrity audit');
 
 select * from finish();
 rollback;
