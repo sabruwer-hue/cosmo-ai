@@ -4,7 +4,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = extensions, public, pg_catalog;
 
-select plan(41);
+select plan(48);
 
 select has_table('public', 'cosmo_history_records', 'history archive table exists');
 select has_table('public', 'cosmo_memory_index', 'memory index table exists');
@@ -59,6 +59,16 @@ select ok(exists (select 1 from pg_policies where schemaname = 'public' and tabl
 
 select ok(to_regprocedure('public.cosmo_audit_vault_integrity()') is not null, 'retrieval-time vault integrity audit function exists');
 select ok(has_function_privilege('authenticated', 'public.cosmo_audit_vault_integrity()', 'EXECUTE'), 'authenticated users can run the RLS-scoped integrity audit');
+
+select has_trigger('public', 'cosmo_history_records', 'cosmo_history_records_no_direct_delete', 'history direct-delete guard exists');
+select has_trigger('public', 'cosmo_memory_index', 'cosmo_memory_index_no_direct_delete', 'memory direct-delete guard exists');
+select has_trigger('public', 'cosmo_memory_source_links', 'cosmo_memory_source_links_no_direct_delete', 'source-link direct-delete guard exists');
+
+select ok((select confdeltype = 'r' from pg_constraint where conname = 'cosmo_history_records_supersedes_fk'), 'history supersedes relationship restricts deletion');
+select ok((select confdeltype = 'r' from pg_constraint where conname = 'cosmo_memory_index_supersedes_fk'), 'memory supersedes relationship restricts deletion');
+
+select ok(to_regprocedure('public.cosmo_export_vault_checkpoint()') is not null, 'external checkpoint export function exists');
+select ok(has_function_privilege('authenticated', 'public.cosmo_export_vault_checkpoint()', 'EXECUTE'), 'authenticated users can export their RLS-scoped checkpoint');
 
 select * from finish();
 rollback;
