@@ -31,14 +31,14 @@
     deg: { scale: Math.PI/180, dims: [0,0,0,0,0,0,0] }
   };
   const FUNCTIONS = {
-    sqrt: { fn: Math.sqrt, min: 0, max: Infinity },
-    abs: { fn: Math.abs, min: 0, max: Infinity },
-    sin: { fn: Math.sin, min: 0, max: Infinity },
-    cos: { fn: Math.cos, min: 0, max: Infinity },
-    tan: { fn: Math.tan, min: 0, max: Infinity },
-    ln: { fn: Math.log, min: 0, max: Infinity },
-    log: { fn: Math.log10, min: 0, max: Infinity },
-    exp: { fn: Math.exp, min: 0, max: Infinity }
+    sqrt: { fn: Math.sqrt, min: 1, max: 1 },
+    abs: { fn: Math.abs, min: 1, max: 1 },
+    sin: { fn: Math.sin, min: 1, max: 1 },
+    cos: { fn: Math.cos, min: 1, max: 1 },
+    tan: { fn: Math.tan, min: 1, max: 1 },
+    ln: { fn: Math.log, min: 1, max: 1 },
+    log: { fn: Math.log10, min: 1, max: 1 },
+    exp: { fn: Math.exp, min: 1, max: 1 }
   };
   function fail(message) { throw new Error(message); }
   function tokenize(source) {
@@ -85,12 +85,12 @@
       if (peek().type === "(") { take("("); const node = expression(); take(")"); return node; }
       fail("Expected a number, variable or parenthesised expression.");
     }
+    function power() { let n=primary(); if(peek().type==="^"){take("^");n={kind:"binary",op:"^",left:n,right:unary()};} return n; }
     function unary() {
       if (peek().type === "+" || peek().type === "-") { const op=t[p++].type; return {kind:"unary", op, value:unary()}; }
-      return primary();
+      return power();
     }
-    function power() { let n=unary(); if(peek().type==="^"){take("^");n={kind:"binary",op:"^",left:n,right:power()};} return n; }
-    function term() { let n=power(); while(peek().type==="*"||peek().type==="/"){const op=t[p++].type;n={kind:"binary",op,left:n,right:power()};} return n; }
+    function term() { let n=unary(); while(peek().type==="*"||peek().type==="/"){const op=t[p++].type;n={kind:"binary",op,left:n,right:unary()};} return n; }
     function expression() { let n=term(); while(peek().type==="+"||peek().type==="-"){const op=t[p++].type;n={kind:"binary",op,left:n,right:term()};} return n; }
     const ast=expression(); if(peek().type!=="eof") fail("Unexpected token '" + peek().value + "'."); return ast;
   }
@@ -105,9 +105,9 @@
     if(node.kind==="variable") {
       if(!Object.prototype.hasOwnProperty.call(vars,node.name)) fail("Missing value for variable '" + node.name + "'.");
       const v=vars[node.name], u=unitInfo(v.unit || "1");
-      return {dims:u.dims, value:toSI(v.value,u===undefined?"1":v.unit||"1")};
+      return {dims:u.dims, value:toSI(v.value,v.unit||"1"), affine:!!u.affine};
     }
-    if(node.kind==="unary") return infer(node.value,vars);
+    if(node.kind==="unary") { const v=infer(node.value,vars); return {dims:v.dims,value:node.op==="-"?-v.value:v.value,affine:v.affine}; }
     if(node.kind==="call") {
       const a=infer(node.args[0],vars);
       if(node.name==="sqrt") { if(a.value<0) fail("sqrt requires a non-negative input."); if(a.dims.some(x=>x%2!==0)) fail("sqrt requires even powers in the input dimensions."); return {dims:a.dims.map(x=>x/2),value:Math.sqrt(a.value)}; }
@@ -117,16 +117,16 @@
       return {dims:ZERO,value:FUNCTIONS[node.name].fn(a.value)};
     }
     const a=infer(node.left,vars), b=infer(node.right,vars);
-    if(node.op==="+"||node.op==="-") { if(!same(a.dims,b.dims)) fail("Cannot add or subtract quantities with different dimensions."); return {dims:a.dims,value:node.op==="+"?a.value+b.value:a.value-b.value}; }
+    if(node.op==="+"||node.op==="-") { if(!same(a.dims,b.dims)) fail("Cannot add or subtract quantities with different dimensions."); if(a.affine||b.affine) fail("Convert affine temperatures to an explicit temperature-difference model before arithmetic."); return {dims:a.dims,value:node.op==="+"?a.value+b.value:a.value-b.value}; }
     if(node.op==="*"||node.op==="/") {
       if(node.op==="/"&&b.value===0) fail("Division by zero.");
-      if(Object.keys(vars).some(k=>(vars[k].unit||"1")==="degC")) fail("Affine temperature units cannot be multiplied or divided directly.");
-      return {dims:plusDims(a.dims,b.dims,node.op==="*"?1:-1),value:node.op==="*"?a.value*b.value:a.value/b.value};
+      if(a.affine||b.affine) fail("Affine temperature units cannot be multiplied or divided directly.");
+      return {dims:plusDims(a.dims,b.dims,node.op==="*"?1:-1),value:node.op==="*"?a.value*b.value:a.value/b.value,affine:false};
     }
     if(node.op==="^") {
       if(!same(b.dims,ZERO)||!Number.isInteger(b.value)||Math.abs(b.value)>12) fail("Exponent must be a dimensionless integer between -12 and 12.");
       if(a.value===0&&b.value<0) fail("Zero cannot be raised to a negative power.");
-      return {dims:a.dims.map(x=>x*b.value),value:Math.pow(a.value,b.value)};
+      if(a.affine) fail("Affine temperature units cannot be exponentiated."); return {dims:a.dims.map(x=>x*b.value),value:Math.pow(a.value,b.value)};
     }
     fail("Unsupported operation.");
   }
