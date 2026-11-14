@@ -1,0 +1,125 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "npm:@supabase/supabase-js@2";
+import { createCheckpointEnvelope, signCheckpointBody, verifyCheckpointReceipt } from "../_shared/checkpoint-delivery.ts";
+
+const cors = {
+  "Access-Control-Allow-Origin": "https://cosmo-ai.co.za",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Content-Type": "application/json",
+  "Cache-Control": "no-store",
+};
+const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: cors });
+
+Deno.serve(async (req: Request) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
+  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
+  const sinkUrl = Deno.env.get("COSMO_CHECKPOINT_SINK_URL");
+  const hmacSecret = Deno.env.get("COSMO_CHECKPOINT_HMAC_SECRET");
+  const receiptPublicKey = Deno.env.get("COSMO_CHECKPOINT_RECEIPT_PUBLIC_KEY");
+  const keyId = Deno.env.get("COSMO_CHECKPOINT_HMAC_KEY_ID") || "primary";
+  const authorization = req.headers.get("Authorization") || "";
+
+  if (!supabaseUrl || !anonKey || !authorization.startsWith("Bearer ")) {
+    return json({ error: "A valid authenticated session is required." }, 401);
+  }
+  if (!sinkUrl || !hmacSecret || !receiptPublicKey) {
+    return json({ error: "Independent checkpoint storage or receipt verification is not configured." }, 503);
+  }
+  if (hmacSecret.length < 32) {
+    return json({ error: "Checkpoint signing configuration is invalid." }, 503);
+  }
+
+  let parsedSink: URL;
+  try {
+    parsedSink = new URL(sinkUrl);
+  } catch {
+    return json({ error: "Checkpoint sink configuration is invalid." }, 503);
+  }
+  if (parsedSink.protocol !== "https:" || parsedSink.username || parsedSink.password) {
+    return json({ error: "Checkpoint sink must be a credential-free HTTPS endpoint." }, 503);
+  }
+
+  const userClient = createClient(supabaseUrl, anonKey, {
+    global: { headers: { Authorization: authorization } },
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data: userResult, error: authError } = await userClient.auth.getUser();
+  const user = userResult?.user;
+  if (authError || !user) return json({ error: "Invalid session." }, 401);
+
+  // Call as the authenticated user. Do not use the service-role key: the RPC must
+  // remain subject to that user's RLS visibility.
+  const { data, error } = await userClient.rpc("cosmo_export_vault_checkpoint");
+  if (error || !data) return json({ error: "Could not export the authenticated user's vault checkpoint." }, 502);
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row?.checkpoint_payload || !row?.checkpoint_sha256 || row.checkpoint_payload.owner_id !== user.id) {
+    return json({ error: "The vault checkpoint export returned an invalid or cross-owner response." }, 502);
+  }
+
+  let envelope: ReturnType<typeof createCheckpointEnvelope>;
+  try {
+    envelope = createCheckpointEnvelope(user.id, row);
+  } catch {
+    return json({ error: "The vault checkpoint could not be validated." }, 502);
+  }
+  const body = JSON.stringify(envelope);
+  const signature = await signCheckpointBody(body, hmacSecret);
+
+  let sinkResponse: Response;
+  try {
+    sinkResponse = await fetch(parsedSink, {
+      method: "POST",
+      redirect: "error",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Cosmo-Signature": `sha256=${signature}`,
+        "X-Cosmo-Key-Id": keyId,
+        "Idempotency-Key": envelope.delivery_id,
+      },
+      body,
+      signal: AbortSignal.timeout(15000),
+    });
+  } catch {
+    return json({ error: "Independent checkpoint delivery failed. No successful archive receipt was recorded." }, 502);
+  }
+  if (!sinkResponse.ok) {
+    return json({ error: "Independent checkpoint storage rejected the delivery.", sink_status: sinkResponse.status }, 502);
+  }
+
+  // A 2xx response alone is not proof of durable storage. Require the receiver
+  // to HMAC-sign its exact receipt body and bind it to this owner, delivery and
+  // checkpoint digest before reporting success to the caller.
+  let receiptBody: string;
+  try {
+    receiptBody = await sinkResponse.text();
+  } catch {
+    return json({ error: "The checkpoint receiver returned an unreadable receipt. Storage is unverified." }, 502);
+  }
+  const receipt = await verifyCheckpointReceipt(
+    receiptBody,
+    sinkResponse.headers.get("X-Cosmo-Receipt-Signature"),
+    receiptPublicKey,
+    {
+      delivery_id: envelope.delivery_id,
+      owner_id: user.id,
+      checkpoint_sha256: envelope.checkpoint_sha256,
+    },
+  );
+  if (!receipt) {
+    return json({ error: "The checkpoint receiver did not provide a valid signed receipt bound to this delivery. Storage is unverified." }, 502);
+  }
+
+  return json({
+    stored: true,
+    delivery_id: envelope.delivery_id,
+    exported_at: envelope.exported_at,
+    checkpoint_sha256: envelope.checkpoint_sha256,
+    owner_id: user.id,
+    stored_at: receipt.stored_at,
+    receipt_status: sinkResponse.status,
+  });
+});
