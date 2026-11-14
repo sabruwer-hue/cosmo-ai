@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { createCheckpointEnvelope, signCheckpointBody } from "../_shared/checkpoint-delivery.ts";
+import { createCheckpointEnvelope, signCheckpointBody, verifyCheckpointReceipt } from "../_shared/checkpoint-delivery.ts";
 
 const cors = {
   "Access-Control-Allow-Origin": "https://cosmo-ai.co.za",
@@ -89,12 +89,36 @@ Deno.serve(async (req: Request) => {
     return json({ error: "Independent checkpoint storage rejected the delivery.", sink_status: sinkResponse.status }, 502);
   }
 
+  // A 2xx response alone is not proof of durable storage. Require the receiver
+  // to HMAC-sign its exact receipt body and bind it to this owner, delivery and
+  // checkpoint digest before reporting success to the caller.
+  let receiptBody: string;
+  try {
+    receiptBody = await sinkResponse.text();
+  } catch {
+    return json({ error: "The checkpoint receiver returned an unreadable receipt. Storage is unverified." }, 502);
+  }
+  const receipt = await verifyCheckpointReceipt(
+    receiptBody,
+    sinkResponse.headers.get("X-Cosmo-Receipt-Signature"),
+    hmacSecret,
+    {
+      delivery_id: envelope.delivery_id,
+      owner_id: user.id,
+      checkpoint_sha256: envelope.checkpoint_sha256,
+    },
+  );
+  if (!receipt) {
+    return json({ error: "The checkpoint receiver did not provide a valid signed receipt bound to this delivery. Storage is unverified." }, 502);
+  }
+
   return json({
     stored: true,
     delivery_id: envelope.delivery_id,
     exported_at: envelope.exported_at,
     checkpoint_sha256: envelope.checkpoint_sha256,
     owner_id: user.id,
+    stored_at: receipt.stored_at,
     receipt_status: sinkResponse.status,
   });
 });
