@@ -1,5 +1,5 @@
-import { assertEquals, assertRejects } from "jsr:@std/assert";
-import { createCheckpointEnvelope, signCheckpointBody } from "./checkpoint-delivery.ts";
+import { assertEquals, assertRejects } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { createCheckpointEnvelope, signCheckpointBody, verifyCheckpointSignature } from "./checkpoint-delivery.ts";
 
 Deno.test("checkpoint envelope binds the authenticated owner and opaque database digest", () => {
   const envelope = createCheckpointEnvelope(
@@ -39,5 +39,7 @@ Deno.test("HMAC signing is deterministic and rejects weak secrets", async () => 
   const second = await signCheckpointBody(body, secret);
   assertEquals(first, second);
   assertEquals(first.length, 64);
+  assertEquals(await verifyCheckpointSignature(body, first, secret), true);
+  assertEquals(await verifyCheckpointSignature(body + "tampered", first, secret), false);
   await assertRejects(() => signCheckpointBody(body, "short"));
 });
