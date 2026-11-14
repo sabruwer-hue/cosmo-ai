@@ -55,8 +55,8 @@ Deno.serve(async (req: Request) => {
   const { data, error } = await userClient.rpc("cosmo_export_vault_checkpoint");
   if (error || !data) return json({ error: "Could not export the authenticated user's vault checkpoint." }, 502);
   const row = Array.isArray(data) ? data[0] : data;
-  if (!row?.checkpoint_payload || !row?.checkpoint_sha256) {
-    return json({ error: "The vault checkpoint export returned an invalid response." }, 502);
+  if (!row?.checkpoint_payload || !row?.checkpoint_sha256 || row.checkpoint_payload.owner_id !== user.id) {
+    return json({ error: "The vault checkpoint export returned an invalid or cross-owner response." }, 502);
   }
 
   let envelope: ReturnType<typeof createCheckpointEnvelope>;
