@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Cosmo Formula Lab — safe expression parsing and dimensional checks prototype.">
+<title>Cosmo Formula Lab — Prototype</title>
+<style>
+:root{color-scheme:dark;--bg:#080e19;--panel:#111e31;--line:#293b55;--muted:#9aaac0;--text:#eef3fb;--violet:#b9a5ff;--mint:#82d8b5;--amber:#f0c77b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,sans-serif}.wrap{width:min(920px,calc(100% - 30px));margin:36px auto}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin:14px 0}h1,h2{margin-top:0}p{color:var(--muted);line-height:1.6}.tag{color:var(--amber);font-size:12px;letter-spacing:1px;font-weight:700}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{display:block;color:var(--muted);font-size:12px;margin:12px 0 6px}input,select,button{font:inherit;border-radius:8px;border:1px solid var(--line);padding:11px;background:#0a1423;color:var(--text);width:100%}button{background:var(--violet);color:#111629;font-weight:700;cursor:pointer;margin-top:14px}.result{padding:14px;background:#0a1423;border-radius:9px;white-space:pre-wrap;min-height:50px}.good{color:var(--mint)}.bad{color:#ff9e9e}.examples button{width:auto;margin:4px 6px 4px 0;background:#1a2940;color:var(--text)}code{color:var(--violet)}@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main class="wrap">
+<p class="tag">COSMO-FIE · STAGE 0/2 PROTOTYPE</p>
+<h1>Formula Lab</h1>
+<p>Try a small, bounded expression engine with unit-aware inputs. This is a demonstration, not a connected or persistent Cosmo service and not a certified engineering calculator.</p>
+<section class="panel">
+<h2>Expression</h2>
+<label for="expression">Formula expression</label>
+<input id="expression" value="0.5 * m * v^2" autocomplete="off">
+<div class="examples">
+<button type="button" data-example="0.5 * m * v^2">Kinetic energy</button>
+<button type="button" data-example="F * d">Work</button>
+<button type="button" data-example="sqrt(a^2 + b^2)">Pythagorean theorem</button>
+</div>
+<div id="variables" class="grid"></div>
+<div class="grid">
+<div><label for="outputUnit">Expected output unit</label><select id="outputUnit"><option>J</option><option>N</option><option>W</option><option>m</option><option>s</option><option>kg</option><option>Pa</option><option>Hz</option><option>1</option></select></div>
+<div><label>&nbsp;</label><button id="calculate" type="button">Check and calculate</button></div>
+</div>
+</section>
+<section class="panel"><h2>Result</h2><div id="result" class="result" aria-live="polite">Enter values and calculate.</div></section>
+<section class="panel"><h2>What this prototype checks</h2><p>Allowed operators and functions only; missing variables; finite results; dimensional compatibility for addition, subtraction and output units; bounded integer powers; division by zero; and unit conversions for a limited unit catalogue.</p><p><strong>Not yet included:</strong> persistent formula records, source discovery, symbolic derivation, uncertainty propagation, qualified review or production security testing.</p></section>
+</main>
+<script src="../assets/js/cosmo-formula-engine.js"></script>
+<script>
+const samples={
+ "0.5 * m * v^2":{vars:{m:{value:2,unit:"kg"},v:{value:3,unit:"m"}},out:"J"},
+ "F * d":{vars:{F:{value:10,unit:"N"},d:{value:2,unit:"m"}},out:"J"},
+ "sqrt(a^2 + b^2)":{vars:{a:{value:3,unit:"m"},b:{value:4,unit:"m"}},out:"m"}
+};
+const $=id=>document.getElementById(id);
+function renderVars(){const ast=CosmoFormulaEngine.parse($("expression").value);const names=[...new Set((function walk(n,out=[]){if(n.kind==="variable")out.push(n.name);if(n.left)walk(n.left,out);if(n.right)walk(n.right,out);(n.args||[]).forEach(x=>walk(x,out));if(n.value&&typeof n.value==="object")walk(n.value,out);return out})(ast))];$("variables").innerHTML="";names.forEach(name=>{const wrap=document.createElement("div");const label=document.createElement("label");label.textContent=name+" value";const input=document.createElement("input");input.type="number";input.step="any";input.id="v_"+name;input.value=samples[$("expression").value]?.vars[name]?.value??1;const unit=document.createElement("select");unit.id="u_"+name;CosmoFormulaEngine.units.forEach(u=>{const o=document.createElement("option");o.value=u;o.textContent=u;if(u===(samples[$("expression").value]?.vars[name]?.unit||"1"))o.selected=true;unit.appendChild(o)});wrap.append(label,input,unit);$("variables").appendChild(wrap)})}
+function calculate(){try{const vars={};$("variables").querySelectorAll("input").forEach(input=>{const name=input.id.slice(2);vars[name]={value:Number(input.value),unit:$("u_"+name).value};if(!Number.isFinite(vars[name].value))throw new Error("Enter a finite value for "+name+".")});const r=CosmoFormulaEngine.evaluate($("expression").value,vars,$("outputUnit").value);$("result").innerHTML='<span class="good">Dimension check passed</span>\\n'+r.value.toPrecision(8)+' '+r.unit+'\\nSI base value: '+r.siValue+'\\nDimensions [kg, m, s, A, K, mol, cd]: ['+r.dimensions.join(", ")+']'}catch(e){$("result").innerHTML='<span class="bad">Check failed</span>\\n'+e.message}}
+$("expression").addEventListener("change",()=>{try{renderVars()}catch(e){$("variables").textContent=e.message}});$("calculate").addEventListener("click",calculate);document.querySelectorAll("[data-example]").forEach(b=>b.addEventListener("click",()=>{$("expression").value=b.dataset.example;$("outputUnit").value=samples[b.dataset.example].out;renderVars();calculate()}));renderVars();
+</script>
+</body></html>
