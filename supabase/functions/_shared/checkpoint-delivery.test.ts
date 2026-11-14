@@ -6,11 +6,11 @@ Deno.test("checkpoint envelope binds the authenticated owner and opaque database
     "11111111-1111-4111-8111-111111111111",
     { checkpoint_payload: { format: "cosmo-vault-checkpoint-v1", history_records: [] }, checkpoint_sha256: "a".repeat(64) },
     new Date("2026-11-14T10:00:00.000Z"),
-    "delivery-test-1",
+    "33333333-3333-4333-8333-333333333333",
   );
   assertEquals(envelope.owner_id, "11111111-1111-4111-8111-111111111111");
   assertEquals(envelope.checkpoint_sha256, "a".repeat(64));
-  assertEquals(envelope.delivery_id, "delivery-test-1");
+  assertEquals(envelope.delivery_id, "33333333-3333-4333-8333-333333333333");
   assertEquals(envelope.exported_at, "2026-11-14T10:00:00.000Z");
 });
 
