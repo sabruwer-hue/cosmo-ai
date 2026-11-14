@@ -3,7 +3,7 @@ on:
   push:
     branches: ["main", "hardening/**", "feature/**"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "hardening/**", "feature/**"]
   workflow_dispatch:
 permissions:
   contents: read
