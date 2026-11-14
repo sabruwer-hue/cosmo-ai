@@ -1,7 +1,7 @@
 name: Cosmo quality checks
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "hardening/**", "feature/**"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
