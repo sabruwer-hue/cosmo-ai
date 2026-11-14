@@ -14,7 +14,8 @@ Deploy `cosmo-checkpoint-export` only after the independent sink is provisioned.
 
 - `COSMO_CHECKPOINT_SINK_URL`: fixed HTTPS URL of the receiving service. Do not accept a destination URL from a user request.
 - `COSMO_CHECKPOINT_HMAC_SECRET`: randomly generated secret with at least 32 characters. Use a unique secret for this integration; never reuse a user password or Supabase key.
-- `COSMO_CHECKPOINT_HMAC_KEY_ID`: optional rotation identifier, default `primary`.
+- `COSMO_CHECKPOINT_HMAC_KEY_ID`: optional request-key rotation identifier, default `primary`.
+- `COSMO_CHECKPOINT_RECEIPT_PUBLIC_KEY`: base64-encoded 32-byte raw Ed25519 public key used to verify the receiver's signed receipt. The receiver private key must remain only with the receiver.
 
 The function also uses the platform-provided `SUPABASE_URL` and `SUPABASE_ANON_KEY`. It deliberately does not require or use the service-role key.
 
@@ -29,7 +30,8 @@ The receiving endpoint must:
 5. Treat `Idempotency-Key` as the delivery ID and make retries safe without overwriting earlier checkpoint versions.
 6. Persist the original body, owner ID, delivery ID, received-at timestamp, digest and verification outcome to storage outside the Cosmo Supabase project.
 7. Use a separate cloud account/project, least-privilege write credentials, encryption at rest, immutable/object-lock retention where legally appropriate, audit logging and backup/recovery testing.
-8. Return 2xx only after durable storage and verification have completed. A 2xx response is the sender's archive receipt.
+8. Return 2xx only after durable storage and verification have completed. Include a JSON receipt body with schema `cosmo-checkpoint-receipt-v1`, `delivery_id`, `owner_id`, `checkpoint_sha256`, `stored: true` and `stored_at`.
+9. Sign the exact UTF-8 receipt response body using the receiver's Ed25519 private key and return `X-Cosmo-Receipt-Signature: ed25519=<base64-signature>`. The sender verifies this signature using its configured public key and checks that delivery ID, owner ID and checkpoint digest exactly match the request. A bare 2xx response is not proof of storage.
 
 Do not reserialize the JSON body before HMAC verification. Do not treat the included database digest as a substitute for verifying the transport HMAC.
 
@@ -39,7 +41,8 @@ Implemented in this repository:
 - authenticated owner-scoped export invocation;
 - signed HMAC-SHA-256 envelope;
 - fixed HTTPS sink configuration;
-- fail-closed behaviour when the sink is missing, unavailable or rejects a delivery;
+- fail-closed behaviour when the sink is missing, unavailable, rejects a delivery, or fails to return a valid receiver-signed receipt;
+- Ed25519 receipt verification bound to the exact response body, delivery ID, owner ID and checkpoint digest;
 - unit tests for envelope validation, HMAC determinism and tamper detection;
 - a two-owner SQL integration test for RLS and checkpoint isolation.
 
@@ -48,6 +51,7 @@ Still required outside this repository:
 - deploy the Edge Function and set secrets;
 - configure key rotation and secret backup;
 - run the SQL integration test on disposable Supabase infrastructure;
+- implement and deploy a receiver that signs durable-storage receipts with its Ed25519 private key;
 - execute a real end-to-end delivery and verify the external durable receipt;
 - schedule checkpoint exports and compare successive manifests to alert on missing records, changed hashes or altered links.
 
