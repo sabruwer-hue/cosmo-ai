@@ -26,6 +26,10 @@ jobs:
         run: deno test supabase/functions/_shared/intelligence-review.test.ts
       - name: Test memory and history vault contracts
         run: deno test supabase/functions/_shared/memory-vault-contract.test.ts
+      - name: Test independent checkpoint signing and validation
+        run: deno test supabase/functions/_shared/checkpoint-delivery.test.ts
+      - name: Type-check independent checkpoint export endpoint
+        run: deno check supabase/functions/cosmo-checkpoint-export/index.ts
       - name: Type-check Cosmo chat (known legacy check warning)
         continue-on-error: true
         run: deno check supabase/functions/cosmo-chat/index.ts
