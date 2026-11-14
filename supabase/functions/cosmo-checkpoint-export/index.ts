@@ -72,6 +72,7 @@ Deno.serve(async (req: Request) => {
   try {
     sinkResponse = await fetch(parsedSink, {
       method: "POST",
+      redirect: "error",
       headers: {
         "Content-Type": "application/json",
         "X-Cosmo-Signature": `sha256=${signature}`,
