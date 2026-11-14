@@ -59,21 +59,26 @@ export async function verifyCheckpointSignature(body: string, signatureHex: stri
 /**
  * Verify a receiver's signed, body-bound acknowledgement. A bare HTTP 2xx is
  * deliberately insufficient evidence that a checkpoint was durably stored.
- * The receiver must HMAC-sign the exact response body with the shared secret
- * and return it in X-Cosmo-Receipt-Signature as "sha256=<lowercase hex>".
+ * The receiver must Ed25519-sign the exact response body with its private key
+ * and return base64 in X-Cosmo-Receipt-Signature as "ed25519=<base64>".
+ * The sender stores only the receiver's public key, never its private key.
  */
 export async function verifyCheckpointReceipt(
   receiptBody: string,
   signatureHeader: string | null,
-  secret: string,
+  publicKeyBase64: string,
   expected: CheckpointReceiptExpectation,
 ): Promise<CheckpointReceipt | null> {
-  const match = signatureHeader?.match(/^sha256=([0-9a-f]{64})$/);
-  if (!match || secret.length < 32) return null;
+  const match = signatureHeader?.match(/^ed25519=([A-Za-z0-9+/]+={0,2})$/);
+  if (!match || !publicKeyBase64) return null;
 
   let receipt: CheckpointReceipt;
+  let signature: Uint8Array;
+  let publicKeyBytes: Uint8Array;
   try {
     receipt = JSON.parse(receiptBody) as CheckpointReceipt;
+    signature = Uint8Array.from(atob(match[1]), (character) => character.charCodeAt(0));
+    publicKeyBytes = Uint8Array.from(atob(publicKeyBase64), (character) => character.charCodeAt(0));
   } catch {
     return null;
   }
@@ -86,13 +91,23 @@ export async function verifyCheckpointReceipt(
     receipt.owner_id !== expected.owner_id ||
     receipt.checkpoint_sha256 !== expected.checkpoint_sha256 ||
     typeof receipt.stored_at !== "string" ||
-    !Number.isFinite(Date.parse(receipt.stored_at))
+    !Number.isFinite(Date.parse(receipt.stored_at)) ||
+    signature.length !== 64 ||
+    publicKeyBytes.length !== 32
   ) return null;
 
-  const validSignature = await verifyCheckpointSignature(receiptBody, match[1], secret);
-  return validSignature ? receipt : null;
+  try {
+    const publicKey = await crypto.subtle.importKey(
+      "raw", publicKeyBytes, { name: "Ed25519" }, false, ["verify"],
+    );
+    const validSignature = await crypto.subtle.verify(
+      { name: "Ed25519" }, publicKey, signature, encoder.encode(receiptBody),
+    );
+    return validSignature ? receipt : null;
+  } catch {
+    return null;
+  }
 }
-
 export function createCheckpointEnvelope(
   ownerId: string,
   row: VaultCheckpointRow,
