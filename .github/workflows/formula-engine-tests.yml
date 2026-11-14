@@ -1,0 +1,27 @@
+name: Formula engine tests
+
+on:
+  pull_request:
+    paths:
+      - "assets/js/cosmo-formula-engine.js"
+      - "tests/cosmo-formula-engine.test.mjs"
+      - ".github/workflows/formula-engine-tests.yml"
+  push:
+    branches:
+      - "feature/formula-intelligence-engine-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  formula-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run formula engine tests
+        run: node --test tests/cosmo-formula-engine.test.mjs
