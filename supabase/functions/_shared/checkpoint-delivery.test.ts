@@ -85,7 +85,7 @@ Deno.test("receipt verifier accepts only a valid receiver Ed25519 signature boun
 });
 
 Deno.test("receipt verifier rejects signed receipts for another owner, delivery or digest", async () => {
-  const pair = await crypto.subtle.generateKey({ name: "Ed25519" }, true, ["sign", "verify"]);
+  const pair = await crypto.subtle.generateKey({ name: "Ed25519" }, true, ["sign", "verify"]) as CryptoKeyPair;
   const publicKey = new Uint8Array(await crypto.subtle.exportKey("raw", pair.publicKey));
   const publicKeyBase64 = btoa(String.fromCharCode(...publicKey));
   const receipt = {
@@ -97,7 +97,7 @@ Deno.test("receipt verifier rejects signed receipts for another owner, delivery 
     stored_at: "2026-11-14T10:05:00.000Z",
   };
   const body = JSON.stringify(receipt);
-  const signatureBytes = new Uint8Array(await crypto.subtle.sign({ name: "Ed25519" }, pair.privateKey, new TextEncoder().encode(body)));
+  const signatureBytes = new Uint8Array(await crypto.subtle.sign({ name: "Ed25519" }, pair.privateKey, new TextEncoder().encode(body) as BufferSource));
   const signature = `ed25519=${btoa(String.fromCharCode(...signatureBytes))}`;
 
   assertEquals(await verifyCheckpointReceipt(body, signature, publicKeyBase64, {
