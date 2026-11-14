@@ -19,14 +19,15 @@ Deno.serve(async (req: Request) => {
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const sinkUrl = Deno.env.get("COSMO_CHECKPOINT_SINK_URL");
   const hmacSecret = Deno.env.get("COSMO_CHECKPOINT_HMAC_SECRET");
+  const receiptPublicKey = Deno.env.get("COSMO_CHECKPOINT_RECEIPT_PUBLIC_KEY");
   const keyId = Deno.env.get("COSMO_CHECKPOINT_HMAC_KEY_ID") || "primary";
   const authorization = req.headers.get("Authorization") || "";
 
   if (!supabaseUrl || !anonKey || !authorization.startsWith("Bearer ")) {
     return json({ error: "A valid authenticated session is required." }, 401);
   }
-  if (!sinkUrl || !hmacSecret) {
-    return json({ error: "Independent checkpoint storage is not configured." }, 503);
+  if (!sinkUrl || !hmacSecret || !receiptPublicKey) {
+    return json({ error: "Independent checkpoint storage or receipt verification is not configured." }, 503);
   }
   if (hmacSecret.length < 32) {
     return json({ error: "Checkpoint signing configuration is invalid." }, 503);
@@ -101,7 +102,7 @@ Deno.serve(async (req: Request) => {
   const receipt = await verifyCheckpointReceipt(
     receiptBody,
     sinkResponse.headers.get("X-Cosmo-Receipt-Signature"),
-    hmacSecret,
+    receiptPublicKey,
     {
       delivery_id: envelope.delivery_id,
       owner_id: user.id,
