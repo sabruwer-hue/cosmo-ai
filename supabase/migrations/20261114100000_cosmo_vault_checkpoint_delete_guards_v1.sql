@@ -1,5 +1,5 @@
 -- Cosmo Vault Checkpoint + Delete Guards v1
--- Exports a deterministic per-owner manifest for storage outside this database.
+-- Exports a canonical per-owner manifest for storage outside this database.
 -- Adds direct-delete guards while preserving intentional account-erasure cascades.
 -- This migration is additive except that supersedes FKs change from CASCADE to RESTRICT.
 
@@ -124,7 +124,7 @@ revoke all on function public.cosmo_export_vault_checkpoint() from public, anon;
 grant execute on function public.cosmo_export_vault_checkpoint() to authenticated;
 
 comment on function public.cosmo_export_vault_checkpoint() is
-  'Exports a deterministic per-owner manifest and SHA-256 digest. Persist the payload and digest in a separate, access-controlled system with independent retention; a same-database copy cannot prove deletion resistance.';
+  'Exports a canonical per-owner manifest and SHA-256 digest. Persist the payload and digest in a separate, access-controlled system with independent retention; a same-database copy cannot prove deletion resistance.';
 
 comment on function private.cosmo_reject_direct_vault_delete() is
   'Rejects direct vault row deletion while permitting nested FK cascades used by intentional account erasure. Supersedes relationships use RESTRICT to prevent version-chain cascades.';
