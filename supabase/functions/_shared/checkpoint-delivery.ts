@@ -98,10 +98,10 @@ export async function verifyCheckpointReceipt(
 
   try {
     const publicKey = await crypto.subtle.importKey(
-      "raw", publicKeyBytes, { name: "Ed25519" }, false, ["verify"],
+      "raw", publicKeyBytes as BufferSource, { name: "Ed25519" } as Algorithm, false, ["verify"],
     );
     const validSignature = await crypto.subtle.verify(
-      { name: "Ed25519" }, publicKey, signature, encoder.encode(receiptBody),
+      { name: "Ed25519" } as Algorithm, publicKey, signature as BufferSource, encoder.encode(receiptBody) as BufferSource,
     );
     return validSignature ? receipt : null;
   } catch {
@@ -112,7 +112,7 @@ export function createCheckpointEnvelope(
   ownerId: string,
   row: VaultCheckpointRow,
   now = new Date(),
-  deliveryId = crypto.randomUUID(),
+  deliveryId: string = crypto.randomUUID(),
 ): CheckpointEnvelope {
   if (!UUID_RE.test(ownerId)) {
     throw new Error("A valid authenticated owner UUID is required.");
