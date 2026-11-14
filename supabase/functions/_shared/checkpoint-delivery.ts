@@ -13,6 +13,7 @@ export type CheckpointEnvelope = {
 };
 
 const encoder = new TextEncoder();
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function toHex(bytes: ArrayBuffer): string {
   return Array.from(new Uint8Array(bytes), (byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -30,13 +31,22 @@ export async function signCheckpointBody(body: string, secret: string): Promise<
   return toHex(await crypto.subtle.sign("HMAC", key, encoder.encode(body)));
 }
 
+export async function verifyCheckpointSignature(body: string, signatureHex: string, secret: string): Promise<boolean> {
+  if (secret.length < 32 || !/^[0-9a-f]{64}$/.test(signatureHex)) return false;
+  const key = await crypto.subtle.importKey(
+    "raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["verify"],
+  );
+  const signature = new Uint8Array(signatureHex.match(/.{2}/g)!.map((part) => Number.parseInt(part, 16)));
+  return await crypto.subtle.verify("HMAC", key, signature, encoder.encode(body));
+}
+
 export function createCheckpointEnvelope(
   ownerId: string,
   row: VaultCheckpointRow,
   now = new Date(),
   deliveryId = crypto.randomUUID(),
 ): CheckpointEnvelope {
-  if (!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(ownerId)) {
+  if (!UUID_RE.test(ownerId)) {
     throw new Error("A valid authenticated owner UUID is required.");
   }
   if (!/^[0-9a-f]{64}$/.test(row.checkpoint_sha256)) {
